@@ -1,10 +1,11 @@
 import { PlayIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTheme } from "../contexts/ThemeContext";
+import GoLogo from "../../public/images/GoLogo.png";
 
 const Loading = ({ onComplete }) => {
   const [text, setText] = useState("");
-  const fullText = "GoCoin";
+  const fullText = "GoToken";
   const { theme } = useTheme();
 
   const isDark = theme === "dark";
@@ -33,10 +34,8 @@ const Loading = ({ onComplete }) => {
     <div className={`fixed inset-0 z-50 flex flex-col items-center justify-center transition-colors duration-500 ${bgColor}`}>
       {/* Icon and Text */}
       <div className={`mb-6 text-4xl font-semibold font-mono flex items-center ${textColor}`}>
-        <span className="w-11 h-11 flex items-center justify-center rounded-full bg-orange-500  mr-3">
-          <PlayIcon size={22} className="text-white" />
-        </span>
-        {text}
+        <span><img src={GoLogo} className="w-[50px] mr-2" /></span>
+          {text}
         <span className="ml-1 animate-blink">|</span>
       </div>
 

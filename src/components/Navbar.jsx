@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Home as HomeIcon,
   Wallet,
@@ -9,7 +9,6 @@ import {
 import { useTheme } from "../contexts/ThemeContext";
 
 const Navbar = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   const { theme } = useTheme();
 
@@ -26,9 +25,11 @@ const Navbar = () => {
 
   return (
     <div
-      className={`w-full rounded-t-[32px] py-2 fixed bottom-0 left-0 right-0 sm:max-w-md sm:left-1/2 sm:translate-x-[-50%] sm:bottom-2 ${bgColor} sm:rounded-[32px] z-50 shadow-lg`}
+      className={`w-full rounded-t-[32px] fixed bottom-0 left-0 right-0 sm:max-w-md sm:left-1/2 sm:translate-x-[-50%] sm:bottom-2 ${bgColor} sm:rounded-[32px] z-50 ${
+        isDark ? "shadow-md" : "shadow-[0_0_15px_rgba(0,0,0,0.1)]"
+      }`}
     >
-      <nav className="flex justify-between items-end px-8 py-2 relative">
+      <nav className="flex justify-between items-end py-2 relative">
         {navItems.map((item) => {
           const isActive = location.pathname === item.to;
           const Icon = item.icon;
@@ -37,18 +38,18 @@ const Navbar = () => {
             <Link
               key={item.to}
               to={item.to}
-              className={`flex flex-col items-center gap-2 text-xs font-medium relative transition duration-200 flex-1`}
+              className="flex flex-col items-center gap-2 text-xs font-medium relative transition duration-200 flex-1"
             >
               {isActive ? (
                 <>
                   <div
-                    className={`absolute -top-12 w-16 h-16 ${
+                    className={`absolute -top-8 w-14 h-14 ${
                       isDark
-                        ? "bg-orange-500  border-[#2a2a2a]"
-                        : "bg-orange-500  shadow-orange-200 border-white"
+                        ? "bg-orange-500 border-[#2a2a2a]"
+                        : "bg-orange-500 shadow-orange-200 border-gray-700"
                     } text-white rounded-full flex items-center justify-center shadow-2xl z-30 border-4`}
                   >
-                    <Icon size={26} />
+                    <Icon size={25} />
                   </div>
                   <span className={`mt-10 ${activeColor} font-semibold`}>
                     {item.label}
@@ -67,16 +68,16 @@ const Navbar = () => {
         {/* Profile (No auth check) */}
         <Link
           to="/profile"
-          className={`flex flex-col items-center gap-2 text-xs font-medium relative transition duration-200 flex-1`}
+          className="flex flex-col items-center gap-2 text-xs font-medium relative transition duration-200 flex-1"
         >
           {location.pathname === "/profile" ? (
             <>
               <div
-                className={`absolute -top-12 w-16 h-16 ${
+                className={`absolute -top-8 w-14 h-14 ${
                   isDark
-                    ? "bg-orange-500  border-[#2a2a2a]"
-                    : "bg-orange-500  shadow-orange-200 border-white"
-                } text-white rounded-full flex items-center justify-center shadow-2xl z-30 border-4`}
+                    ? "bg-orange-500 border-[#2a2a2a]"
+                    : "bg-orange-500 shadow-orange-200 border-gray-700"
+                } text-white rounded-full flex items-center justify-center shadow-4xl z-30 border-4`}
               >
                 <User size={26} />
               </div>

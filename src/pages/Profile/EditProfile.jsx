@@ -26,16 +26,16 @@ const EditProfile = () => {
     <div className={`h-screen flex flex-col justify-between ${isDark ? 'bg-[#1e1e1e] text-white' : 'bg-[#f9f9f9] text-black'}`}>
       
       {/* Header */}
-      <div className="flex items-center px-3 pb-2 p-4 pt-10">
-        <button onClick={handleBack} className="mr-3">
+      <div className="flex items-center px-3 pt-6 pb-3">
+        <button onClick={handleBack} className="mr-4">
           <ArrowLeft size={20} className={isDark ? 'text-white' : 'text-black'} />
         </button>
         <h1 className="text-base font-medium">Edit Profile</h1>
       </div>
 
       {/* Profile image & name */}
-      <div className="flex flex-col items-center px-3">
-        <div className="relative mb-2">
+      <div className="flex flex-col items-center">
+        <div className="relative">
           <div className="w-16 h-16 bg-orange-500 rounded-full overflow-hidden">
             <img
               src="/api/placeholder/96/96"
@@ -51,7 +51,7 @@ const EditProfile = () => {
           </button>
         </div>
 
-        <h2 className="text-sm font-semibold mt-1 mb-1">Username</h2>
+        <h2 className="text-sm font-semibold mt-1">Username</h2>
         <button
           onClick={handleEditImage}
           className="text-xs text-orange-500 hover:underline"
@@ -82,7 +82,7 @@ const EditProfile = () => {
       </div>
 
       {/* Action buttons */}
-      <div className="px-3 space-y-2 pb-4 mt-2">
+      <div className="px-3 space-y-2 pb-4">
         <button
           onClick={handleSaveChanges}
           className="w-full bg-orange-500 text-white py-2 rounded-xl text-sm font-medium hover:bg-[#b67300]"
@@ -97,9 +97,6 @@ const EditProfile = () => {
         >
           Cancel
         </button>
-        <div className="flex justify-center pt-1">
-          <div className="w-16 h-1 bg-gray-600 rounded-full"></div>
-        </div>
       </div>
     </div>
   );

@@ -64,7 +64,7 @@ const Activity = () => {
   return (
     <div className={`min-h-screen flex flex-col ${isDark ? 'bg-[#1e1e1e] text-white' : 'bg-[#f9f9f9] text-black'}`}>
       {/* Header */}
-      <div className="flex items-center px-4 pt-8 pb-2">
+      <div className="flex items-center px-3 pt-6 pb-3">
         <button onClick={handleBack} className="mr-4">
           <ArrowLeft size={20} className={isDark ? 'text-white' : 'text-black'} />
         </button>
@@ -72,7 +72,7 @@ const Activity = () => {
       </div>
 
       {/* Main Content */}
-      <div className="px-4 space-y-4 pb-6">
+      <div className="px-4 space-y-4 pb-6 mt-6">
         <div>
           <h2 className="text-base font-bold mb-0.5">This week</h2>
           <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} text-xs`}>

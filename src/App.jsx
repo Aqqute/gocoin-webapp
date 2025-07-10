@@ -13,6 +13,7 @@ import Board from "./pages/Board";
 import Profile from "./pages/Profile";
 import Activity from "./pages/Profile/Activity";
 import EditProfile from "./pages/Profile/EditProfile";
+import ManageWallet from "./pages/Profile/ManageWallet";
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -62,6 +63,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/activities" element={<Activity />} />
           <Route path="/profile/edit" element={<EditProfile />} />
+          <Route path="/profile/wallet" element={<ManageWallet />} />
         </Routes> 
       )}
     </>

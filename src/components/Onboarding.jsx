@@ -53,7 +53,7 @@ const Onboarding = ({ onAccept }) => {
       <img
         src={currentStep.image}
         alt="Onboarding background"
-        className="absolute inset-0 w-full p-4 h-full object-contain z-0"
+        className="absolute inset-0 w-full h-full object-contain z-0"
         style={{ backgroundColor: isDark ? "#1e1e1e" : "#f5f5f5" }}
       />
 
@@ -88,7 +88,7 @@ const Onboarding = ({ onAccept }) => {
             <button
               onClick={() => {
                 onAccept();
-                navigate("/signup");
+                navigate("/");
               }}
               className="bg-orange-500 text-white font-semibold text-sm w-full py-3 rounded-full mb-4"
             >
@@ -113,7 +113,7 @@ const Onboarding = ({ onAccept }) => {
             <button
               onClick={() => {
                 onAccept();
-                navigate("/signup");
+                navigate("/");
               }}
               className={`${mutedText} text-sm hover:underline`}
             >

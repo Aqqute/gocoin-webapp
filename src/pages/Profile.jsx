@@ -57,7 +57,7 @@ const ProfileSettings = () => {
       }`}
     >
       {/* Main Content */}
-      <div className="pt-14 px-4 space-y-2 text-sm pb-2">
+      <div className="pt-6 px-4 space-y-2 text-sm pb-2">
         {settingsItems.map((item) => (
           <div
             key={item.id}
