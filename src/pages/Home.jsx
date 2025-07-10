@@ -61,15 +61,13 @@ const Home = () => {
         isDark ? "bg-[#1e1e1e] text-white" : "bg-[#f9f9f9] text-black"
       }`}
     >
-      {/* Fixed Header */}
+      {/* Header */}
       <Header />
-
-      {/* Spacer below fixed header */}
       <div className="h-32" />
 
       {/* Filters */}
-      <div className="px-4 mb-4">
-        <div className="flex space-x-2 overflow-x-auto hide-scrollbar">
+      <div className="w-full mb-4 overflow-x-auto hide-scrollbar sm:overflow-visible">
+        <div className="flex space-x-2 min-w-max px-4 sm:px-0 sm:flex-wrap sm:justify-center">
           {filters.map((filter) => (
             <button
               key={filter}
@@ -89,9 +87,9 @@ const Home = () => {
       </div>
 
       {/* Task Timeline */}
-      <div className="px-4 pb-32">
+      <div className="px-4 pb-32 w-full">
         <h2 className="text-base font-bold mb-2">Task Timeline</h2>
-        <div className="space-y-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 w-full">
           {tasks.map((task) => (
             <div
               key={task.id}
@@ -127,7 +125,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Fixed Bottom Navbar */}
+      {/* Bottom Navbar */}
       <Navbar />
     </div>
   );
