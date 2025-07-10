@@ -52,10 +52,11 @@ const ProfileSettings = () => {
 
   return (
     <div
-      className={`min-h-screen flex flex-col justify-between ${
+      className={`min-h-screen flex flex-col  ${
         isDark ? 'bg-[#1e1e1e] text-white' : 'bg-white text-black'
       }`}
     >
+      <h1 className='pt-6 px-4 text-lg font-semibold'>Profile Settings</h1>
       {/* Main Content */}
       <div className="pt-6 px-4 space-y-2 text-sm pb-2">
         {settingsItems.map((item) => (

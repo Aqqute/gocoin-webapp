@@ -29,13 +29,13 @@ const Header = () => {
 
         {/* Right Side Icons */}
         <div className="flex items-center gap-6 relative">
-          <div className="flex items-center gap-1">
+          <div className="flex items-center bg-gray-200 px-2 py-1 rounded-full gap-1">
             <Flame className="text-orange-500" size={20} />
-            <span className={`text-sm font-medium ${isDark ? "text-white" : "text-black"}`}>
+            <span className={`text-sm font-medium ${isDark ? "text-black" : "text-black"}`}>
               20
             </span>
           </div>
-
+          
           <div className="relative">
             <Bell className={isDark ? "text-gray-300" : "text-black"} size={22} />
             <span className="absolute -top-2 -right-2 bg-orange-500 text-white rounded-full px-1.5 text-xs">

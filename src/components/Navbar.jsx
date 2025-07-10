@@ -45,9 +45,9 @@ const Navbar = () => {
                   <div
                     className={`absolute -top-8 w-14 h-14 ${
                       isDark
-                        ? "bg-orange-500 border-[#2a2a2a]"
-                        : "bg-orange-500 shadow-orange-200 border-gray-700"
-                    } text-white rounded-full flex items-center justify-center shadow-2xl z-30 border-4`}
+                      ? "bg-[#2a2a2a] border-[#373636]"
+                    : "bg-white shadow-orange-200 border-gray-300"
+                    } text-orange-500 rounded-full flex items-center justify-center shadow-2xl z-30 border-4`}
                   >
                     <Icon size={25} />
                   </div>
@@ -75,9 +75,9 @@ const Navbar = () => {
               <div
                 className={`absolute -top-8 w-14 h-14 ${
                   isDark
-                    ? "bg-orange-500 border-[#2a2a2a]"
-                    : "bg-orange-500 shadow-orange-200 border-gray-700"
-                } text-white rounded-full flex items-center justify-center shadow-4xl z-30 border-4`}
+                    ? "bg-[#2a2a2a] border-[#373636]"
+                    : "bg-white shadow-orange-200 border-gray-300"
+                } text-orange-500 rounded-full flex items-center justify-center shadow-4xl z-30 border-4`}
               >
                 <User size={26} />
               </div>

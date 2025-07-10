@@ -14,6 +14,8 @@ import Profile from "./pages/Profile";
 import Activity from "./pages/Profile/Activity";
 import EditProfile from "./pages/Profile/EditProfile";
 import ManageWallet from "./pages/Profile/ManageWallet";
+import Notifications from "./components/Notifications";
+import BoardActivity from "./pages/Board/Activity";
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -60,7 +62,9 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/wallet" element={<Wallet />} />
           <Route path="/board" element={<Board />} />
+          <Route path="/board/activity" element={<BoardActivity />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/notification" element={<Notifications/>}/>
           <Route path="/profile/activities" element={<Activity />} />
           <Route path="/profile/edit" element={<EditProfile />} />
           <Route path="/profile/wallet" element={<ManageWallet />} />

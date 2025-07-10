@@ -61,6 +61,7 @@ const GoWalletComponent = () => {
 
   return (
     <div className={`min-h-screen flex flex-col ${isDark ? 'bg-[#1e1e1e] text-white' : 'bg-[#f9f9f9] text-black'}`}>
+      <h1 className='pt-6 px-4 text-lg font-semibold'>Go Wallet</h1>
       {/* Balance Card */}
       <div className="pt-6 px-4 space-y-2 text-sm pb-2">
         <div className={`rounded-xl p-4 ${isDark ? 'bg-[#2a2a2a]' : 'bg-white'} shadow-sm`}>

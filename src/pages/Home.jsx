@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import Header from "../components/Header";
 import { useTheme } from "../contexts/ThemeContext";
+import GoLogo from "../../public/images/GoLogo.png"; // Make sure this is imported correctly
 
 const Home = () => {
   const [activeFilter, setActiveFilter] = useState("All");
@@ -25,7 +26,6 @@ const Home = () => {
       description: "Engage and share campaign posts on platforms.",
       amount: "0.000048",
       change: "~$2.00",
-      icon: "📱",
     },
     {
       id: 2,
@@ -33,7 +33,6 @@ const Home = () => {
       description: "Create and post original media content.",
       amount: "0.000048",
       change: "~$2.00",
-      icon: "📝",
     },
     {
       id: 3,
@@ -41,7 +40,6 @@ const Home = () => {
       description: "Download partner apps and leave reviews.",
       amount: "0.000048",
       change: "~$2.00",
-      icon: "📲",
     },
     {
       id: 4,
@@ -49,7 +47,6 @@ const Home = () => {
       description: "Participate in surveys and community polls.",
       amount: "0.000048",
       change: "~$2.00",
-      icon: "📊",
     },
   ];
 
@@ -61,7 +58,6 @@ const Home = () => {
         isDark ? "bg-[#1e1e1e] text-white" : "bg-[#f9f9f9] text-black"
       }`}
     >
-      {/* Header */}
       <Header />
       <div className="h-32" />
 
@@ -74,10 +70,10 @@ const Home = () => {
               onClick={() => handleFilterChange(filter)}
               className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                 activeFilter === filter
-                  ? "bg-orange-500 text-white"
+                  ? "bg-gray-200 border-1 border-orange-500 text-orange-500"
                   : isDark
-                  ? "bg-[#2a2a2a] text-gray-300 hover:bg-[#3a3a3a]"
-                  : "bg-white text-black hover:bg-gray-100"
+                  ? "bg-gray-200 text-black hover:bg-[#3a3a3a]"
+                  : "bg-gray-200 text-black hover:bg-gray-100"
               }`}
             >
               {filter}
@@ -88,7 +84,7 @@ const Home = () => {
 
       {/* Task Timeline */}
       <div className="px-4 pb-32 w-full">
-        <h2 className="text-base font-bold mb-2">Task Timeline</h2>
+        <h2 className="text-left text-base font-bold mb-4">Task Timeline</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 w-full">
           {tasks.map((task) => (
             <div
@@ -97,17 +93,21 @@ const Home = () => {
                 isDark ? "bg-[#2a2a2a]" : "bg-white"
               }`}
             >
-              <h3 className="font-semibold mb-1">{task.title}</h3>
+              <h3 className="font-semibold text-left mb-1">{task.title}</h3>
               <p
-                className={`text-xs mb-2 ${
+                className={`text-xs text-left mb-4 ${
                   isDark ? "text-gray-300" : "text-gray-800"
                 }`}
               >
                 {task.description}
               </p>
               <div className="flex items-center gap-3">
-                <div className="w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center text-xs">
-                  {task.icon}
+                <div className="w-6 h-6 rounded-full bg-white p-1 shadow-md">
+                  <img
+                    src={GoLogo}
+                    alt="Go Logo"
+                    className="w-full h-full object-contain"
+                  />
                 </div>
                 <span className="text-[#cc8400] font-medium">
                   {task.amount}
@@ -125,7 +125,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Bottom Navbar */}
       <Navbar />
     </div>
   );
