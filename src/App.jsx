@@ -16,6 +16,9 @@ import EditProfile from "./pages/Profile/EditProfile";
 import ManageWallet from "./pages/Profile/ManageWallet";
 import Notifications from "./components/Notifications";
 import BoardActivity from "./pages/Board/Activity";
+import NotificationsSettings from "./pages/Profile/NotificationSettings";
+import PrivacySettings from "./pages/Profile/PrivacySettings";
+import Referrals from "./pages/Profile/Referrals";
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -68,6 +71,10 @@ function App() {
           <Route path="/profile/activities" element={<Activity />} />
           <Route path="/profile/edit" element={<EditProfile />} />
           <Route path="/profile/wallet" element={<ManageWallet />} />
+          <Route path="/profile/notifications" element={<NotificationsSettings />} />
+          <Route path="/profile/privacy" element={<PrivacySettings />} />
+          <Route path="/profile/referrals" element={<Referrals />} />
+
         </Routes> 
       )}
     </>
