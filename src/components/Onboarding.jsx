@@ -88,7 +88,7 @@ const Onboarding = ({ onAccept }) => {
             <button
               onClick={() => {
                 onAccept();
-                navigate("/");
+                navigate("/signup");
               }}
               className="bg-orange-500 text-white font-semibold text-sm w-full py-3 rounded-full mb-4"
             >
