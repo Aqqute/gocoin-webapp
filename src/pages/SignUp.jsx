@@ -10,7 +10,7 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
-import WelcomeModal from "../components/WelcomeModal"
+import WelcomeModal from "../components/WelcomeModal";
 
 import MetaMaskLogo from "../../public/images/MetaMask.webp";
 import TrustWalletLogo from "../../public/images/TrustWallet.png";
@@ -182,7 +182,7 @@ const Signup = () => {
                 {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
-            <p className="text-xs text-gray-600 mb-6">
+            <p className="text-xs text-gray-400 mb-6">
               Both passwords must match
             </p>
             <button
@@ -369,11 +369,12 @@ const Signup = () => {
             <WelcomeModal
               isOpen={isWelcomeOpen}
               onClose={() => setIsWelcomeOpen(false)}
+              isDark={isDark}
             />
 
             <button
               onClick={() => navigate("/")}
-              className="w-full text-sm text-gray-500 underline mb-6"
+              className={`w-full text-sm underline mb-6 text-center font-bold ${text} cursor-pointer`}
             >
               Skip
             </button>
@@ -400,7 +401,6 @@ const Signup = () => {
   return (
     <div className={`min-h-screen ${bg} px-4 py-6 flex`}>
       <div className="w-full max-w-md mx-auto">
-        {/* Top Navigation */}
         <div className="flex items-center gap-2 mb-3">
           {step > 1 && (
             <button onClick={handleBack}>
@@ -410,7 +410,6 @@ const Signup = () => {
           <p className={`text-base font-bold ${text}`}>Step {step}/5</p>
         </div>
 
-        {/* Progress Bar */}
         <div className="w-full h-1 bg-gray-200 rounded mb-6">
           <div
             className="h-1 bg-orange-500 rounded-full"
@@ -418,13 +417,11 @@ const Signup = () => {
           />
         </div>
 
-        {/* Card */}
         <div className="bg-transparent p-2">{renderStep()}</div>
 
-        {/* Footer */}
         {step === 1 && (
-          <p className="text-center mt-6 text-sm text-gray-800">
-            Already have an account?{" "}
+          <p className={`text-base mt-2 text-center font-bold ${text} cursor-pointer`}>
+            Already have an account?{' '}
             <span
               className="font-semibold underline cursor-pointer"
               onClick={() => navigate("/login")}
@@ -435,7 +432,6 @@ const Signup = () => {
         )}
       </div>
     </div>
-  );
-};
+  );};
 
 export default Signup;
