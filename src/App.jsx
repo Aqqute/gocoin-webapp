@@ -19,6 +19,7 @@ import BoardActivity from "./pages/Board/Activity";
 import NotificationsSettings from "./pages/Profile/NotificationSettings";
 import PrivacySettings from "./pages/Profile/PrivacySettings";
 import Referrals from "./pages/Profile/Referrals";
+import ResetPassword from "./pages/ResetPassword"
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -63,6 +64,7 @@ function App() {
           />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/resetpassword" element={<ResetPassword/>}/>
           <Route path="/wallet" element={<Wallet />} />
           <Route path="/board" element={<Board />} />
           <Route path="/board/activity" element={<BoardActivity />} />

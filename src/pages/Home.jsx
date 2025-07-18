@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import Header from "../components/Header";
 import { useTheme } from "../contexts/ThemeContext";
-import GoLogo from "../../public/images/GoLogo.png"; // Make sure this is imported correctly
-
+import GoLogo from "../../public/images/GoLogo.png"; 
 const Home = () => {
   const [activeFilter, setActiveFilter] = useState("All");
   const { theme } = useTheme();

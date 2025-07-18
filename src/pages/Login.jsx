@@ -1,32 +1,84 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
+import { Eye, EyeOff } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const navigate = useNavigate();
 
-  const bg = isDark ? "bg-[#1e1e1e]" : "bg-gray-100";
-  const cardBg = isDark ? "bg-[#2B2B2B]" : "bg-white";
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+
+  const bg = isDark ? "bg-[#1e1e1e]" : "bg-white";
   const text = isDark ? "text-white" : "text-black";
+  const inputBg = isDark ? "bg-[#2B2B2B] text-white" : "bg-gray-100 text-black";
+  const borderColor = isDark ? "border-gray-600" : "border-gray-300";
+
+  const handleChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
   return (
-    <div className={`min-h-screen flex items-center justify-center px-4 ${bg}`}>
-      <div className={`w-full max-w-md ${cardBg} p-6 rounded-lg shadow-md`}>
-        <h1 className={`text-2xl font-bold text-center mb-4 ${text}`}>Login</h1>
-        {/* Login form goes here */}
+    <div className={`min-h-screen px-4 py-10 ${bg}`}>
+      <div className="max-w-md mx-auto w-full">
+        <h2 className={`text-2xl font-bold mb-8 ${text}`}>Log In</h2>
+
         <input
-          type="email"
-          placeholder="Email"
-          className="w-full px-4 py-2 mb-4 border rounded outline-none focus:ring-2 focus:ring-orange-400 bg-transparent text-inherit placeholder-gray-400"
+          type="text"
+          name="username"
+          placeholder="Username"
+          value={formData.username}
+          onChange={handleChange}
+          className={`w-full mb-4 px-4 py-3 rounded-md ${inputBg} text-sm outline-none border ${borderColor}`}
         />
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full px-4 py-2 mb-6 border rounded outline-none focus:ring-2 focus:ring-orange-400 bg-transparent text-inherit placeholder-gray-400"
-        />
-        <button className="w-full py-3 bg-[#FFA500] text-white font-semibold rounded">
-          Login
+
+        <div className="relative mb-4">
+          <input
+            type={showPassword ? "text" : "password"}
+            name="password"
+            placeholder="Create password"
+            value={formData.password}
+            onChange={handleChange}
+            className={`w-full px-4 py-3 pr-10 rounded-md ${inputBg} text-sm outline-none border ${borderColor}`}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-3 text-gray-400"
+          >
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        </div>
+
+        <div className="mb-6">
+          <button
+            className="text-orange-500 text-sm font-semibold underline"
+            onClick={() => navigate("/resetpassword")}
+          >
+            Forgot password?
+          </button>
+        </div>
+
+        <button
+          className="w-full text-sm bg-orange-500 text-white py-3 rounded-full font-semibold"
+          onClick={() => console.log("Logging in...")}
+        >
+          Continue
         </button>
+
+        <p className={`mt-6 text-sm text-center font-bold ${text}`}>
+          Don’t have an account?{" "}
+          <span
+            className="font-semibold underline cursor-pointer"
+            onClick={() => navigate("/signup")}
+          >
+            Sign Up
+          </span>
+        </p>
       </div>
     </div>
   );

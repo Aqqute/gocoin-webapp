@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { useTheme } from '../../contexts/ThemeContext'; // Use your theme context
+import { useTheme } from '../../contexts/ThemeContext'; 
 
 const NotificationSettings = ({ onBack }) => {
   const { theme } = useTheme();
@@ -26,12 +26,12 @@ const NotificationSettings = ({ onBack }) => {
   const ToggleSwitch = ({ isOn, onToggle }) => (
     <button
       onClick={onToggle}
-      className={`relative w-12 h-6 rounded-full focus:outline-none transition-colors duration-300 ${
+      className={`relative w-11 h-5 rounded-full focus:outline-none transition-colors duration-300 ${
         isOn ? 'bg-orange-500' : 'bg-gray-400'
       }`}
     >
       <div
-        className={`absolute w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300 top-0.5 ${
+        className={`absolute w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-300 top-0.5 ${
           isOn ? 'translate-x-6' : 'translate-x-0.5'
         }`}
       />
@@ -68,7 +68,7 @@ const NotificationSettings = ({ onBack }) => {
             {/* Email */}
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base font-semibold mb-1">Email Notifications</h3>
+                <h3 className="text-sm font-semibold mb-1">Email Notifications</h3>
                 <p className="text-sm text-gray-400">
                   Receive updates and alerts via emails.
                 </p>
@@ -82,7 +82,7 @@ const NotificationSettings = ({ onBack }) => {
             {/* SMS */}
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base font-semibold mb-1">SMS Notifications</h3>
+                <h3 className="text-sm font-semibold mb-1">SMS Notifications</h3>
                 <p className="text-sm text-gray-400">
                   Receive updates and alerts via SMS.
                 </p>
@@ -109,7 +109,7 @@ const NotificationSettings = ({ onBack }) => {
             {/* New Task */}
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base font-semibold mb-1">New Task</h3>
+                <h3 className="text-sm font-semibold mb-1">New Task</h3>
                 <p className="text-sm text-gray-400">
                   Get alerts when new tasks are available.
                 </p>
@@ -123,7 +123,7 @@ const NotificationSettings = ({ onBack }) => {
             {/* Task Reminders */}
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base font-semibold mb-1">Task Reminders</h3>
+                <h3 className="text-sm font-semibold mb-1">Task Reminders</h3>
                 <p className="text-sm text-gray-400">
                   Be reminded to complete tasks before they're due.
                 </p>
@@ -137,7 +137,7 @@ const NotificationSettings = ({ onBack }) => {
             {/* Earnings Alerts */}
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base font-semibold mb-1">Earnings Alerts</h3>
+                <h3 className="text-sm font-semibold mb-1">Earnings Alerts</h3>
                 <p className="text-sm text-gray-400">
                   Get notified when you earn GoTokens.
                 </p>

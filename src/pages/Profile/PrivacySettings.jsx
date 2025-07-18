@@ -26,12 +26,12 @@ const NotificationSettings = ({ onBack }) => {
   const ToggleSwitch = ({ isOn, onToggle }) => (
     <button
       onClick={onToggle}
-      className={`relative w-12 h-6 rounded-full focus:outline-none transition-colors duration-300 ${
+      className={`relative w-11 h-5 rounded-full focus:outline-none transition-colors duration-300 ${
         isOn ? 'bg-orange-500' : 'bg-gray-400'
       }`}
     >
       <div
-        className={`absolute w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300 top-0.5 ${
+        className={`absolute w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-300 top-0.5 ${
           isOn ? 'translate-x-6' : 'translate-x-0.5'
         }`}
       />
@@ -59,7 +59,7 @@ const NotificationSettings = ({ onBack }) => {
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base font-semibold mb-1">Activity Visibility</h3>
+                <h3 className="text-sm font-semibold mb-1">Activity Visibility</h3>
                 <p className="text-sm text-gray-400">
                   Enable others to see your task activities from the leaderboard.
                 </p>
@@ -77,7 +77,7 @@ const NotificationSettings = ({ onBack }) => {
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base font-semibold mb-1">Data Sharing</h3>
+                <h3 className="text-sm font-semibold mb-1">Data Sharing</h3>
                 <p className="text-sm text-gray-400">
                   Grant GoToken the permissions to share your data with third-party services.
                 </p>

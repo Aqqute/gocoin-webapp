@@ -187,7 +187,7 @@ const Signup = () => {
             </p>
             <button
               onClick={handleNext}
-              className="w-full mt-4 bg-orange-500 text-white py-3 rounded-full font-semibold"
+              className="w-full mt-4 text-sm bg-orange-500 text-white py-3 rounded-full font-semibold"
             >
               Continue
             </button>
@@ -200,7 +200,7 @@ const Signup = () => {
             <h2 className={`text-xl font-bold mb-6 ${text}`}>
               Confirm Email Address
             </h2>
-            <p className="text-sm text-center mb-4 text-gray-500">
+            <p className={`text-sm mb-4 ${text}`}>
               An OTP has been sent to your email address{" "}
               <strong>{formData.email}</strong>. Please enter 6 digits OTP
             </p>
@@ -220,13 +220,13 @@ const Signup = () => {
             </div>
 
             {!resendAvailable ? (
-              <p className="text-base mb-10 mt-4 flex justify-between font-semibold">
-                {formatTime()}{" "}
-                <span className="text-orange-500">Resend code</span>
+              <p className="text-base mb-6 mt-4 flex justify-between font-semibold">
+                <span className={`text-sm ${text}`}>{formatTime()}{" "}</span>
+                <span className="text-orange-500 text-sm ">Resend code</span>
               </p>
             ) : (
               <p
-                className="text-base font-semibold text-orange-500 text-center underline mb-4 cursor-pointer"
+                className="text-sm font-semibold text-orange-500 text-center underline mb-4 cursor-pointer"
                 onClick={() => {
                   setTimer(120);
                   setResendAvailable(false);
@@ -237,7 +237,7 @@ const Signup = () => {
             )}
             <button
               onClick={handleNext}
-              className="w-full bg-orange-500 text-white py-3 rounded-full font-semibold"
+              className="w-full text-sm bg-orange-500 text-white py-3 rounded-full font-semibold"
             >
               Continue
             </button>
@@ -250,7 +250,7 @@ const Signup = () => {
             <h2 className={`text-xl font-bold mb-6 ${text}`}>
               Select Interests
             </h2>
-            <p className="mb-6 text-sm">
+            <p className={`text-sm mb-6 ${text}`}>
               Choose 3-5 topics that excite you the most. This will help us
               tailor tasks and to your preferences
             </p>
@@ -271,7 +271,7 @@ const Signup = () => {
             </div>
             <button
               onClick={handleNext}
-              className="w-full bg-orange-500 text-white py-3 rounded-full font-semibold"
+              className="w-full bg-orange-500 text-sm text-white py-3 rounded-full font-semibold"
             >
               Continue
             </button>
@@ -282,12 +282,12 @@ const Signup = () => {
         return (
           <>
             <h2 className={`text-xl font-bold mb-6 ${text}`}>Set Location</h2>
-            <p className="mb-6 text-sm">
+            <p className={`text-sm mb-6 ${text}`}>
               Almost done! Let’s set your location and provide you with relevant
               tasks based on your region and ensures a better match for local
               campaigns.
             </p>
-            <h1 className="font-semibold tex-xl mb-2">Country</h1>
+            <h1 className={`font-semibold mb-2 ${text}`}>Country</h1>
             <select
               name="country"
               value={formData.country}
@@ -300,7 +300,7 @@ const Signup = () => {
               <option value="South Africa">South Africa</option>
               <option value="Kenya">Kenya</option>
             </select>
-            <h1 className="font-semibold tex-xl mb-2">State/Region</h1>
+            <h1 className={`font-semibold mb-2 ${text}`}>State/Region</h1>
             <input
               type="text"
               name="state"
@@ -311,7 +311,7 @@ const Signup = () => {
             />
             <button
               onClick={handleNext}
-              className="w-full bg-orange-500 mt-16 text-white py-3 rounded-full font-semibold"
+              className="w-full bg-orange-500 mt-10 text-sm text-white py-3 rounded-full font-semibold"
             >
               Continue
             </button>
@@ -321,10 +321,10 @@ const Signup = () => {
       case 5:
         return (
           <>
-            <h2 className="text-2xl font-semibold mb-2">
+            <h2 className={`text-xl font-bold mb-6 ${text}`}>
               Connect Crypto Wallet
             </h2>
-            <p className="text-gray-500 mb-6 text-sm">
+            <p className={`text-sm mb-6 ${text}`}>
               Ready to start earning? Let’s begin by connecting your wallet and
               secure your GO Tokens.
             </p>
@@ -343,7 +343,7 @@ const Signup = () => {
                   onClick={() =>
                     setFormData({ ...formData, wallet: wallet.name })
                   }
-                  className={`border rounded-xl p-4 flex flex-col items-center justify-center ${
+                  className={`border rounded-xl ${text} p-4 flex flex-col items-center justify-center ${
                     formData.wallet === wallet.name
                       ? "border-orange-500 shadow-sm"
                       : "border-gray-200"
@@ -361,7 +361,7 @@ const Signup = () => {
 
             <button
               onClick={() => setIsWelcomeOpen(true)}
-              className="bg-orange-500 hover:bg-orange-600 text-white w-full py-2 px-4 rounded-full mb-4"
+              className="bg-orange-500 font-semibold hover:bg-orange-600 text-white w-full py-2 px-4 rounded-full mb-4"
             >
               Connect
             </button>
@@ -379,7 +379,7 @@ const Signup = () => {
               Skip
             </button>
 
-            <p className="text-sm text-center mt-8 text-gray-400">
+            <p className={`${text} text-center mt-4 text-sm`}>
               By connecting your wallet you agree to our{" "}
               <span className="text-blue-800 underline cursor-pointer">
                 Terms of service
@@ -420,7 +420,7 @@ const Signup = () => {
         <div className="bg-transparent p-2">{renderStep()}</div>
 
         {step === 1 && (
-          <p className={`text-base mt-2 text-center font-bold ${text} cursor-pointer`}>
+          <p className={`mt-2 text-sm text-center font-bold ${text} cursor-pointer`}>
             Already have an account?{' '}
             <span
               className="font-semibold underline cursor-pointer"

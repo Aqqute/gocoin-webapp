@@ -29,7 +29,7 @@ const Header = () => {
 
         {/* Right Side Icons */}
         <div className="flex items-center gap-6 relative">
-          <div className="flex items-center bg-gray-200 px-2 py-1 rounded-full gap-1">
+          <div className="flex items-center bg-gray-300 px-2 py-1 rounded-full gap-1">
             <Flame className="text-orange-500" size={20} />
             <span className={`text-sm font-medium ${isDark ? "text-black" : "text-black"}`}>
               20
