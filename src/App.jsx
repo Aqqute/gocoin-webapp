@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTheme } from "./contexts/ThemeContext";
+import { useAuth } from "./contexts/AuthContext";
 import Loading from "./components/Loading";
 import { Toaster } from "react-hot-toast";
 import Onboarding from "./components/Onboarding";
@@ -19,17 +20,18 @@ import BoardActivity from "./pages/Board/Activity";
 import NotificationsSettings from "./pages/Profile/NotificationSettings";
 import PrivacySettings from "./pages/Profile/PrivacySettings";
 import Referrals from "./pages/Profile/Referrals";
-import ResetPassword from "./pages/ResetPassword"
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [onboardingComplete, setOnboardingComplete] = useState(false);
   const { theme, setTheme } = useTheme();
+  const { isAuthenticated } = useAuth();
 
   return (
     <>
       <Toaster
-        position="top-center"
+        position="top-right"
         toastOptions={{
           style: {
             background: theme === "dark" ? "#1e1f28" : "#fff",
@@ -43,12 +45,7 @@ function App() {
         <Loading onComplete={() => setIsLoaded(true)} />
       ) : !theme ? (
         <ThemeSelector onSelect={setTheme} />
-      ) : !onboardingComplete ? (
-        <Onboarding
-          onAccept={() => setOnboardingComplete(true)}
-          theme={theme}
-        />
-      ) : (
+      ) : isAuthenticated || onboardingComplete ? (
         <Routes>
           <Route
             path="/"
@@ -64,20 +61,21 @@ function App() {
           />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/resetpassword" element={<ResetPassword/>}/>
+          <Route path="/resetpassword" element={<ResetPassword />} />
           <Route path="/wallet" element={<Wallet />} />
           <Route path="/board" element={<Board />} />
           <Route path="/board/activity" element={<BoardActivity />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/notification" element={<Notifications/>}/>
+          <Route path="/notification" element={<Notifications />} />
           <Route path="/profile/activities" element={<Activity />} />
           <Route path="/profile/edit" element={<EditProfile />} />
           <Route path="/profile/wallet" element={<ManageWallet />} />
           <Route path="/profile/notifications" element={<NotificationsSettings />} />
           <Route path="/profile/privacy" element={<PrivacySettings />} />
           <Route path="/profile/referrals" element={<Referrals />} />
-
-        </Routes> 
+        </Routes>
+      ) : (
+        <Onboarding onAccept={() => setOnboardingComplete(true)} theme={theme} />
       )}
     </>
   );

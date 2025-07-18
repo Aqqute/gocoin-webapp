@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTheme } from "../contexts/ThemeContext";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 import {
   Music,
   Paintbrush,
@@ -25,15 +27,6 @@ const Signup = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
   const isDark = theme === "dark";
-
-  const [step, setStep] = useState(1);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [otpDigits, setOtpDigits] = useState(["", "", "", "", "", ""]);
-  const [timer, setTimer] = useState(120);
-  const [resendAvailable, setResendAvailable] = useState(false);
-  const [isWelcomeOpen, setIsWelcomeOpen] = useState(false);
-
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -45,6 +38,75 @@ const Signup = () => {
     state: "",
     wallet: "",
   });
+
+  const [loadings, setLoadings] = useState(false);
+  const [step, setStep] = useState(1);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [otpDigits, setOtpDigits] = useState(["", "", "", "", "", ""]);
+  const [timer, setTimer] = useState(120);
+  const [resendAvailable, setResendAvailable] = useState(false);
+  const [isWelcomeOpen, setIsWelcomeOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState("");
+
+  const handleNext = async () => {
+    if (step === 1) {
+      const { username, email, password, confirmPassword } = formData;
+      if (!username || !email || !password || password !== confirmPassword) {
+        toast.error("Please complete all fields correctly.");
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const response = await axios.post(
+          "https://gocoin.onrender.com/api/auth/signup",
+          {
+            username,
+            email,
+            password,
+          }
+        );
+
+        setUserId(response.data.userId);
+        toast.success("Signup successful! Enter the OTP sent to your email.");
+        setStep(2);
+      } catch (error) {
+        const message = error?.response?.data?.message || "Signup failed";
+        toast.error(message);
+      } finally {
+        setLoading(false);
+      }
+    } else if (step === 2) {
+      if (!formData.emailCode || formData.emailCode.length !== 6) {
+        toast.error("Please enter a valid 6-digit OTP.");
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const response = await axios.post(
+          "https://gocoin.onrender.com/api/auth/confirm-email",
+          {
+            userId,
+            otp: formData.emailCode,
+          }
+        );
+
+        toast.success("Email verified successfully!");
+        setStep(3);
+      } catch (error) {
+        const message =
+          error?.response?.data?.message || "Email verification failed";
+        toast.error(message);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setStep((prev) => Math.min(prev + 1, 5));
+    }
+  };
 
   const bg = isDark ? "bg-[#1e1e1e]" : "bg-white";
   const text = isDark ? "text-white" : "text-black";
@@ -93,7 +155,7 @@ const Signup = () => {
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleNext = () => setStep((prev) => Math.min(prev + 1, 5));
+  // const handleNext = () => setStep((prev) => Math.min(prev + 1, 5));
   const handleBack = () => setStep((prev) => Math.max(prev - 1, 1));
 
   const toggleInterest = (interest) => {
@@ -187,9 +249,12 @@ const Signup = () => {
             </p>
             <button
               onClick={handleNext}
-              className="w-full mt-4 text-sm bg-orange-500 text-white py-3 rounded-full font-semibold"
+              disabled={loading}
+              className={`w-full mt-4 text-sm bg-orange-500 text-white py-3 rounded-full font-semibold ${
+                loading ? "opacity-60 cursor-not-allowed" : ""
+              }`}
             >
-              Continue
+              {loading ? "Signing Up..." : "Continue"}
             </button>
           </>
         );
@@ -221,7 +286,7 @@ const Signup = () => {
 
             {!resendAvailable ? (
               <p className="text-base mb-6 mt-4 flex justify-between font-semibold">
-                <span className={`text-sm ${text}`}>{formatTime()}{" "}</span>
+                <span className={`text-sm ${text}`}>{formatTime()} </span>
                 <span className="text-orange-500 text-sm ">Resend code</span>
               </p>
             ) : (
@@ -237,9 +302,12 @@ const Signup = () => {
             )}
             <button
               onClick={handleNext}
-              className="w-full text-sm bg-orange-500 text-white py-3 rounded-full font-semibold"
+              disabled={loading}
+              className={`w-full text-sm bg-orange-500 text-white py-3 rounded-full font-semibold ${
+                loading ? "opacity-60 cursor-not-allowed" : ""
+              }`}
             >
-              Continue
+              {loading ? "Verifying..." : "Continue"}
             </button>
           </>
         );
@@ -271,9 +339,12 @@ const Signup = () => {
             </div>
             <button
               onClick={handleNext}
-              className="w-full bg-orange-500 text-sm text-white py-3 rounded-full font-semibold"
+              disabled={loading}
+              className={`w-full bg-orange-500 text-sm text-white py-3 rounded-full font-semibold ${
+                loading ? "opacity-60 cursor-not-allowed" : ""
+              }`}
             >
-              Continue
+              {loading ? "Loading..." : "Continue"}
             </button>
           </>
         );
@@ -311,9 +382,12 @@ const Signup = () => {
             />
             <button
               onClick={handleNext}
-              className="w-full bg-orange-500 mt-10 text-sm text-white py-3 rounded-full font-semibold"
+              disabled={loading}
+              className={`w-full bg-orange-500 text-sm text-white py-3 rounded-full font-semibold ${
+                loading ? "opacity-60 cursor-not-allowed" : ""
+              }`}
             >
-              Continue
+              {loading ? "Loading..." : "Continue"}
             </button>
           </>
         );
@@ -361,9 +435,12 @@ const Signup = () => {
 
             <button
               onClick={() => setIsWelcomeOpen(true)}
-              className="bg-orange-500 font-semibold hover:bg-orange-600 text-white w-full py-2 px-4 rounded-full mb-4"
+              disabled={loading}
+              className={`bg-orange-500 font-semibold hover:bg-orange-600 text-white w-full py-2 px-4 rounded-full mb-4 ${
+                loading ? "opacity-60 cursor-not-allowed" : ""
+              }`}
             >
-              Connect
+              {loading ? "Connecting..." : "Connect"}
             </button>
 
             <WelcomeModal
@@ -420,8 +497,10 @@ const Signup = () => {
         <div className="bg-transparent p-2">{renderStep()}</div>
 
         {step === 1 && (
-          <p className={`mt-2 text-sm text-center font-bold ${text} cursor-pointer`}>
-            Already have an account?{' '}
+          <p
+            className={`mt-2 text-sm text-center font-bold ${text} cursor-pointer`}
+          >
+            Already have an account?{" "}
             <span
               className="font-semibold underline cursor-pointer"
               onClick={() => navigate("/login")}
@@ -432,6 +511,7 @@ const Signup = () => {
         )}
       </div>
     </div>
-  );};
+  );
+};
 
 export default Signup;
