@@ -13,21 +13,22 @@ import {
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const ProfileSettings = () => {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
+  const { currentUser } = useAuth();
   const isDark = theme === 'dark';
 
-  const user = {
-    name: "John Doe",
-    email: "john.doe@example.com",
-  };
+  // Safely extract username and email from nested currentUser
+  const user = currentUser;
+  // console.log(user)
 
   const settingsItems = [
     {
       id: 'profile',
-      title: user.name,
+      title: user.username,
       subtitle: user.email,
       isProfileCard: true,
       path: '/profile/edit',
@@ -46,17 +47,18 @@ const ProfileSettings = () => {
     if (item.id === 'lightMode') {
       toggleTheme();
     } else if (item.path) {
-      navigate(item.path);
+      navigate(item.path, { state: { user } }); 
     }
   };
 
   return (
     <div
-      className={`min-h-screen flex flex-col  ${
+      className={`min-h-screen flex flex-col ${
         isDark ? 'bg-[#1e1e1e] text-white' : 'bg-white text-black'
       }`}
     >
-      <h1 className='pt-6 px-4 text-lg font-semibold'>Profile Settings</h1>
+      <h1 className="pt-6 px-4 text-lg font-semibold">Profile Settings</h1>
+
       {/* Main Content */}
       <div className="pt-6 px-4 space-y-2 text-sm pb-2">
         {settingsItems.map((item) => (
@@ -76,7 +78,7 @@ const ProfileSettings = () => {
             <div className="flex items-center gap-3">
               {item.isProfileCard ? (
                 <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center font-bold text-white text-base">
-                  {item.title.charAt(0)}
+                  {user.username?.charAt(0).toUpperCase()}
                 </div>
               ) : (
                 <item.icon size={20} className={isDark ? 'text-gray-300' : 'text-gray-600'} />
@@ -90,7 +92,7 @@ const ProfileSettings = () => {
                 )}
               </div>
             </div>
-            {/* Show toggle icon instead of arrow for theme */}
+
             {item.id === 'lightMode' ? (
               <div
                 className={`w-10 h-5 rounded-full flex items-center px-1 ${

@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import Header from "../components/Header";
 import { useTheme } from "../contexts/ThemeContext";
-import GoLogo from "../../public/images/GoLogo.png"; 
+import { useNavigate } from "react-router-dom";
+import GoLogo from "../../public/images/GoLogo.png";
+
 const Home = () => {
   const [activeFilter, setActiveFilter] = useState("All");
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const navigate = useNavigate();
 
   const filters = [
     "All",
@@ -88,7 +91,8 @@ const Home = () => {
           {tasks.map((task) => (
             <div
               key={task.id}
-              className={`rounded-2xl p-3 text-sm shadow-lg ${
+              onClick={() => navigate(`/task/${task.id}`)}
+              className={`rounded-2xl p-3 text-sm shadow-lg cursor-pointer hover:shadow-xl transition ${
                 isDark ? "bg-[#2a2a2a]" : "bg-white"
               }`}
             >

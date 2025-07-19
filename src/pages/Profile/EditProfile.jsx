@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ArrowLeft, Camera } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const EditProfile = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { currentUser, token } = useAuth();
   const isDark = theme === 'dark';
 
   const [formData, setFormData] = useState({
@@ -15,10 +19,48 @@ const EditProfile = () => {
     stateRegion: ''
   });
 
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (currentUser) {
+      setFormData({
+        username: currentUser.username || '',
+        email: currentUser.email || '',
+        country: currentUser.country || '',
+        stateRegion: currentUser.stateRegion || ''
+      });
+    }
+  }, [currentUser]);
+
   const handleBack = () => navigate('/profile');
-  const handleEditImage = () => console.log("Edit profile image");
-  const handleSaveChanges = () => console.log("Save changes", formData);
-  const handleCancel = () => console.log("Cancel changes");
+
+  const handleEditImage = () => {
+    toast('Profile image edit not implemented yet');
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.put(
+        'https://gocoin.onrender.com/api/users/me/profile',
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      toast.success('Profile updated successfully');
+      navigate('/profile');
+    } catch (error) {
+      console.error('Update failed:', error);
+      toast.error(error?.response?.data?.message || 'Failed to update profile');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancel = () => navigate('/profile');
 
   const cardStyle = `${isDark ? 'bg-[#2a2a2a]' : 'bg-white shadow-sm'} rounded-xl p-2`;
 
@@ -38,7 +80,7 @@ const EditProfile = () => {
         <div className="relative">
           <div className="w-16 h-16 bg-orange-500 rounded-full overflow-hidden">
             <img
-              src="/api/placeholder/96/96"
+              src={currentUser?.avatar || 'https://via.placeholder.com/96'}
               alt="Profile"
               className="w-full h-full object-cover"
             />
@@ -51,7 +93,7 @@ const EditProfile = () => {
           </button>
         </div>
 
-        <h2 className="text-sm font-semibold mt-1">Username</h2>
+        <h2 className="text-sm font-semibold mt-1">{formData.username}</h2>
         <button
           onClick={handleEditImage}
           className="text-xs text-orange-500 hover:underline"
@@ -72,7 +114,9 @@ const EditProfile = () => {
                   : field.charAt(0).toUpperCase() + field.slice(1)
               }
               value={formData[field]}
-              onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, [field]: e.target.value }))
+              }
               className={`w-full bg-transparent outline-none placeholder-gray-400 text-xs ${
                 isDark ? 'text-white' : 'text-black'
               }`}
@@ -85,9 +129,12 @@ const EditProfile = () => {
       <div className="px-3 space-y-2 pb-4">
         <button
           onClick={handleSaveChanges}
-          className="w-full bg-orange-500 text-white py-2 rounded-xl text-sm font-medium hover:bg-[#b67300]"
+          disabled={loading}
+          className={`w-full py-2 rounded-xl text-sm font-medium ${
+            loading ? 'bg-gray-400' : 'bg-orange-500 hover:bg-[#b67300]'
+          } text-white`}
         >
-          Save
+          {loading ? 'Saving...' : 'Save'}
         </button>
         <button
           onClick={handleCancel}

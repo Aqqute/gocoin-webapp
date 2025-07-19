@@ -21,6 +21,8 @@ import NotificationsSettings from "./pages/Profile/NotificationSettings";
 import PrivacySettings from "./pages/Profile/PrivacySettings";
 import Referrals from "./pages/Profile/Referrals";
 import ResetPassword from "./pages/ResetPassword";
+import Withdraw from "./pages/Wallet/Withdraw"
+import TaskDetails from "./pages/Home/TaskDetails";
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -59,10 +61,12 @@ function App() {
               </div>
             }
           />
+          <Route path="/task/:id" element={<TaskDetails />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/resetpassword" element={<ResetPassword />} />
           <Route path="/wallet" element={<Wallet />} />
+          <Route path="/wallet/withdraw" element={<Withdraw/>}/>
           <Route path="/board" element={<Board />} />
           <Route path="/board/activity" element={<BoardActivity />} />
           <Route path="/profile" element={<Profile />} />
