@@ -103,6 +103,30 @@ const Signup = () => {
       } finally {
         setLoading(false);
       }
+    } else if (step === 3) {
+      if (formData.interests.length < 3 || formData.interests.length > 5) {
+        toast.error("Please select between 3 and 5 interests.");
+        return;
+      }
+
+      setLoading(true);
+      try {
+        await axios.put("https://gocoin.onrender.com/api/users/me/interests", {
+          userId,
+          interests: formData.interests,
+        });
+        console.log(userId)
+        console.log(interests)
+
+        toast.success("Interests saved!");
+        setStep(4);
+      } catch (error) {
+        const message =
+          error?.response?.data?.message || "Failed to save interests";
+        toast.error(message);
+      } finally {
+        setLoading(false);
+      }
     } else {
       setStep((prev) => Math.min(prev + 1, 5));
     }
