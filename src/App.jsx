@@ -21,14 +21,14 @@ import NotificationsSettings from "./pages/Profile/NotificationSettings";
 import PrivacySettings from "./pages/Profile/PrivacySettings";
 import Referrals from "./pages/Profile/Referrals";
 import ResetPassword from "./pages/ResetPassword";
-import Withdraw from "./pages/Wallet/Withdraw"
+import Withdraw from "./pages/Wallet/Withdraw";
 import TaskDetails from "./pages/Home/TaskDetails";
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [onboardingComplete, setOnboardingComplete] = useState(false);
   const { theme, setTheme } = useTheme();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, needsMoreInfo } = useAuth();
 
   return (
     <>
@@ -47,6 +47,8 @@ function App() {
         <Loading onComplete={() => setIsLoaded(true)} />
       ) : !theme ? (
         <ThemeSelector onSelect={setTheme} />
+      // ) : needsMoreInfo ? ( 
+      //   <Signup stepOverride={3} />
       ) : isAuthenticated || onboardingComplete ? (
         <Routes>
           <Route
@@ -66,7 +68,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/resetpassword" element={<ResetPassword />} />
           <Route path="/wallet" element={<Wallet />} />
-          <Route path="/wallet/withdraw" element={<Withdraw/>}/>
+          <Route path="/wallet/withdraw" element={<Withdraw />} />
           <Route path="/board" element={<Board />} />
           <Route path="/board/activity" element={<BoardActivity />} />
           <Route path="/profile" element={<Profile />} />
@@ -74,12 +76,18 @@ function App() {
           <Route path="/profile/activities" element={<Activity />} />
           <Route path="/profile/edit" element={<EditProfile />} />
           <Route path="/profile/wallet" element={<ManageWallet />} />
-          <Route path="/profile/notifications" element={<NotificationsSettings />} />
+          <Route
+            path="/profile/notifications"
+            element={<NotificationsSettings />}
+          />
           <Route path="/profile/privacy" element={<PrivacySettings />} />
           <Route path="/profile/referrals" element={<Referrals />} />
         </Routes>
       ) : (
-        <Onboarding onAccept={() => setOnboardingComplete(true)} theme={theme} />
+        <Onboarding
+          onAccept={() => setOnboardingComplete(true)}
+          theme={theme}
+        />
       )}
     </>
   );

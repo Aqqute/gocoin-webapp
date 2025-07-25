@@ -30,8 +30,23 @@ export const AuthProvider = ({ children }) => {
     setCurrentUser(null);
   };
 
+  const needsMoreInfo =
+    isAuthenticated &&
+    (!currentUser?.interests?.length ||
+      !currentUser?.country ||
+      !currentUser?.state);
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, token, currentUser, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        token,
+        currentUser,
+        login,
+        logout,
+        needsMoreInfo,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

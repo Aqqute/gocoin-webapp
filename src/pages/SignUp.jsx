@@ -13,6 +13,7 @@ import {
   EyeOff,
 } from "lucide-react";
 import WelcomeModal from "../components/WelcomeModal";
+import { useAuth } from "../contexts/AuthContext";
 
 import MetaMaskLogo from "../../public/images/MetaMask.webp";
 import TrustWalletLogo from "../../public/images/TrustWallet.png";
@@ -23,7 +24,7 @@ import SolflareLogo from "../../public/images/Solflare.png";
 
 import { useNavigate } from "react-router-dom";
 
-const Signup = () => {
+const Signup = ({ stepOverride }) => {
   const navigate = useNavigate();
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -40,7 +41,7 @@ const Signup = () => {
   });
 
   const [loadings, setLoadings] = useState(false);
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(stepOverride || 1);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [otpDigits, setOtpDigits] = useState(["", "", "", "", "", ""]);
@@ -49,6 +50,12 @@ const Signup = () => {
   const [isWelcomeOpen, setIsWelcomeOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState("");
+  const { currentUser } = useAuth();
+  console.log(currentUser);
+
+  useEffect(() => {
+    if (stepOverride) setStep(stepOverride);
+  }, [stepOverride]);
 
   const handleNext = async () => {
     if (step === 1) {
@@ -112,17 +119,41 @@ const Signup = () => {
       setLoading(true);
       try {
         await axios.put("https://gocoin.onrender.com/api/users/me/interests", {
-          userId,
+          userId: currentUser._id,
           interests: formData.interests,
         });
-        console.log(userId)
-        console.log(interests)
+        console.log(userId);
+        console.log(formData.interests);
 
         toast.success("Interests saved!");
         setStep(4);
       } catch (error) {
         const message =
           error?.response?.data?.message || "Failed to save interests";
+        toast.error(message);
+      } finally {
+        setLoading(false);
+      }
+    } else if (step === 4) {
+      const { country, state } = formData;
+      if (!country || !state) {
+        toast.error("Please select your country and state/region.");
+        return;
+      }
+
+      setLoading(true);
+      try {
+        await axios.put("https://gocoin.onrender.com/api/users/me/location", {
+          userId: currentUser._id,
+          country,
+          stateRegion: state,
+        });
+
+        toast.success("Location saved!");
+        setStep(5);
+      } catch (error) {
+        const message =
+          error?.response?.data?.message || "Failed to save location";
         toast.error(message);
       } finally {
         setLoading(false);
@@ -190,7 +221,7 @@ const Signup = () => {
   };
 
   const interestOptions = [
-    { icon: <Music size={16} />, label: "Music" },
+    { icon: <Music size={16} />, label: "Music & Concerts" },
     { icon: <Paintbrush size={16} />, label: "Art" },
     { icon: <Bitcoin size={16} />, label: "Crypto" },
     { icon: <Dumbbell size={16} />, label: "Fitness" },
@@ -200,14 +231,14 @@ const Signup = () => {
     { icon: "📷", label: "Photography" },
     { icon: "🧘‍♀️", label: "Meditation" },
     { icon: "💼", label: "Business" },
-    { icon: "🌍", label: "Travel" },
+    { icon: "🌍", label: "Travel & Adventure" },
     { icon: "👨‍🍳", label: "Cooking" },
     { icon: "🎤", label: "Singing" },
     { icon: "🎨", label: "Design" },
     { icon: "🧠", label: "Self-Development" },
     { icon: "🧵", label: "Fashion" },
     { icon: "🕹️", label: "eSports" },
-    { icon: "💻", label: "Tech" },
+    { icon: "💻", label: "Technology & Gadgets" },
     { icon: "📈", label: "Investing" },
     { icon: "🏞️", label: "Nature" },
   ];

@@ -2,80 +2,63 @@ import React, { useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import Navbar from "../components/Navbar";
 import Icon from "../../public/images/GoLogo.png";
-
 import { useNavigate } from "react-router-dom";
+import { X } from "lucide-react";
+
 
 const DoMoreModal = ({ isOpen, onClose, isDark }) => {
   const navigate = useNavigate();
   if (!isOpen) return null;
 
   const options = [
-    {
-      title: "Withdraw",
-      subtitle: "Withdraw to connected wallet",
-      path: "/wallet/withdraw",
-    },
-    {
-      title: "Recieve Payments",
-      subtitle: "Choose a method to recieve payments",
-      path: "/wallet/receive",
-    },
-    {
-      title: "Send payment",
-      subtitle: "Choose a method to send payments",
-      path: "/wallet/send",
-    },
-    {
-      title: "Swap",
-      subtitle: "Swap between currencies e.g BTC to ETH",
-      path: "/wallet/swap",
-    },
-    {
-      title: "Savings",
-      subtitle: "Start saving in different currencies",
-      path: "/wallet/savings",
-    },
-    {
-      title: "Pay Bills",
-      subtitle: "Pay utilities e.g airtime, data, etc",
-      path: "/wallet/paybills",
-    },
+    { title: "Withdraw", subtitle: "Withdraw to connected wallet", path: "/wallet/withdraw" },
+    { title: "Recieve Payments", subtitle: "Choose a method to receive payments", path: "/wallet/receive" },
+    { title: "Send payment", subtitle: "Choose a method to send payments", path: "/wallet/send" },
+    { title: "Swap", subtitle: "Swap between currencies e.g BTC to ETH", path: "/wallet/swap" },
+    { title: "Savings", subtitle: "Start saving in different currencies", path: "/wallet/savings" },
+    { title: "Pay Bills", subtitle: "Pay utilities e.g airtime, data, etc", path: "/wallet/paybills" },
   ];
 
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
+    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-end">
       <div
-        className={`w-full max-w-sm mx-4 p-4 rounded-xl shadow-lg ${
+        className={`w-full max-w-md p-4 rounded-t-xl shadow-lg transform transition-all duration-300 translate-y-0 animate-slide-up ${
           isDark ? "bg-[#2a2a2a] text-white" : "bg-white text-black"
         }`}
       >
-        <div className="space-y-2">
+        {/* Close Icon */}
+        <div className="flex justify-end mb-2">
+          <button onClick={onClose} className="text-gray-400 hover:text-red-500">
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Options */}
+        <div className="space-y-3">
           {options.map((opt, i) => (
             <button
               key={i}
-              onClick={() => navigate(opt.path)}
-              className={`w-full text-left p-2 rounded-lg ${
+              onClick={() => {
+                onClose();
+                navigate(opt.path);
+              }}
+              className={`w-full text-left p-3 rounded-lg ${
                 isDark
                   ? "bg-[#3a3a3a] hover:bg-[#444]"
                   : "bg-gray-100 hover:bg-gray-200"
               }`}
             >
-              <p className="text-sm font-medium">{opt.title}</p>
+              <p className="text-sm font-semibold">{opt.title}</p>
               <p className="text-xs text-gray-400">{opt.subtitle}</p>
             </button>
           ))}
         </div>
-
-        <button
-          onClick={onClose}
-          className="mt-5 w-full py-2 bg-orange-500 text-white text-sm rounded-full hover:bg-orange-600"
-        >
-          Close
-        </button>
       </div>
     </div>
   );
 };
+
+
 
 const GoWalletComponent = () => {
   const { theme } = useTheme();
@@ -207,7 +190,7 @@ const GoWalletComponent = () => {
       />
 
       {/* Bottom Navbar */}
-      <Navbar />
+      {!isModalOpen && <Navbar />}
     </div>
   );
 };
