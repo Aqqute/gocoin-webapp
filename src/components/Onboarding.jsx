@@ -90,7 +90,7 @@ const Onboarding = ({ onAccept }) => {
                 onAccept();
                 navigate("/signup");
               }}
-              className="bg-orange-500 text-white font-semibold text-sm w-full py-3 rounded-full mb-4"
+              className="bg-orange-500 text-white font-semibold text-sm w-full py-2 rounded-full mb-4"
             >
               Get Started
             </button>

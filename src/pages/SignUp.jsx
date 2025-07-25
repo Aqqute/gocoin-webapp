@@ -51,7 +51,7 @@ const Signup = ({ stepOverride }) => {
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState("");
   const { currentUser } = useAuth();
-  console.log(currentUser);
+
 
   useEffect(() => {
     if (stepOverride) setStep(stepOverride);
@@ -305,7 +305,7 @@ const Signup = ({ stepOverride }) => {
             <button
               onClick={handleNext}
               disabled={loading}
-              className={`w-full mt-4 text-sm bg-orange-500 text-white py-3 rounded-full font-semibold ${
+              className={`w-full mt-4 text-sm bg-orange-500 text-white py-2 rounded-full font-semibold ${
                 loading ? "opacity-60 cursor-not-allowed" : ""
               }`}
             >
@@ -358,7 +358,7 @@ const Signup = ({ stepOverride }) => {
             <button
               onClick={handleNext}
               disabled={loading}
-              className={`w-full text-sm bg-orange-500 text-white py-3 rounded-full font-semibold ${
+              className={`w-full text-sm bg-orange-500 text-white py-2 rounded-full font-semibold ${
                 loading ? "opacity-60 cursor-not-allowed" : ""
               }`}
             >
@@ -395,7 +395,7 @@ const Signup = ({ stepOverride }) => {
             <button
               onClick={handleNext}
               disabled={loading}
-              className={`w-full bg-orange-500 text-sm text-white py-3 rounded-full font-semibold ${
+              className={`w-full bg-orange-500 text-sm text-white py-2 rounded-full font-semibold ${
                 loading ? "opacity-60 cursor-not-allowed" : ""
               }`}
             >
@@ -438,7 +438,7 @@ const Signup = ({ stepOverride }) => {
             <button
               onClick={handleNext}
               disabled={loading}
-              className={`w-full bg-orange-500 text-sm text-white py-3 rounded-full font-semibold ${
+              className={`w-full bg-orange-500 text-sm text-white py-2 rounded-full font-semibold ${
                 loading ? "opacity-60 cursor-not-allowed" : ""
               }`}
             >
