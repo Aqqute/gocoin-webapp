@@ -261,9 +261,9 @@ const Modal = ({ children, onClose }) => {
   const isDark = theme === "dark";
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-end">
       <div
-        className={`relative w-[92%] max-w-sm rounded-lg p-4 shadow-xl ${
+        className={`w-full max-w-md p-4 rounded-t-xl shadow-lg transform transition-all duration-300 translate-y-0 animate-slide-up ${
           isDark ? "bg-[#2a2a2a] text-white" : "bg-white text-black"
         }`}
       >

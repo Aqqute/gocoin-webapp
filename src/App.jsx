@@ -23,6 +23,7 @@ import Referrals from "./pages/Profile/Referrals";
 import ResetPassword from "./pages/ResetPassword";
 import Withdraw from "./pages/Wallet/Withdraw";
 import TaskDetails from "./pages/Home/TaskDetails";
+import ChangePassword from "./pages/Profile/ChangePassword";
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -82,6 +83,7 @@ function App() {
           />
           <Route path="/profile/privacy" element={<PrivacySettings />} />
           <Route path="/profile/referrals" element={<Referrals />} />
+          <Route path="/profile/password" element={<ChangePassword />} />
         </Routes>
       ) : (
         <Onboarding
