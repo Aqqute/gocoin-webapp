@@ -24,12 +24,15 @@ import ResetPassword from "./pages/ResetPassword";
 import Withdraw from "./pages/Wallet/Withdraw";
 import TaskDetails from "./pages/Home/TaskDetails";
 import ChangePassword from "./pages/Profile/ChangePassword";
+import Swap from "./pages/Wallet/Swap"
+import SendPayment from "./pages/Wallet/SendPayment"
+
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [onboardingComplete, setOnboardingComplete] = useState(false);
   const { theme, setTheme } = useTheme();
-  const { isAuthenticated, needsMoreInfo } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   return (
     <>
@@ -70,6 +73,8 @@ function App() {
           <Route path="/resetpassword" element={<ResetPassword />} />
           <Route path="/wallet" element={<Wallet />} />
           <Route path="/wallet/withdraw" element={<Withdraw />} />
+          <Route path="/wallet/swap" element={<Swap/>}/>
+          <Route path="/wallet/send" element={<SendPayment/>}/>
           <Route path="/board" element={<Board />} />
           <Route path="/board/activity" element={<BoardActivity />} />
           <Route path="/profile" element={<Profile />} />

@@ -28,7 +28,7 @@ const DoMoreModal = ({ isOpen, onClose, isDark }) => {
       >
         {/* Close Icon */}
         <div className="flex justify-end mb-2">
-          <button onClick={onClose} className="text-gray-400 hover:text-red-500">
+          <button onClick={onClose} className=" hover:text-red-500">
             <X size={20} />
           </button>
         </div>
@@ -49,7 +49,7 @@ const DoMoreModal = ({ isOpen, onClose, isDark }) => {
               }`}
             >
               <p className="text-sm font-semibold">{opt.title}</p>
-              <p className="text-xs text-gray-400">{opt.subtitle}</p>
+              <p className="text-xs">{opt.subtitle}</p>
             </button>
           ))}
         </div>

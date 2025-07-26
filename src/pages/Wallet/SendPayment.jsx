@@ -34,19 +34,34 @@ const Withdraw = () => {
         }`}
       >
         {/* Header */}
-        <div className="flex items-center px-2 pt-5 pb-2">
-          <button onClick={handleBack} className="mr-3">
-            <ArrowLeft size={18} />
-          </button>
-          <h1 className="text-md font-semibold">Select a withdrawal method</h1>
+        <div>
+          <div className="flex items-center px-2 pt-5 pb-2">
+            <button onClick={handleBack} className="mr-3">
+              <ArrowLeft size={18} />
+            </button>
+            <h1 className="text-md font-semibold">Send Payments</h1>
+          </div>
+          <h1 className="text-sm px-2">Choose a method to send payments</h1>
         </div>
 
         {/* Options */}
         <div className=" mt-4 space-y-3">
           <div onClick={() => setShowWalletModal(true)} className={cardStyle}>
-            <h2 className="font-medium text-sm">Withdraw to Wallet</h2>
-            <p className="text-xs text-gray-400">
-              Instant withdrawal to your connected crypto wallet
+            <h2 className="font-medium text-sm">Cryptocurrency</h2>
+            <p className="text-xs">
+              Pick a method to send payment
+            </p>
+          </div>
+          <div onClick={() => setShowWalletModal(true)} className={cardStyle}>
+            <h2 className="font-medium text-sm">Mobile Banking</h2>
+            <p className="text-xs">
+              Pick a method to send payment
+            </p>
+          </div>
+          <div onClick={() => setShowWalletModal(true)} className={cardStyle}>
+            <h2 className="font-medium text-sm">Bank transfer</h2>
+            <p className="text-xs">
+             Pick a method to send payment
             </p>
           </div>
 
@@ -57,9 +72,9 @@ const Withdraw = () => {
             }}
             className={cardStyle}
           >
-            <h2 className="font-medium text-sm">Withdraw to Bank</h2>
-            <p className="text-xs text-gray-400">
-              Send money to your local bank account
+            <h2 className="font-medium text-sm">Scan to pay</h2>
+            <p className="text-xs ">
+            Pick a method to send payment
             </p>
           </div>
           <button className="w-full bg-orange-500 text-white p-2 mt-3 rounded-full text-sm">
