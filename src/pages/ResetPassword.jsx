@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import {
   Music,
@@ -10,15 +10,8 @@ import {
   Eye,
   EyeOff,
 } from "lucide-react";
-import WelcomeModal from "../components/WelcomeModal";
-
-import MetaMaskLogo from "../../public/images/MetaMask.webp";
-import TrustWalletLogo from "../../public/images/TrustWallet.png";
-import TronLogo from "../../public/images/Tron.png";
-import PhantomLogo from "../../public/images/Phantom.jpeg";
-import CoinbaseLogo from "../../public/images/CoinBase.webp";
-import SolflareLogo from "../../public/images/Solflare.png";
-
+import axios from "axios";
+import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const ResetPassword = () => {
@@ -90,10 +83,53 @@ const ResetPassword = () => {
     return `${m}:${s < 10 ? "0" + s : s}`;
   };
 
-  const handleChange = (e) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleNext = () => setStep((prev) => Math.min(prev + 1, 3));
+  const handleNext = async () => {
+    if (step === 1) {
+      try {
+        await axios.post(`https://gocoin.onrender.com/api/auth/reset-password`, {
+          step: 1,
+          email: formData.email,
+        });
+        toast.success("OTP sent to your email.");
+        setStep(2);
+      } catch (err) {
+        toast.error(err.response?.data?.message || "Failed to send OTP.");
+      }
+    } else if (step === 2) {
+      try {
+        await axios.post(`https://gocoin.onrender.com/api/auth/reset-password`, {
+          step: 2,
+          email: formData.email,
+          emailCode: formData.emailCode,
+        });
+        toast.success("OTP verified.");
+        setStep(3);
+      } catch (err) {
+        toast.error(err.response?.data?.message || "Invalid or expired OTP.");
+      }
+    } else if (step === 3) {
+      if (formData.password !== formData.confirmPassword) {
+        toast.error("Passwords do not match.");
+        return;
+      }
+
+      try {
+        await axios.post(`https://gocoin.onrender.com/api/auth/reset-password`, {
+          step: 3,
+          email: formData.email,
+          password: formData.password,
+          confirmPassword: formData.confirmPassword,
+        });
+        toast.success("Password reset successful!");
+        navigate("/login");
+      } catch (err) {
+        toast.error(err.response?.data?.message || "Failed to reset password.");
+      }
+    }
+  };
+
   const handleBack = () => setStep((prev) => Math.max(prev - 1, 1));
 
   const toggleInterest = (interest) => {
@@ -146,7 +182,7 @@ const ResetPassword = () => {
             />
             <button
               onClick={handleNext}
-              className="w-full mt-4 text-sm bg-orange-500 text-white py-3 rounded-full font-semibold"
+              className="w-full mt-4 text-sm bg-orange-500 text-white py-2 rounded-full font-semibold"
             >
               Send Instructions
             </button>

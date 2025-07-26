@@ -119,7 +119,7 @@ const Signup = ({ stepOverride }) => {
       setLoading(true);
       try {
         await axios.put("https://gocoin.onrender.com/api/users/me/interests", {
-          userId: currentUser._id,
+          userId,
           interests: formData.interests,
         });
         console.log(userId);
@@ -130,6 +130,7 @@ const Signup = ({ stepOverride }) => {
       } catch (error) {
         const message =
           error?.response?.data?.message || "Failed to save interests";
+          console.log(error.message)
         toast.error(message);
       } finally {
         setLoading(false);
@@ -144,7 +145,7 @@ const Signup = ({ stepOverride }) => {
       setLoading(true);
       try {
         await axios.put("https://gocoin.onrender.com/api/users/me/location", {
-          userId: currentUser._id,
+          userId,
           country,
           stateRegion: state,
         });

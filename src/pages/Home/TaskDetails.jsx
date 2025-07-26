@@ -148,13 +148,19 @@ const TaskDetail = () => {
 
   if (!task) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${isDark ? 'bg-[#1e1e1e] text-white' : 'bg-[#f9f9f9] text-black'}`}>
+      <div
+        className={`min-h-screen flex items-center justify-center ${
+          isDark ? "bg-[#1e1e1e] text-white" : "bg-[#f9f9f9] text-black"
+        }`}
+      >
         <p className="text-lg font-semibold">⚠️ Task not found</p>
       </div>
     );
   }
 
-  const cardStyle = `${isDark ? 'bg-[#2a2a2a]' : 'bg-white'} rounded-xl p-4 shadow-sm`;
+  const cardStyle = `${
+    isDark ? "bg-[#2a2a2a]" : "bg-white"
+  } rounded-xl p-4 shadow-sm`;
 
   const handleFileChange = (e) => {
     const selected = e.target.files[0];
@@ -166,11 +172,18 @@ const TaskDetail = () => {
   };
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-[#1e1e1e] text-white' : 'bg-[#f9f9f9] text-black'}`}>
+    <div
+      className={`min-h-screen ${
+        isDark ? "bg-[#1e1e1e] text-white" : "bg-[#f9f9f9] text-black"
+      }`}
+    >
       {/* Header */}
       <div className="flex items-center px-4 pt-6 pb-3">
         <button onClick={() => navigate(-1)} className="mr-4">
-          <ArrowLeft size={20} className={isDark ? 'text-white' : 'text-black'} />
+          <ArrowLeft
+            size={20}
+            className={isDark ? "text-white" : "text-black"}
+          />
         </button>
         <h1 className="text-base font-semibold">Task Details</h1>
       </div>
@@ -198,8 +211,16 @@ const TaskDetail = () => {
         {/* Reward */}
         <div className="flex items-center justify-between gap-3">
           <p className="text-sm font-medium">Reward:</p>
-          <div className={`${isDark ? 'bg-[#2a2a2a]' : 'bg-[#f2f3f5]'} flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium`}>
-            <img src={GoLogo} alt="Go Logo" className="w-4 h-4 object-contain" />
+          <div
+            className={`${
+              isDark ? "bg-[#2a2a2a]" : "bg-[#f2f3f5]"
+            } flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium`}
+          >
+            <img
+              src={GoLogo}
+              alt="Go Logo"
+              className="w-4 h-4 object-contain"
+            />
             <span className="text-[#cc8400]">{task.amount}</span>
             <span>{task.change}</span>
           </div>
@@ -215,8 +236,13 @@ const TaskDetail = () => {
 
         {/* Modal */}
         {showModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
-            <div className="bg-white dark:bg-[#2a2a2a] text-black dark:text-white w-[90%] max-w-md p-6 rounded-xl relative">
+          <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-end">
+            {" "}
+            <div
+              className={`w-full max-w-md p-4 rounded-t-xl shadow-lg transform transition-all duration-300 translate-y-0 animate-slide-up ${
+                isDark ? "bg-[#2a2a2a] text-white" : "bg-white text-black"
+              }`}
+            >
               <button
                 className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 dark:hover:text-white"
                 onClick={() => setShowModal(false)}
@@ -257,8 +283,10 @@ const TaskDetail = () => {
               <button
                 className="w-full mt-5 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded-full text-sm"
                 onClick={() => {
-                  if (task.title === "Social media" && !inputValue) return alert("Please provide a valid URL");
-                  if (task.title !== "Social media" && !file) return alert("Please upload a screenshot");
+                  if (task.title === "Social media" && !inputValue)
+                    return alert("Please provide a valid URL");
+                  if (task.title !== "Social media" && !file)
+                    return alert("Please upload a screenshot");
                   alert("Submitted successfully!");
                   setShowModal(false);
                 }}

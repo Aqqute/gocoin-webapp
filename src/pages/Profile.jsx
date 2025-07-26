@@ -21,9 +21,10 @@ const ProfileSettings = () => {
   const { currentUser } = useAuth();
   const isDark = theme === 'dark';
 
-  // Safely extract username and email from nested currentUser
-  const user = currentUser;
-  // console.log(user)
+  const user = currentUser || {
+    username: "Guest",
+    email: "guest@example.com",
+  };
 
   const settingsItems = [
     {
