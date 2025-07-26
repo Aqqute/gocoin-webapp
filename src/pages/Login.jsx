@@ -95,7 +95,7 @@ const Login = () => {
           disabled={loading}
           className={`w-full text-sm ${
             loading ? "bg-orange-400" : "bg-orange-500"
-          } text-white py-3 rounded-full font-semibold flex items-center justify-center`}
+          } text-white py-2 rounded-full font-semibold flex items-center justify-center`}
         >
           
           {loading ? "Logging in..." : "Continue"}
