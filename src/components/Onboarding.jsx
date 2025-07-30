@@ -113,7 +113,7 @@ const Onboarding = ({ onAccept }) => {
             <button
               onClick={() => {
                 onAccept();
-                navigate("/");
+                navigate("/login");
               }}
               className={`${mutedText} text-sm hover:underline`}
             >

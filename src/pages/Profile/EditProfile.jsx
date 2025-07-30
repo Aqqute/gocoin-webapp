@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 const EditProfile = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const { currentUser, token } = useAuth();
+  const { currentUser, setCurrentUser, token } = useAuth();
   const isDark = theme === "dark";
 
   const [formData, setFormData] = useState({
@@ -62,6 +62,15 @@ const EditProfile = () => {
       );
 
       toast.success("Profile updated successfully");
+      setCurrentUser(res.data.user); 
+      console.log("Updated user:", res.data.user);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          token,
+          user: res.data.user,
+        })
+      );
       navigate("/profile");
     } catch (error) {
       console.error("Update failed:", error);
