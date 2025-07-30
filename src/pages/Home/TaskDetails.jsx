@@ -5,6 +5,7 @@ import GoLogo from "../../../public/images/GoLogo.png";
 import { ArrowLeft, FileText, X } from "lucide-react";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
+import toast from "react-hot-toast";
 
 const getButtonLabel = (type) => {
   switch (type?.toLowerCase()) {
@@ -189,13 +190,53 @@ const TaskDetail = () => {
 
                 <button
                   className="w-full mt-5 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded-full text-sm"
-                  onClick={() => {
+                  onClick={async () => {
                     if (task.submissionMethod === "link" && !inputValue)
-                      return alert("Please provide a valid URL");
-                    if (task.submissionMethod !== "link" && !file)
-                      return alert("Please upload a screenshot");
-                    alert("Submitted successfully!");
-                    setShowModal(false);
+                      return toast.error("Please provide a valid URL");
+
+                    try {
+                      if (task.submissionMethod === "link") {
+                        await axios.post(
+                          `https://gocoin.onrender.com/api/tasks/${id}/submit`,
+                          { submissionData: inputValue },
+                          {
+                            headers: {
+                              Authorization: `Bearer ${token}`,
+                              "Content-Type": "application/json",
+                            },
+                          }
+                        );
+                        toast.success("Link submitted successfully!");
+                      } else {
+                        if (!file)
+                          return toast.error("Please upload a screenshot");
+
+                        const formData = new FormData();
+                        formData.append("submissionData", file);
+
+                        await axios.post(
+                          `https://gocoin.onrender.com/api/tasks/${id}/submit`,
+                          formData,
+                          {
+                            headers: {
+                              Authorization: `Bearer ${token}`,
+                              "Content-Type": "multipart/form-data",
+                            },
+                          }
+                        );
+                        toast.success("Screenshot submitted successfully!");
+                      }
+
+                      setShowModal(false);
+                      setInputValue("");
+                      setFile(null);
+                    } catch (error) {
+                      console.error("Submission failed:", error);
+                      toast.error(
+                        error?.response?.data?.message ||
+                          "Failed to submit. Please try again later."
+                      );
+                    }
                   }}
                 >
                   Submit{" "}

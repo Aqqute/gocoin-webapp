@@ -23,8 +23,8 @@ const ProfileSettings = () => {
   const isDark = theme === 'dark';
 
   const [user, setUser] = useState({
-    username: 'Guest',
-    email: 'guest@example.com',
+    username: 'username',
+    email: 'email@example.com',
   });
 
   useEffect(() => {
