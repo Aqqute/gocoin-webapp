@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Activity,
@@ -14,17 +14,36 @@ import {
 import Navbar from '../components/Navbar';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
 
 const ProfileSettings = () => {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
-  const { currentUser } = useAuth();
+  const { token } = useAuth();
   const isDark = theme === 'dark';
 
-  const user = currentUser || {
-    username: "Guest",
-    email: "guest@example.com",
-  };
+  const [user, setUser] = useState({
+    username: 'Guest',
+    email: 'guest@example.com',
+  });
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get('https://gocoin.onrender.com/api/users/me', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log('Fetched user:', response.data);
+        setUser(response.data.user || {});
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      }
+    };
+
+    fetchUser();
+  }, [token]);
 
   const settingsItems = [
     {
@@ -48,7 +67,7 @@ const ProfileSettings = () => {
     if (item.id === 'lightMode') {
       toggleTheme();
     } else if (item.path) {
-      navigate(item.path, { state: { user } }); 
+      navigate(item.path, { state: { user } });
     }
   };
 
@@ -60,7 +79,6 @@ const ProfileSettings = () => {
     >
       <h1 className="pt-6 px-4 text-lg font-semibold">Profile Settings</h1>
 
-      {/* Main Content */}
       <div className="pt-6 px-4 space-y-2 text-sm pb-2">
         {settingsItems.map((item) => (
           <div
@@ -113,7 +131,6 @@ const ProfileSettings = () => {
         ))}
       </div>
 
-      {/* Bottom Navbar */}
       <Navbar />
     </div>
   );

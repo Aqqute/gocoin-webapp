@@ -27,7 +27,6 @@ const Home = () => {
     "Apps",
     "Survey",
     "Polls",
-    "Jobs",
   ];
 
   const handleFilterChange = (filter) => setActiveFilter(filter);
@@ -65,9 +64,7 @@ const Home = () => {
     activeFilter === "All"
       ? activities
       : activities.filter((activity) =>
-          activity.taskId?.type
-            ?.toLowerCase()
-            .includes(activeFilter.toLowerCase())
+          activity.type?.toLowerCase().includes(activeFilter.toLowerCase())
         );
 
   return (
@@ -137,7 +134,7 @@ const Home = () => {
                     isDark ? "text-gray-300" : "text-gray-800"
                   }`}
                 >
-                {activity.description.split(".")[0]  || "N/A"}
+                  {activity.description.split(".")[0] || "N/A"}
                 </p>
                 <div className="flex items-center">
                   <div className="w-6 h-6 rounded-full bg-white p-1 shadow-md">
