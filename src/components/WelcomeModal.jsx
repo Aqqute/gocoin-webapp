@@ -46,7 +46,7 @@ const WelcomeModal = ({ isOpen, onClose, isDark }) => {
               onClose();
               navigate("/profile");
             }}
-            className="w-full text-sm font-semibold"
+            className="w-full text-sm mt-1 font-semibold"
           >
             Visit profile
           </button>
