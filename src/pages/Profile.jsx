@@ -15,6 +15,8 @@ import Navbar from '../components/Navbar';
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import PageLoader from "../components/PageLoader"
+
 
 const ProfileSettings = () => {
   const navigate = useNavigate();
@@ -22,10 +24,8 @@ const ProfileSettings = () => {
   const { token } = useAuth();
   const isDark = theme === 'dark';
 
-  const [user, setUser] = useState({
-    username: 'username',
-    email: 'email@example.com',
-  });
+  const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -35,10 +35,11 @@ const ProfileSettings = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log('Fetched user:', response.data);
         setUser(response.data.user || {});
       } catch (error) {
         console.error('Failed to fetch user:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -48,8 +49,8 @@ const ProfileSettings = () => {
   const settingsItems = [
     {
       id: 'profile',
-      title: user.username,
-      subtitle: user.email,
+      title: user.username || '',
+      subtitle: user.email || '',
       isProfileCard: true,
       path: '/profile/edit',
     },
@@ -70,6 +71,12 @@ const ProfileSettings = () => {
       navigate(item.path, { state: { user } });
     }
   };
+
+  if (loading) {
+    return (
+       <PageLoader />
+    );
+  }
 
   return (
     <div
@@ -97,7 +104,7 @@ const ProfileSettings = () => {
             <div className="flex items-center gap-3">
               {item.isProfileCard ? (
                 <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center font-bold text-white text-base">
-                  {user.username?.charAt(0).toUpperCase()}
+                  {user.username?.charAt(0)?.toUpperCase() || '?'}
                 </div>
               ) : (
                 <item.icon size={20} className={isDark ? 'text-gray-300' : 'text-gray-600'} />

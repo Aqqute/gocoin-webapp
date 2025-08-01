@@ -15,7 +15,7 @@ const Navbar = () => {
   const isDark = theme === "dark";
   const bgColor = isDark ? "bg-[#2a2a2a]" : "bg-white";
   const textColor = isDark ? "text-gray-400" : "text-gray-600";
-  const activeColor = "text-[#FFA200]";
+  const activeColor = "text-orange-500";
 
   const navItems = [
     { label: "Home", icon: HomeIcon, to: "/" },
@@ -46,7 +46,7 @@ const Navbar = () => {
                     className={`absolute -top-8 w-14 h-14 ${
                       isDark
                       ? "bg-[#2a2a2a] border-[#373636]"
-                    : "bg-white shadow-orange-200 border-gray-300"
+                    : "bg-white shadow-orange-200 border-gray-200"
                     } text-orange-500 rounded-full flex items-center justify-center shadow-2xl z-30 border-4`}
                   >
                     <Icon size={25} />
@@ -76,7 +76,7 @@ const Navbar = () => {
                 className={`absolute -top-8 w-14 h-14 ${
                   isDark
                     ? "bg-[#2a2a2a] border-[#373636]"
-                    : "bg-white shadow-orange-200 border-gray-300"
+                    : "bg-white shadow-orange-200 border-gray-200"
                 } text-orange-500 rounded-full flex items-center justify-center shadow-4xl z-30 border-4`}
               >
                 <User size={26} />

@@ -3,12 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import Navbar from '../components/Navbar';
 import GoLogo from '../../public/images/GoLogo.png';
+import PageLoader from '../components/PageLoader';
 
 const EarningLeaderBoard = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('Today');
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+
 
   const topUsers = [
     { id: 1, rank: 2, username: 'Username', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b332c81c?w=100&h=100&fit=crop&crop=face', earnings: '0.000048' },

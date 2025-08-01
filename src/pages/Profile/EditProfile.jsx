@@ -108,7 +108,7 @@ const EditProfile = () => {
         <div className="relative">
           <div className="w-16 h-16 bg-orange-500 rounded-full overflow-hidden">
             <img
-              src={currentUser?.avatar || "https://via.placeholder.com/96"}
+              src={currentUser?.avatar || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"}
               alt="Profile"
               className="w-full h-full object-cover"
             />

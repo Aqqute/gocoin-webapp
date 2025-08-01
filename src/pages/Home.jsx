@@ -20,14 +20,7 @@ const Home = () => {
 
   const { token, isAuthenticated } = useAuth();
 
-  const filters = [
-    "All",
-    "Social",
-    "Content",
-    "Apps",
-    "Survey",
-    "Polls",
-  ];
+  const filters = ["All", "Social", "Content", "Apps", "Survey", "Polls"];
 
   const handleFilterChange = (filter) => setActiveFilter(filter);
 
@@ -43,7 +36,7 @@ const Home = () => {
             },
           }
         );
-        console.log("Fetched activities:", response.data);
+        // console.log("Fetched activities:", response.data);
         setActivities(response.data.data.tasks || []);
       } catch (error) {
         console.error("Failed to fetch activities:", error);
@@ -102,7 +95,19 @@ const Home = () => {
         <h2 className="text-left text-base font-bold mb-4">Task Timeline</h2>
 
         {loading ? (
-          <p className="text-center text-sm">Loading tasks...</p>
+          <div
+            className={`flex items-center justify-center ${
+              isDark ? "bg-[#1e1e1e]" : "bg-white"
+            }`}
+          >
+            <div className="w-20 h-20 mt-20 rounded-full border-[6px] border-orange-500 border-t-transparent animate-spin flex items-center justify-center">
+              <img
+                src={GoLogo}
+                alt="Logo"
+                className="w-10 h-10 object-contain"
+              />
+            </div>
+          </div>
         ) : !isAuthenticated ? (
           <div className="text-center mt-20">
             <FileQuestion size={48} className="mx-auto mb-3 text-gray-400" />
@@ -136,7 +141,7 @@ const Home = () => {
                 >
                   {activity.description.split(".")[0] || "N/A"}
                 </p>
-                <div className="flex items-center">
+                <div className="flex gap-1 items-center">
                   <div className="w-6 h-6 rounded-full bg-white p-1 shadow-md">
                     <img
                       src={GoLogo}

@@ -506,7 +506,7 @@ const Signup = ({ stepOverride }) => {
             />
 
             <button
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/login")}
               className={`w-full text-sm underline mb-6 text-center font-bold ${text} cursor-pointer`}
             >
               Skip

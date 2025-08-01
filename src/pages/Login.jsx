@@ -5,7 +5,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
-
+import WelcomeModal from "../components/WelcomeModal";
 
 const Login = () => {
   const { theme } = useTheme();
@@ -17,6 +17,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showWelcome, setShowWelcome] = useState(false); // NEW
 
   const bg = isDark ? "bg-[#1e1e1e]" : "bg-white";
   const text = isDark ? "text-white" : "text-black";
@@ -37,7 +38,7 @@ const Login = () => {
       );
       login(response.data);
       toast.success("Login successful!");
-      navigate("/");
+      setShowWelcome(true); // Show welcome modal
     } catch (err) {
       const message = err.response?.data?.message || "Login failed";
       setError(message);
@@ -49,6 +50,13 @@ const Login = () => {
 
   return (
     <div className={`min-h-screen px-4 py-10 ${bg}`}>
+      {/* Welcome Modal */}
+      <WelcomeModal
+        isOpen={showWelcome}
+        onClose={() => setShowWelcome(false)}
+        isDark={isDark}
+      />
+
       <div className="max-w-md mx-auto w-full">
         <h2 className={`text-2xl font-bold mb-8 ${text}`}>Log In</h2>
 
@@ -97,7 +105,6 @@ const Login = () => {
             loading ? "bg-orange-400" : "bg-orange-500"
           } text-white py-2 rounded-full font-semibold flex items-center justify-center`}
         >
-          
           {loading ? "Logging in..." : "Continue"}
         </button>
 

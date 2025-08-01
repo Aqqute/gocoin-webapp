@@ -133,11 +133,11 @@ const GoWalletComponent = () => {
         >
           <div className="flex justify-between items-start mb-1">
             <div>
-              <p className="text-xs text-gray-400">GoToken Balance</p>
-              <p className="text-2xl font-semibold">0.0046589</p>
+              <p className="text-xs">GoToken Balance</p>
+              <p className="text-2xl mt-1 font-semibold">0.0046589</p>
             </div>
             <div className="text-right">
-              <p className="text-sm text-gray-400">~$20.00</p>
+              <p className="text-sm">~$20.00</p>
             </div>
           </div>
         </div>

@@ -1,15 +1,47 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { ArrowLeft, Copy } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import Referral from "../../../public/images/Referrals.png";
 import { toast } from "react-hot-toast";
+import axios from "axios";
+import { useAuth } from "../../contexts/AuthContext";
+
 
 const Referrals = ({ onBack }) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  const referralCode = "RG3845U2NBH3";
+  const {token} = useAuth();
+
+  const [referralCode, setReferralCode] = useState("");
+  const [loading, setLoading] = useState(true);
+
+ useEffect(() => {
+  const fetchReferralCode = async () => {
+    try {
+      const response = await axios.get(
+        "https://gocoin.onrender.com/api/referral/my-code",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Referral code response:", response.data?.data.referralCode);
+      setReferralCode(response.data?.data.referralCode || "");
+      setLoading(false);
+    } catch (error) {
+      toast.error("Could not load referral code");
+      setLoading(false);
+    }
+  };
+
+  fetchReferralCode();
+}, []);
+
 
   const handleCopy = () => {
+    if (!referralCode) return;
     navigator.clipboard.writeText(referralCode);
     toast.success("Referral code copied!");
   };
@@ -45,7 +77,7 @@ const Referrals = ({ onBack }) => {
         />
       </div>
 
-      {/* Steps (Responsive) */}
+      {/* Steps */}
       <div className="space-y-4 text-sm mb-6">
         {[
           "Share Referral link/code to your friends",
@@ -67,10 +99,13 @@ const Referrals = ({ onBack }) => {
           isDark ? "bg-[#2a2a2a] text-white" : "bg-[#f3f3fd] text-black"
         }`}
       >
-        <span className="font-semibold text-[#4a3aff]">{referralCode}</span>
+        <span className="font-semibold text-[#4a3aff]">
+          {loading ? "Loading..." : referralCode || " "}
+        </span>
         <button
           onClick={handleCopy}
-          className="text-sm border border-orange-500 text-orange-500 px-3 py-1 rounded-full hover:bg-orange-100"
+          disabled={!referralCode}
+          className="text-sm border border-orange-500 text-orange-500 px-3 py-1 rounded-full hover:bg-orange-100 disabled:opacity-50"
         >
           Copy
         </button>
