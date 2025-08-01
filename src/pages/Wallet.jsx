@@ -1,39 +1,63 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import Navbar from "../components/Navbar";
 import Icon from "../../public/images/GoLogo.png";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
-
+import axios from "axios";
+import PageLoader from "../components/PageLoader";
+import { useAuth } from "../contexts/AuthContext";
 
 const DoMoreModal = ({ isOpen, onClose, isDark }) => {
   const navigate = useNavigate();
   if (!isOpen) return null;
 
   const options = [
-    { title: "Withdraw", subtitle: "Withdraw to connected wallet", path: "/wallet/withdraw" },
-    { title: "Recieve Payments", subtitle: "Choose a method to receive payments", path: "/wallet/receive" },
-    { title: "Send payment", subtitle: "Choose a method to send payments", path: "/wallet/send" },
-    { title: "Swap", subtitle: "Swap between currencies e.g BTC to ETH", path: "/wallet/swap" },
-    { title: "Savings", subtitle: "Start saving in different currencies", path: "/wallet/savings" },
-    { title: "Pay Bills", subtitle: "Pay utilities e.g airtime, data, etc", path: "/wallet/paybills" },
+    {
+      title: "Withdraw",
+      subtitle: "Withdraw to connected wallet",
+      path: "/wallet/withdraw",
+    },
+    {
+      title: "Recieve Payments",
+      subtitle: "Choose a method to receive payments",
+      path: "/wallet/receive",
+    },
+    {
+      title: "Send payment",
+      subtitle: "Choose a method to send payments",
+      path: "/wallet/send",
+    },
+    {
+      title: "Swap",
+      subtitle: "Swap between currencies e.g BTC to ETH",
+      path: "/wallet/swap",
+    },
+    {
+      title: "Savings",
+      subtitle: "Start saving in different currencies",
+      path: "/wallet/savings",
+    },
+    {
+      title: "Pay Bills",
+      subtitle: "Pay utilities e.g airtime, data, etc",
+      path: "/wallet/paybills",
+    },
   ];
 
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-end">
+    <div className="fixed inset-0 z-50 bg-black bg-opacity-10 flex justify-center items-end">
       <div
         className={`w-full max-w-md p-4 rounded-t-xl shadow-lg transform transition-all duration-300 translate-y-0 animate-slide-up ${
           isDark ? "bg-[#2a2a2a] text-white" : "bg-white text-black"
         }`}
       >
-        {/* Close Icon */}
         <div className="flex justify-end mb-2">
-          <button onClick={onClose} className=" hover:text-red-500">
+          <button onClick={onClose} className="hover:text-red-500">
             <X size={20} />
           </button>
         </div>
 
-        {/* Options */}
         <div className="space-y-3">
           {options.map((opt, i) => (
             <button
@@ -58,64 +82,50 @@ const DoMoreModal = ({ isOpen, onClose, isDark }) => {
   );
 };
 
-
-
 const GoWalletComponent = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [balance, setBalance] = useState(null);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { token } = useAuth();
 
-  const transactions = [
-    {
-      id: 1,
-      type: "Received",
-      amount: "+0.003746",
-      date: "29 AUG - 10:21 PM",
-      isPositive: true,
-    },
-    {
-      id: 2,
-      type: "Withdrawal",
-      amount: "-0.003746",
-      date: "29 AUG - 10:21 PM",
-      isPositive: false,
-    },
-    {
-      id: 3,
-      type: "Received",
-      amount: "+0.003746",
-      date: "29 AUG - 10:21 PM",
-      isPositive: true,
-    },
-    {
-      id: 4,
-      type: "Received",
-      amount: "+0.003746",
-      date: "29 AUG - 10:21 PM",
-      isPositive: true,
-    },
-    {
-      id: 5,
-      type: "Withdrawal",
-      amount: "-0.003746",
-      date: "29 AUG - 10:21 PM",
-      isPositive: false,
-    },
-    {
-      id: 6,
-      type: "Withdrawal",
-      amount: "-0.003746",
-      date: "29 AUG - 10:21 PM",
-      isPositive: false,
-    },
-    {
-      id: 7,
-      type: "Received",
-      amount: "+0.003746",
-      date: "29 AUG - 10:21 PM",
-      isPositive: true,
-    },
-  ];
+  useEffect(() => {
+    const fetchWalletData = async () => {
+      try {
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
+        const [balanceRes, txRes] = await Promise.all([
+          axios.get("https://gocoin.onrender.com/api/wallet/balance", config),
+          axios.get(
+            "https://gocoin.onrender.com/api/wallet/transactions",
+            config
+          ),
+        ]);
+        console.log("Balance response:", balanceRes.data);
+        console.log("Transactions response:", txRes.data);
+
+        setBalance(balanceRes.data.data.goTokenBalance || "0.000000");
+        // setFiatEquivalent(balanceRes.data.data.fiatEquivalent || 0);
+        setTransactions(txRes.data.data.transactions || []);
+      } catch (error) {
+        console.error("Failed to fetch wallet data:", error);
+        setBalance("0.000000");
+        setTransactions([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWalletData();
+  }, [token]);
+
+  if (loading) return <PageLoader />;
 
   return (
     <div
@@ -124,6 +134,7 @@ const GoWalletComponent = () => {
       }`}
     >
       <h1 className="pt-6 px-4 text-lg font-semibold">Go Wallet</h1>
+
       {/* Balance Card */}
       <div className="pt-6 px-4 space-y-2 text-sm pb-2">
         <div
@@ -134,7 +145,9 @@ const GoWalletComponent = () => {
           <div className="flex justify-between items-start mb-1">
             <div>
               <p className="text-xs">GoToken Balance</p>
-              <p className="text-2xl mt-1 font-semibold">0.0046589</p>
+              <p className="text-2xl mt-1 font-semibold">
+                {Number(balance).toFixed(4)}
+              </p>
             </div>
             <div className="text-right">
               <p className="text-sm">~$20.00</p>
@@ -156,30 +169,48 @@ const GoWalletComponent = () => {
       {/* Transaction History */}
       <div className="px-4 mb-20 w-full">
         <h2 className="text-md font-semibold mb-4">Transaction History</h2>
-        <div className="space-y-3">
-          {transactions.map((tx) => (
-            <div key={tx.id} className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <img
-                  src={Icon}
-                  alt="tx"
-                  className="w-8 h-8 rounded-full bg-gray-200"
-                />
-                <div>
-                  <p className="text-sm font-medium">{tx.type}</p>
-                  <p className="text-xs text-gray-400">{tx.date}</p>
+        {transactions.length === 0 ? (
+          <p className="text-sm text-gray-400 text-center">
+            No transaction history
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {transactions.map((tx) => {
+              const isPositive = tx.amountGoToken > 0;
+              const formattedAmount = `${isPositive ? "+" : ""}${
+                tx.amountGoToken
+              }`;
+              const formattedDate = new Date(
+                tx.timestamp || tx.createdAt
+              ).toLocaleDateString();
+
+              return (
+                <div key={tx._id} className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <img
+                      src={Icon}
+                      alt="tx"
+                      className="w-8 h-8 rounded-full bg-gray-200"
+                    />
+                    <div>
+                      <p className="text-sm font-medium capitalize">
+                        {tx.type.replace("_", " ")}
+                      </p>
+                      <p className="text-xs text-gray-400">{formattedDate}</p>
+                    </div>
+                  </div>
+                  <div
+                    className={`text-sm font-semibold ${
+                      isPositive ? "text-green-500" : "text-red-500"
+                    }`}
+                  >
+                    {formattedAmount}
+                  </div>
                 </div>
-              </div>
-              <div
-                className={`text-sm font-semibold ${
-                  tx.isPositive ? "text-green-500" : "text-red-500"
-                }`}
-              >
-                {tx.amount}
-              </div>
-            </div>
-          ))}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Modal */}
