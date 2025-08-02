@@ -100,7 +100,7 @@ const ProfileSettings = () => {
       icon: FileText,
       path: "/profile/terms",
     },
-    { id: "logout", title: "Logout", icon: LogOut, action: logout },
+    { id: "logout", title: "Logout", icon: LogOut, action: logout, path: "/" },
   ];
 
   const handleItemClick = (item) => {
