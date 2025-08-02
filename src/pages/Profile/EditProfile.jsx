@@ -9,28 +9,50 @@ import toast from "react-hot-toast";
 const EditProfile = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const { currentUser, setCurrentUser, token } = useAuth();
+  const { token } = useAuth();
   const isDark = theme === "dark";
-
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    country: "",
-    stateRegion: "",
-  });
-
   const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState("");
+
+  const [formData, setFormData] = useState("");
+
+  const fetchUser = async () => {
+    try {
+      const response = await axios.get(
+        "https://gocoin.onrender.com/api/users/me",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const user = response.data.user;
+      // console.log(user._id)
+
+      setUserId(user._id);
+
+      setFormData({
+        userId: user._id,
+        username: user.username || "",
+        email: user.email || "",
+        country: user.country || "",
+        stateRegion: user.stateRegion || "",
+        avatar: user.avatar || "",
+      });
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+      toast.error("Failed to load user data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (currentUser) {
-      setFormData({
-        username: currentUser.username || "",
-        email: currentUser.email || "",
-        country: currentUser.country || "",
-        stateRegion: currentUser.stateRegion || "",
-      });
+    if (token) {
+      setLoading(true);
+      fetchUser();
     }
-  }, [currentUser]);
+  }, [token]);
 
   const handleBack = () => navigate("/profile");
 
@@ -39,17 +61,19 @@ const EditProfile = () => {
   };
 
   const handleSaveChanges = async () => {
-    if (!currentUser?._id) {
-      toast.error("User ID missing");
-      return;
-    }
+   
 
     try {
       setLoading(true);
+      // console.log("Saving changes with formData:", formData);
       const payload = {
-        userId: currentUser._id,
-        ...formData,
+        userId,
+        username: formData.username,
+        country: formData.country,
+        email: formData.email,
       };
+
+      // console.log("Payload:", payload);
 
       const res = await axios.put(
         "https://gocoin.onrender.com/api/users/me/profile",
@@ -62,8 +86,6 @@ const EditProfile = () => {
       );
 
       toast.success("Profile updated successfully");
-      setCurrentUser(res.data.user); 
-      console.log("Updated user:", res.data.user);
       localStorage.setItem(
         "user",
         JSON.stringify({
@@ -108,7 +130,10 @@ const EditProfile = () => {
         <div className="relative">
           <div className="w-16 h-16 bg-orange-500 rounded-full overflow-hidden">
             <img
-              src={currentUser?.avatar || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"}
+              src={
+                formData.avatar?.avatar ||
+                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+              }
               alt="Profile"
               className="w-full h-full object-cover"
             />
