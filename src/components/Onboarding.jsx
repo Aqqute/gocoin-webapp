@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import StepOne from "../../public/images/Step1.png";
 import StepTwo from "../../public/images/Step2.png";
 import StepThree from "../../public/images/Step3.png";
+import GoLogo from "../../public/images/GoLogo.png";
 
 const steps = [
   {
@@ -48,85 +49,186 @@ const Onboarding = ({ onAccept }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-end overflow-hidden">
-      {/* Background Image */}
-      <img
-        src={currentStep.image}
-        alt="Onboarding background"
-        className="absolute inset-0 w-full h-full object-contain z-0"
-        style={{ backgroundColor: isDark ? "#1e1e1e" : "#f5f5f5" }}
-      />
-
-      {/* Bottom Card */}
-      <div
-        className={`relative z-10 w-full max-w-md rounded-t-[30px] px-6 pt-6 pb-10 text-center shadow-lg ${bgColor}`}
-      >
-        <h1 className={`text-xl font-bold mb-3 ${textColor}`}>
-          {currentStep.title}
-        </h1>
-        <p className={`${mutedText} text-sm whitespace-pre-line mb-6`}>
-          {currentStep.message}
-        </p>
-
-        {/* Dot Indicators */}
-        <div className="flex justify-center space-x-2 mb-6">
-          {steps.map((_, index) => (
-            <span
-              key={index}
-              className={`h-2 rounded-full transition-all ${
-                index === stepIndex
-                  ? "w-4 bg-orange-500"
-                  : `w-2 ${dotInactive}`
-              }`}
-            ></span>
-          ))}
+    <div
+      className={`fixed inset-0 w-full p-4 h-full ${
+        isDark ? "bg-[#1e1e1e]" : "bg-[#f5f5f5]"
+      }`}
+    >
+      <div className="hidden md:block">
+        <div className="flex  items-center gap-2">
+          <img src={GoLogo} alt="GoCoin Logo" width={30} height={40} />
+          <h1
+            className={`font-semibold font-mono text-xl ${
+              isDark ? "text-white" : "text-black"
+            }`}
+          >
+            GOTOKEN
+          </h1>
+        </div>
+      </div>
+      {/* Desktop View */}
+      <div className="hidden p-2 md:flex h-full">
+        {/* Left side with image and logo */}
+        <div className="w-1/2 flex flex-col justify-center items-center p-10 relative">
+          <img
+            src={currentStep.image}
+            alt="Onboarding visual"
+            className="w-[80%] max-w-[400px]"
+          />
         </div>
 
-        {/* Controls */}
-        {currentStep.isFinal ? (
-          <>
-            <button
-              onClick={() => {
-                onAccept();
-                navigate("/signup");
-              }}
-              className="bg-orange-500 text-white font-semibold text-sm w-full py-2 rounded-full mb-4"
-            >
-              Get Started
-            </button>
+        {/* Right side with card */}
+        <div className="w-1/2 flex items-center justify-center px-10">
+          <div
+            className={`rounded-3xl shadow-lg w-full max-w-md p-8 text-center ${bgColor}`}
+          >
+            <h1 className={`text-xl font-bold mb-4 ${textColor}`}>
+              {currentStep.title}
+            </h1>
+            <p className={`text-sm whitespace-pre-line mb-6 ${mutedText}`}>
+              {currentStep.message}
+            </p>
 
-            <p className={`text-sm ${mutedText}`}>
-              Already have an account?{" "}
+            {/* Dot Indicators */}
+            <div className="flex justify-center space-x-2 mb-6">
+              {steps.map((_, index) => (
+                <span
+                  key={index}
+                  className={`h-2 rounded-full transition-all ${
+                    index === stepIndex
+                      ? "w-4 bg-orange-500"
+                      : `w-2 ${dotInactive}`
+                  }`}
+                ></span>
+              ))}
+            </div>
+
+            {/* Controls */}
+            {currentStep.isFinal ? (
+              <>
+                <button
+                  onClick={() => {
+                    onAccept();
+                    navigate("/signup");
+                  }}
+                  className="bg-orange-500 text-white font-semibold text-sm w-full py-2 rounded-full mb-4"
+                >
+                  Get Started
+                </button>
+
+                <p className={`text-sm ${mutedText}`}>
+                  Already have an account?{" "}
+                  <button
+                    onClick={() => {
+                      onAccept();
+                      navigate("/login");
+                    }}
+                    className={`${textColor} font-medium underline`}
+                  >
+                    Log In
+                  </button>
+                </p>
+              </>
+            ) : (
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => {
+                    onAccept();
+                    navigate("/login");
+                  }}
+                  className={`${mutedText} text-sm hover:underline`}
+                >
+                  Skip
+                </button>
+                <button
+                  onClick={handleNext}
+                  className="bg-orange-500 p-3 rounded-full text-white"
+                >
+                  <ArrowRight size={18} />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile View */}
+      <div className="flex md:hidden flex-col items-center justify-end h-full">
+        <img
+          src={currentStep.image}
+          alt="Onboarding"
+          className="absolute inset-0 w-full h-full object-contain z-0"
+        />
+        <div
+          className={`relative z-10 w-full max-w-md rounded-t-[30px] px-6 pt-6 pb-10 text-center shadow-lg ${bgColor}`}
+        >
+          <h1 className={`text-xl font-bold mb-3 ${textColor}`}>
+            {currentStep.title}
+          </h1>
+          <p className={`${mutedText} text-sm whitespace-pre-line mb-6`}>
+            {currentStep.message}
+          </p>
+
+          {/* Dot Indicators */}
+          <div className="flex justify-center space-x-2 mb-6">
+            {steps.map((_, index) => (
+              <span
+                key={index}
+                className={`h-2 rounded-full transition-all ${
+                  index === stepIndex
+                    ? "w-4 bg-orange-500"
+                    : `w-2 ${dotInactive}`
+                }`}
+              ></span>
+            ))}
+          </div>
+
+          {/* Controls */}
+          {currentStep.isFinal ? (
+            <>
+              <button
+                onClick={() => {
+                  onAccept();
+                  navigate("/signup");
+                }}
+                className="bg-orange-500 text-white font-semibold text-sm w-full py-2 rounded-full mb-4"
+              >
+                Get Started
+              </button>
+
+              <p className={`text-sm ${mutedText}`}>
+                Already have an account?{" "}
+                <button
+                  onClick={() => {
+                    onAccept();
+                    navigate("/login");
+                  }}
+                  className={`${textColor} font-medium underline`}
+                >
+                  Log In
+                </button>
+              </p>
+            </>
+          ) : (
+            <div className="flex items-center justify-between">
               <button
                 onClick={() => {
                   onAccept();
                   navigate("/login");
                 }}
-                className={`${textColor} font-medium underline`}
+                className={`${mutedText} text-sm hover:underline`}
               >
-                Log In
+                Skip
               </button>
-            </p>
-          </>
-        ) : (
-          <div className="flex items-center justify-between">
-            <button
-              onClick={() => {
-                onAccept();
-                navigate("/login");
-              }}
-              className={`${mutedText} text-sm hover:underline`}
-            >
-              Skip
-            </button>
-            <button
-              onClick={handleNext}
-              className="bg-orange-500  p-3 rounded-full text-white"
-            >
-              <ArrowRight size={18} />
-            </button>
-          </div>
-        )}
+              <button
+                onClick={handleNext}
+                className="bg-orange-500 p-3 rounded-full text-white"
+              >
+                <ArrowRight size={18} />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -4,13 +4,16 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import {
   Music,
-  Paintbrush,
+  GraduationCap,
   Bitcoin,
   Dumbbell,
   Gamepad,
   ArrowLeft,
   Eye,
   EyeOff,
+  Plane,
+  Camera,
+  House,
 } from "lucide-react";
 import WelcomeModal from "../components/WelcomeModal";
 import { useAuth } from "../contexts/AuthContext";
@@ -51,7 +54,6 @@ const Signup = ({ stepOverride }) => {
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState("");
   const { currentUser } = useAuth();
-
 
   useEffect(() => {
     if (stepOverride) setStep(stepOverride);
@@ -130,7 +132,7 @@ const Signup = ({ stepOverride }) => {
       } catch (error) {
         const message =
           error?.response?.data?.message || "Failed to save interests";
-          console.log(error.message)
+        console.log(error.message);
         toast.error(message);
       } finally {
         setLoading(false);
@@ -222,27 +224,23 @@ const Signup = ({ stepOverride }) => {
   };
 
   const interestOptions = [
+    { icon: "📚", label: "Books & Literature" },
     { icon: <Music size={16} />, label: "Music & Concerts" },
-    { icon: <Paintbrush size={16} />, label: "Art" },
-    { icon: <Bitcoin size={16} />, label: "Crypto" },
-    { icon: <Dumbbell size={16} />, label: "Fitness" },
-    { icon: <Gamepad size={16} />, label: "Gaming" },
-    { icon: "🎬", label: "Movies" },
-    { icon: "📚", label: "Books" },
+    { icon: <Bitcoin size={16} />, label: "Crypto & web3" },
+    { icon: <Dumbbell size={16} />, label: "Sports & Fitness" },
+    { icon: <Gamepad size={16} />, label: "Online Gaming & Esports" },
+    { icon: "🎬", label: "Movies & TV Shows" },
     { icon: "📷", label: "Photography" },
-    { icon: "🧘‍♀️", label: "Meditation" },
-    { icon: "💼", label: "Business" },
-    { icon: "🌍", label: "Travel & Adventure" },
-    { icon: "👨‍🍳", label: "Cooking" },
-    { icon: "🎤", label: "Singing" },
-    { icon: "🎨", label: "Design" },
-    { icon: "🧠", label: "Self-Development" },
-    { icon: "🧵", label: "Fashion" },
-    { icon: "🕹️", label: "eSports" },
+    { icon: <Plane size={16}/>, label: "Travel & Adventure" },
+    { icon: "🧵", label: "Fashion & Style" },
     { icon: "💻", label: "Technology & Gadgets" },
-    { icon: "📈", label: "Investing" },
-    { icon: "🏞️", label: "Nature" },
+    { icon: "📈", label: "Finance & Investments" },
+    { icon: <GraduationCap size={16}/>, label: "Education and Learning" },
+    {icon: <Camera size={16}/>, label: "Social Media & Influencing" },
+    {icon: <House size={16}/>, label: "Real Estate" }
   ];
+
+  const [error, setError] = useState("");
 
   const renderStep = () => {
     switch (step) {
@@ -300,11 +298,19 @@ const Signup = ({ stepOverride }) => {
                 {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
-            <p className="text-xs text-gray-400 mb-6">
-              Both passwords must match
-            </p>
+            {error && <p className="text-xs text-red-500 mb-2">{error}</p>}
             <button
-              onClick={handleNext}
+              onClick={(e) => {
+                e.preventDefault();
+
+                if (formData.password !== formData.confirmPassword) {
+                  setError("Both passwords do not match");
+                  return;
+                }
+
+                setError(""); 
+                handleNext();
+              }}
               disabled={loading}
               className={`w-full mt-4 text-sm bg-orange-500 text-white py-2 rounded-full font-semibold ${
                 loading ? "opacity-60 cursor-not-allowed" : ""
