@@ -49,7 +49,7 @@ const DoMoreModal = ({ isOpen, onClose, isDark }) => {
     <div className="fixed inset-0 z-50 bg-black bg-opacity-10 flex justify-center items-end">
       <div
         className={`w-full max-w-md p-4 rounded-t-xl shadow-lg transform transition-all duration-300 translate-y-0 animate-slide-up ${
-          isDark ? "bg-[#2a2a2a] text-white" : "bg-white text-black"
+          isDark ? "bg-black text-white" : "bg-white text-black"
         }`}
       >
         <div className="flex justify-end mb-2">
@@ -130,7 +130,7 @@ const GoWalletComponent = () => {
   return (
     <div
       className={`min-h-screen flex flex-col ${
-        isDark ? "bg-[#1e1e1e] text-white" : "bg-[#f9f9f9] text-black"
+        isDark ? "bg-black text-white" : "bg-[#f9f9f9] text-black"
       }`}
     >
       <h1 className="pt-6 px-4 text-lg font-semibold">Go Wallet</h1>
@@ -185,7 +185,9 @@ const GoWalletComponent = () => {
               ).toLocaleDateString();
 
               return (
-                <div key={tx._id} className="flex items-center justify-between">
+                <div key={tx._id} className={`rounded-xl flex items-center justify-between px-2  py-1 ${
+            isDark ? "bg-[#2a2a2a]" : "bg-white"
+          } shadow-sm`}>
                   <div className="flex items-center space-x-2">
                     <img
                       src={Icon}

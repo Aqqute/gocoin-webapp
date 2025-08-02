@@ -11,7 +11,7 @@ const Header = () => {
   return (
     <header
       className={`p-4 shadow-md fixed top-0 left-0 right-0 z-50 transition-colors ${
-        isDark ? "bg-[#1e1e1e]" : "bg-white"
+        isDark ? "bg-black" : "bg-white"
       }`}
     >
       <div className="flex items-center justify-between">
@@ -29,9 +29,9 @@ const Header = () => {
 
         {/* Right Side Icons */}
         <div className="flex items-center gap-6 relative">
-          <div className="flex items-center bg-gray-300 px-2 py-1 rounded-full gap-1">
+          <div className={`rounded-full flex py-1 px-2 text-sm font-medium ${isDark ? "bg-[#2a2a2a]" : "bg-gray-300"}`}>
             <Flame className="text-orange-500" size={20} />
-            <span className={`text-sm font-medium ${isDark ? "text-black" : "text-black"}`}>
+            <span className={`text-sm font-medium ${isDark ? "text-white" : "text-black"}`}>
               20
             </span>
           </div>

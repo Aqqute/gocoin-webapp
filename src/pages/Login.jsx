@@ -19,7 +19,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [showWelcome, setShowWelcome] = useState(false); // NEW
 
-  const bg = isDark ? "bg-[#1e1e1e]" : "bg-white";
+  const bg = isDark ? "bg-black" : "bg-white";
   const text = isDark ? "text-white" : "text-black";
   const inputBg = isDark ? "bg-[#2B2B2B] text-white" : "bg-gray-100 text-black";
   const borderColor = isDark ? "border-gray-600" : "border-gray-300";

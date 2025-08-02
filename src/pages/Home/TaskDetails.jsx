@@ -84,7 +84,7 @@ const TaskDetail = () => {
   return (
     <div
       className={`min-h-screen ${
-        isDark ? "bg-[#1e1e1e] text-white" : "bg-[#f9f9f9] text-black"
+        isDark ? "bg-black text-white" : "bg-[#f9f9f9] text-black"
       }`}
     >
       <div className="flex items-center px-4 pt-6 pb-3">

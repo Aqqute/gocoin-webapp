@@ -63,7 +63,7 @@ const Home = () => {
   return (
     <div
       className={`min-h-screen flex flex-col ${
-        isDark ? "bg-[#1e1e1e] text-white" : "bg-[#f9f9f9] text-black"
+        isDark ? "bg-black text-white" : "bg-white text-black"
       }`}
     >
       <Header />
@@ -80,7 +80,7 @@ const Home = () => {
                 activeFilter === filter
                   ? "bg-gray-200 border border-orange-500 text-orange-500"
                   : isDark
-                  ? "bg-gray-200 text-black hover:bg-[#3a3a3a]"
+                  ? "bg-[#2a2a2a] text-white hover:bg-[#3a3a3a]"
                   : "bg-gray-200 text-black hover:bg-gray-100"
               }`}
             >
@@ -97,7 +97,7 @@ const Home = () => {
         {loading ? (
           <div
             className={`flex items-center justify-center ${
-              isDark ? "bg-[#1e1e1e]" : "bg-white"
+              isDark ? "bg-black" : "bg-white"
             }`}
           >
             <div className="w-20 h-20 mt-20 rounded-full border-[6px] border-orange-500 border-t-transparent animate-spin flex items-center justify-center">

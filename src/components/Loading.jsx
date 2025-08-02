@@ -9,7 +9,7 @@ const Loading = ({ onComplete }) => {
   const { theme } = useTheme();
 
   const isDark = theme === "dark";
-  const bgColor = isDark ? "bg-[#1e1e1e]" : "bg-white";
+  const bgColor = isDark ? "bg-black" : "bg-white";
   const textColor = isDark ? "text-white" : "text-black";
   const barBg = isDark ? "bg-gray-700" : "bg-gray-300";
 

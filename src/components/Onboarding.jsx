@@ -50,12 +50,12 @@ const Onboarding = ({ onAccept }) => {
 
   return (
     <div
-      className={`fixed inset-0 w-full p-4 h-full ${
-        isDark ? "bg-[#1e1e1e]" : "bg-[#f5f5f5]"
+      className={`fixed inset-0 w-full  h-full ${
+        isDark ? "bg-black" : "bg-white"
       }`}
     >
       <div className="hidden md:block">
-        <div className="flex  items-center gap-2">
+        <div className="flex p-4  items-center gap-2">
           <img src={GoLogo} alt="GoCoin Logo" width={30} height={40} />
           <h1
             className={`font-semibold font-mono text-xl ${
