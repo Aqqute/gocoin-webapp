@@ -34,11 +34,11 @@ const EarningLeaderBoard = () => {
   };
 
   return (
-    <div className={`min-h-screen pb-20 ${isDark ? 'bg-[#1e1e1e] text-white' : 'bg-white text-black'}`}>
+    <div className={`min-h-screen pb-20 ${isDark ? 'bg-black text-white' : 'bg-white text-black'}`}>
       <h1 className="pt-6 px-4 text-lg font-semibold">Earning Leader Board</h1>
 
       <div className="px-4 mb-4 pt-4">
-        <div className={`flex ${isDark ? 'bg-[#2a2a2a]' : 'bg-gray-200'} rounded-full p-1`}>
+        <div className={`flex ${isDark ? 'bg-black' : 'bg-gray-200'} rounded-full p-1 border-1 border-[#3a3a3a]`}>
           {periods.map((period) => (
             <button
               key={period}

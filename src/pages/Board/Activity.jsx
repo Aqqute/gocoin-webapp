@@ -68,7 +68,7 @@ const ActivityFeed = () => {
   return (
     <div
       className={`min-h-screen ${
-        isDark ? "bg-[#1e1e1e] text-white" : "bg-white text-black"
+        isDark ? "bg-black text-white" : "bg-white text-black"
       }`}
     >
       {/* Header */}

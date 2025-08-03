@@ -15,7 +15,7 @@ const Withdraw = () => {
   const handleBack = () => navigate("/wallet");
 
   const cardStyle = `${
-    isDark ? "bg-[#2a2a2a]" : "bg-white"
+    isDark ? "bg-black" : "bg-white"
   } rounded-lg p-3 shadow-sm cursor-pointer hover:shadow-md`;
 
   const inputStyle = `w-full p-2 text-sm rounded border ${
@@ -27,10 +27,10 @@ const Withdraw = () => {
   const smallText = "text-sm";
 
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-end">
+    <div className="fixed inset-0 z-50  bg-opacity-50 flex justify-center items-end">
       <div
         className={`w-full max-w-md p-4 rounded-t-xl shadow-lg transform transition-all duration-300 translate-y-0 animate-slide-up ${
-          isDark ? "bg-[#2a2a2a] text-white" : "bg-white text-black"
+          isDark ? "bg-black text-white" : "bg-white text-black"
         }`}
       >
         {/* Header */}
@@ -266,7 +266,7 @@ const Modal = ({ children, onClose }) => {
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-end">
       <div
         className={`w-full max-w-md p-4 rounded-t-xl shadow-lg transform transition-all duration-300 translate-y-0 animate-slide-up ${
-          isDark ? "bg-[#2a2a2a] text-white" : "bg-white text-black"
+          isDark ? "bg-black text-white" : "bg-white text-black"
         }`}
       >
         <button

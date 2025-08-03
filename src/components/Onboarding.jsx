@@ -22,7 +22,7 @@ const steps = [
     image: StepTwo,
   },
   {
-    title: "Engage Today, Earn Today!",
+    title: "Engage Today, Earn Today  !",
     message:
       "Start engaging today and watch your\n efforts turn into rewards with Go Token.\nJoin now and begin earning!",
     isFinal: true,

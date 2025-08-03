@@ -53,7 +53,7 @@ const Signup = ({ stepOverride }) => {
   const [isWelcomeOpen, setIsWelcomeOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState("");
-  const { currentUser } = useAuth();
+  // const { currentUser } = useAuth();
 
   useEffect(() => {
     if (stepOverride) setStep(stepOverride);
@@ -389,7 +389,7 @@ const Signup = ({ stepOverride }) => {
                 <button
                   key={item.label}
                   onClick={() => toggleInterest(item.label)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm border ${
+                  className={`grid grid-col-2 md:grid-col-3 items-center gap-2 px-4 py-2 rounded-full text-sm border ${
                     formData.interests.includes(item.label)
                       ? "bg-orange-500 text-white border-orange-500"
                       : `${inputBg} border ${borderColor}`

@@ -46,7 +46,7 @@ const DoMoreModal = ({ isOpen, onClose, isDark }) => {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-10 flex justify-center items-end">
+    <div className="fixed inset-0 z-50 bg-opacity-10 flex justify-center items-end">
       <div
         className={`w-full max-w-md p-4 rounded-t-xl shadow-lg transform transition-all duration-300 translate-y-0 animate-slide-up ${
           isDark ? "bg-black text-white" : "bg-white text-black"

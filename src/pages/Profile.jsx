@@ -11,6 +11,7 @@ import {
   FileText,
   ChevronRight,
   LogOut,
+  AlertTriangle
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import { useTheme } from "../contexts/ThemeContext";
@@ -26,6 +27,22 @@ const ProfileSettings = () => {
 
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
+  const [logoutmodal, setLogoutmodal] = useState(false);
+
+  // Function to show logout confirmation modal.
+  const showLogoutModal = () => {
+    setLogoutmodal(true);
+  };
+
+  // Function to handle the confirmed logout.
+  const confirmLogout = () => {
+    // Call the logout function from context
+    logout();
+    // Close the modal
+    setLogoutmodal(false);
+    // Redirect the user (update the path as necessary)
+    navigate("/login");
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -100,14 +117,14 @@ const ProfileSettings = () => {
       icon: FileText,
       path: "/profile/terms",
     },
-    { id: "logout", title: "Logout", icon: LogOut, action: logout, path: "/" },
+    { id: "logout", title: "Logout", icon: LogOut, action: showLogoutModal },
   ];
 
   const handleItemClick = (item) => {
     if (item.id === "lightMode") {
       toggleTheme();
-    } else if (item.action) {
-      item.action();
+    } else if (item.id === "logout") {
+      item.action(); // Open the logout confirmation modal
     } else if (item.path) {
       navigate(item.path, { state: { user } });
     }
@@ -119,9 +136,9 @@ const ProfileSettings = () => {
 
   return (
     <div
-      className={` flex flex-col ${
+      className={`flex flex-col ${
         isDark ? "bg-black text-white" : "bg-white text-black"
-      }`}
+      } min-h-screen`}
     >
       <h1 className="pt-6 px-4 text-lg font-semibold">Profile Settings</h1>
 
@@ -186,6 +203,44 @@ const ProfileSettings = () => {
           </div>
         ))}
       </div>
+
+      {/* Logout Confirmation Modal */}
+      {logoutmodal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div
+            className={`w-full max-w-md p-6 rounded-xl shadow-lg flex flex-col space-y-4 ${
+              isDark ? "bg-[#2a2a2a] text-white" : "bg-white text-black"
+            }`}
+          >
+            {/* Icon and Title */}
+            <div className="flex flex-col items-center text-center space-y-2">
+              <AlertTriangle className="text-yellow-500" size={36} />
+              <h2 className="text-lg font-semibold">Confirm Logout</h2>
+            </div>
+
+            {/* Message */}
+            <p className="text-sm text-center">
+              Are you sure you want to logout? You will have to login again to access your account.
+            </p>
+
+            {/* Actions */}
+            <div className="flex flex-col justify-between gap-3 pt-2">
+              <button
+                onClick={confirmLogout}
+                className="w-full px-4 py-2 rounded-3xl text-sm font-medium bg-red-600 text-white hover:bg-red-700"
+              >
+                Logout
+              </button>
+              <button
+                onClick={() => setLogoutmodal(false)}
+                className="w-full px-4 py-2 rounded-3xl text-sm font-medium border border-gray-400 hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Navbar />
     </div>
