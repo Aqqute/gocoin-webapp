@@ -49,7 +49,7 @@ const Login = () => {
   };
 
   return (
-    <div className={`min-h-screen px-4 py-10 ${bg}`}>
+    <div className={`min-h-screen  px-4 py-10 ${bg}`}>
       {/* Welcome Modal */}
       <WelcomeModal
         isOpen={showWelcome}

@@ -107,8 +107,8 @@ const GoWalletComponent = () => {
             config
           ),
         ]);
-        console.log("Balance response:", balanceRes.data);
-        console.log("Transactions response:", txRes.data);
+        // console.log("Balance response:", balanceRes.data);
+        // console.log("Transactions response:", txRes.data);
 
         setBalance(balanceRes.data.data.goTokenBalance || "0.000000");
         // setFiatEquivalent(balanceRes.data.data.fiatEquivalent || 0);

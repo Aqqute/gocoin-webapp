@@ -10,7 +10,7 @@ const Header = () => {
 
   return (
     <header
-      className={`p-4 shadow-md fixed top-0 left-0 right-0 z-50 transition-colors ${
+      className={`md:hidden p-4 shadow-md fixed top-0 left-0 right-0 z-50 transition-colors ${
         isDark ? "bg-black" : "bg-white"
       }`}
     >
@@ -23,7 +23,7 @@ const Header = () => {
               isDark ? "text-white" : "text-black"
             }`}
           >
-            GOTOKEN
+            GOCOIN
           </h1>
         </div>
 
