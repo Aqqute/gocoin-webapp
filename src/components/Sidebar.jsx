@@ -24,7 +24,7 @@ const Sidebar = () => {
   const bgColor = theme === "dark" ? "bg-black" : "bg-white";
   const borderColor = theme === "dark" ? "border-[#2a2a2a]" : "border-gray-200";
   const shadow = theme === "dark" ? "" : "shadow-md";
-  const textColor = theme === "dark" ? "text-gray-300" : "text-gray-700";
+  const textColor = theme === "dark" ? "text-white" : "text-black";
   const hoverColor = theme === "dark" ? "hover:bg-[#2a2a2a]" : "hover:bg-gray-100";
 
   const handleLogout = () => {
