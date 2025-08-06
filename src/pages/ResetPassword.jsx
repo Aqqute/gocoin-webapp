@@ -83,45 +83,47 @@ const ResetPassword = () => {
     return `${m}:${s < 10 ? "0" + s : s}`;
   };
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleNext = async () => {
     if (step === 1) {
-      try {
-        await axios.post(`https://gocoin.onrender.com/api/auth/reset-password`, {
-          step: 1,
-          email: formData.email,
-        });
-        toast.success("OTP sent to your email.");
-        setStep(2);
-      } catch (err) {
-        toast.error(err.response?.data?.message || "Failed to send OTP.");
+      if (!formData.email) {
+        toast.error("Email is required.");
+        return;
       }
+      toast.success("OTP has been sent to your email."); // No API call since backend doesn't require it
+      setStep(2);
     } else if (step === 2) {
-      try {
-        await axios.post(`https://gocoin.onrender.com/api/auth/reset-password`, {
-          step: 2,
-          email: formData.email,
-          emailCode: formData.emailCode,
-        });
-        toast.success("OTP verified.");
-        setStep(3);
-      } catch (err) {
-        toast.error(err.response?.data?.message || "Invalid or expired OTP.");
+      if (formData.emailCode.length !== 6) {
+        toast.error("Please enter the 6-digit OTP.");
+        return;
       }
+      setStep(3);
     } else if (step === 3) {
-      if (formData.password !== formData.confirmPassword) {
+      const { email, emailCode, password, confirmPassword } = formData;
+
+      if (!email || !emailCode || !password || !confirmPassword) {
+        toast.error("All fields are required.");
+        return;
+      }
+
+      if (password !== confirmPassword) {
         toast.error("Passwords do not match.");
         return;
       }
 
       try {
-        await axios.post(`https://gocoin.onrender.com/api/auth/reset-password`, {
-          step: 3,
-          email: formData.email,
-          password: formData.password,
-          confirmPassword: formData.confirmPassword,
-        });
+        await axios.post(
+          "https://gocoin.onrender.com/api/auth/reset-password",
+          {
+            email,
+            otp: emailCode,
+            newPassword: password,
+            confirmPassword,
+          }
+        );
+
         toast.success("Password reset successful!");
         navigate("/login");
       } catch (err) {

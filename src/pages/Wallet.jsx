@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
+import { useAuth } from "../contexts/AuthContext";
 import Navbar from "../components/Navbar";
-import Icon from "../../public/images/GoLogo.png";
+import GoWalletDesktop from "../components/GoWalletDesktop";
+// import Header from "../components/Header";
+import PageLoader from "../components/PageLoader";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
-import axios from "axios";
-import PageLoader from "../components/PageLoader";
-import { useAuth } from "../contexts/AuthContext";
+import Icon from "../../public/images/GoLogo.png";
 
 const DoMoreModal = ({ isOpen, onClose, isDark }) => {
   const navigate = useNavigate();
@@ -57,7 +59,6 @@ const DoMoreModal = ({ isOpen, onClose, isDark }) => {
             <X size={20} />
           </button>
         </div>
-
         <div className="space-y-3">
           {options.map((opt, i) => (
             <button
@@ -85,19 +86,17 @@ const DoMoreModal = ({ isOpen, onClose, isDark }) => {
 const GoWalletComponent = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const { token } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [balance, setBalance] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { token } = useAuth();
 
   useEffect(() => {
     const fetchWalletData = async () => {
       try {
         const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         };
 
         const [balanceRes, txRes] = await Promise.all([
@@ -107,11 +106,8 @@ const GoWalletComponent = () => {
             config
           ),
         ]);
-        // console.log("Balance response:", balanceRes.data);
-        // console.log("Transactions response:", txRes.data);
 
         setBalance(balanceRes.data.data.goTokenBalance || "0.000000");
-        // setFiatEquivalent(balanceRes.data.data.fiatEquivalent || 0);
         setTransactions(txRes.data.data.transactions || []);
       } catch (error) {
         console.error("Failed to fetch wallet data:", error);
@@ -129,101 +125,106 @@ const GoWalletComponent = () => {
 
   return (
     <div
-      className={`min-h-screen flex flex-col ${
-        isDark ? "bg-black text-white" : "bg-[#f9f9f9] text-black"
+      className={`min-h-screen ${
+        isDark ? "bg-black text-white" : "bg-white text-black"
       }`}
     >
-      <h1 className="pt-6 px-4 text-lg font-semibold">Go Wallet</h1>
+      <GoWalletDesktop
+        isDark={isDark}
+        balance={balance}
+        transactions={transactions}
+      />
 
-      {/* Balance Card */}
-      <div className="pt-6 px-4 space-y-2 text-sm pb-2">
-        <div
-          className={`rounded-xl p-4 ${
-            isDark ? "bg-[#2a2a2a]" : "bg-white"
-          } shadow-sm`}
-        >
-          <div className="flex justify-between items-start mb-1">
-            <div>
-              <p className="text-xs">GoToken Balance</p>
-              <p className="text-2xl mt-1 font-semibold">
-                {Number(balance).toFixed(4)}
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="text-sm">~$20.00</p>
+      {/* Mobile Layout */}
+      <div className="lg:hidden">
+        <div className="px-4 pb-28">
+          <h2 className="text-lg font-bold pt-4 mb-4">Go Wallet</h2>
+
+          {/* Balance Card */}
+          <div className="pt-2 space-y-2 text-sm pb-2">
+            <div
+              className={`rounded-xl p-4 ${
+                isDark ? "bg-[#2a2a2a]" : "bg-white"
+              } shadow-sm`}
+            >
+              <div className="flex justify-between items-start mb-1">
+                <div>
+                  <p className="text-xs">GoToken Balance</p>
+                  <p className="text-2xl mt-1 font-semibold">
+                    {Number(balance).toFixed(4)}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm">~$20.00</p>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Do More Button */}
-      <div className="px-4 mt-1 mb-4">
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="w-full bg-orange-500 text-white rounded-full mt-2 mb-2 py-2 text-sm font-medium hover:bg-orange-600 transition-colors"
-        >
-          Do more with GoC
-        </button>
-      </div>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="w-full bg-orange-500 text-white rounded-full mt-2 mb-4 py-2 text-sm font-medium hover:bg-orange-600 transition-colors"
+          >
+            Do more with GoC
+          </button>
 
-      {/* Transaction History */}
-      <div className="px-4 mb-20 w-full">
-        <h2 className="text-md font-semibold mb-4">Transaction History</h2>
-        {transactions.length === 0 ? (
-          <p className="text-sm text-gray-400 text-center">
-            No transaction history
-          </p>
-        ) : (
-          <div className="space-y-3">
-            {transactions.map((tx) => {
-              const isPositive = tx.amountGoToken > 0;
-              const formattedAmount = `${isPositive ? "+" : ""}${
-                tx.amountGoToken
-              }`;
-              const formattedDate = new Date(
-                tx.timestamp || tx.createdAt
-              ).toLocaleDateString();
+          <h2 className="text-md font-semibold mb-4">Transaction History</h2>
+          {transactions.length === 0 ? (
+            <p className="text-sm text-gray-400 text-center">
+              No transaction history
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {transactions.map((tx) => {
+                const isPositive = tx.amountGoToken > 0;
+                const formattedAmount = `${isPositive ? "+" : ""}${
+                  tx.amountGoToken
+                }`;
+                const formattedDate = new Date(
+                  tx.timestamp || tx.createdAt
+                ).toLocaleDateString();
 
-              return (
-                <div key={tx._id} className={`rounded-xl flex items-center justify-between px-2  py-1 ${
-            isDark ? "bg-[#2a2a2a]" : "bg-white"
-          } shadow-sm`}>
-                  <div className="flex items-center space-x-2">
-                    <img
-                      src={Icon}
-                      alt="tx"
-                      className="w-8 h-8 rounded-full bg-gray-200"
-                    />
-                    <div>
-                      <p className="text-sm font-medium capitalize">
-                        {tx.type.replace("_", " ")}
-                      </p>
-                      <p className="text-xs text-gray-400">{formattedDate}</p>
+                return (
+                  <div
+                    key={tx._id}
+                    className={`rounded-xl flex items-center justify-between px-2 py-1 ${
+                      isDark ? "bg-[#2a2a2a]" : "bg-white"
+                    } shadow-sm`}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <img
+                        src={Icon}
+                        alt="tx"
+                        className="w-8 h-8 rounded-full bg-gray-200"
+                      />
+                      <div>
+                        <p className="text-sm font-medium capitalize">
+                          {tx.type.replace("_", " ")}
+                        </p>
+                        <p className="text-xs text-gray-400">{formattedDate}</p>
+                      </div>
+                    </div>
+                    <div
+                      className={`text-sm font-semibold ${
+                        isPositive ? "text-green-500" : "text-red-500"
+                      }`}
+                    >
+                      {formattedAmount}
                     </div>
                   </div>
-                  <div
-                    className={`text-sm font-semibold ${
-                      isPositive ? "text-green-500" : "text-red-500"
-                    }`}
-                  >
-                    {formattedAmount}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                );
+              })}
+            </div>
+          )}
+        </div>
+        <Navbar />
       </div>
 
-      {/* Modal */}
       <DoMoreModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         isDark={isDark}
       />
-
-      {/* Bottom Navbar */}
-      {!isModalOpen && <Navbar />}
     </div>
   );
 };

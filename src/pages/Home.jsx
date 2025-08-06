@@ -38,6 +38,7 @@ const Home = () => {
             },
           }
         );
+        console.log(response.data)
         setActivities(response.data.data.tasks || []);
       } catch (error) {
         console.error("Failed to fetch activities:", error);
@@ -65,7 +66,7 @@ const Home = () => {
       }`}
     >
       {/* Desktop Layout */}
-      <div className="hidden md:flex">
+      <div className="hidden lg:flex">
         {/* Sidebar - sticky */}
         <div className="h-screen sticky top-0">
           <Sidebar />
@@ -87,12 +88,8 @@ const Home = () => {
       }
     `}
               </style>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold">Task Timeline</h2>
-              </div>
-
               {/* Filters */}
-              <div className="flex justify-center flex-wrap gap-2 mb-6">
+              <div className="flex justify-left flex-wrap gap-2 mb-6">
                 {filters.map((filter) => (
                   <button
                     key={filter}
@@ -108,6 +105,9 @@ const Home = () => {
                     {filter}
                   </button>
                 ))}
+              </div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold">Task Timeline</h2>
               </div>
 
               {/* Task List */}
@@ -150,18 +150,18 @@ const Home = () => {
                         isDark ? "bg-[#2a2a2a]" : "bg-white"
                       }`}
                     >
-                      <h3 className="font-semibold mb-1">
+                      <h3 className="text-left font-semibold mb-1">
                         {activity.campaignTopic || "Untitled Task"}
                       </h3>
                       <p
-                        className={`text-xs mb-4 ${
+                        className={`text-left text-xs mb-4 ${
                           isDark ? "text-gray-300" : "text-gray-800"
                         }`}
                       >
                         {activity.description.split(".")[0] || "N/A"}
                       </p>
                       <div className="flex gap-1 items-center">
-                        <div className="w-6 h-6 rounded-full bg-white p-1 shadow-md">
+                        <div className="w-6 h-6 p-1 shadow-md">
                           <img
                             src={GoLogo}
                             alt="Go Logo"
@@ -186,8 +186,14 @@ const Home = () => {
             </div>
 
             {/* Right column: illustration */}
-            <div className="hidden justify-center md:block w-full max-w-md">
-              <img src={Step2} alt="Tasks" className="mt-18" />
+            <div className="flex flex-col">
+              <button className="">
+                Create Task
+              </button>
+              <div className="hidden justify-center items-center md:flex w-full max-w-md">
+              <img src={Step2} alt="Tasks" className="w-[300px] h-[300px]" />
+            </div>
+
             </div>
           </div>
         </div>
@@ -200,7 +206,7 @@ const Home = () => {
 
         {/* Filters */}
         <div className="w-full mb-4 overflow-x-auto hide-scrollbar sm:overflow-visible">
-          <div className="flex space-x-2 min-w-max px-4 sm:px-0 sm:flex-wrap">
+          <div className="flex justify-center space-x-2 min-w-max px-4 sm:px-0 sm:flex-wrap">
             {filters.map((filter) => (
               <button
                 key={filter}
@@ -266,7 +272,7 @@ const Home = () => {
                     {activity.description.split(".")[0] || "N/A"}
                   </p>
                   <div className="flex gap-1 items-center">
-                    <div className="w-6 h-6 rounded-full bg-white p-1 shadow-md">
+                    <div className="w-6 h-6  p-1 shadow-md">
                       <img
                         src={GoLogo}
                         alt="Go Logo"

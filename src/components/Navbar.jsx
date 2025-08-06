@@ -20,12 +20,12 @@ const Navbar = () => {
   const navItems = [
     { label: "Home", icon: HomeIcon, to: "/" },
     { label: "Wallet", icon: Wallet, to: "/wallet" },
-    { label: "Board", icon: BarChart3, to: "/board" },
+    // { label: "Board", icon: BarChart3, to: "/board" },
   ];
 
   return (
     <div
-      className={` md:hidden w-full rounded-t-[32px] fixed bottom-0 left-0 right-0 sm:max-w-md sm:left-1/2 sm:translate-x-[-50%] sm:bottom-2 ${bgColor} sm:rounded-[32px] z-50 ${
+      className={` lg:hidden w-full rounded-t-[32px] fixed bottom-0 left-0 right-0 sm:max-w-md sm:left-1/2 sm:translate-x-[-50%] sm:bottom-2 ${bgColor} sm:rounded-[32px] z-50 ${
         isDark ? "shadow-md" : "shadow-[0_0_15px_rgba(0,0,0,0.1)]"
       }`}
     >
@@ -75,9 +75,9 @@ const Navbar = () => {
               <div
                 className={`absolute -top-8 w-14 h-14 ${
                   isDark
-                    ? "bg-[#2a2a2a] border-[#373636]"
+                    ? "bg-[#2a2a2a]"
                     : "bg-white shadow-orange-200 border-gray-200"
-                } text-orange-500 rounded-full flex items-center justify-center shadow-4xl z-30 border-4`}
+                } text-orange-500 rounded-full flex items-center justify-center shadow-4xl z-30`}
               >
                 <User size={26} />
               </div>

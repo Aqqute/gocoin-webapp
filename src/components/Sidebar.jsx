@@ -17,7 +17,7 @@ const Sidebar = () => {
   const navItems = [
     { icon: <Home size={18} />, label: "Home", path: "/" },
     { icon: <Wallet size={18} />, label: "Wallet", path: "/wallet" },
-    { icon: <Trophy size={18} />, label: "Leaderboard", path: "/leaderboard" },
+    // { icon: <Trophy size={18} />, label: "Leaderboard", path: "/leaderboard" },
     { icon: <User size={18} />, label: "Profile", path: "/profile" },
   ];
 
@@ -40,7 +40,7 @@ const Sidebar = () => {
   return (
     <>
       <aside
-        className={`hidden md:flex flex-col justify-between w-52 min-h-screen ${bgColor} border-r ${borderColor} px-5 py-6 ${shadow}`}
+        className={`hidden lg:flex flex-col justify-between w-52 min-h-screen ${bgColor} border-r ${borderColor} px-5 py-6 ${shadow}`}
       >
         {/* Top: Logo + Nav */}
         <div>
