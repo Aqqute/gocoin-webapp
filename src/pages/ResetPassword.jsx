@@ -25,7 +25,6 @@ const ResetPassword = () => {
   const [otpDigits, setOtpDigits] = useState(["", "", "", "", "", ""]);
   const [timer, setTimer] = useState(120);
   const [resendAvailable, setResendAvailable] = useState(false);
-  const [isWelcomeOpen, setIsWelcomeOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -50,7 +49,6 @@ const ResetPassword = () => {
 
   const handleOtpChange = (index, value) => {
     if (!/^\d?$/.test(value)) return;
-
     const updated = [...otpDigits];
     updated[index] = value;
     setOtpDigits(updated);
@@ -132,35 +130,24 @@ const ResetPassword = () => {
 
   const handleBack = () => setStep((prev) => Math.max(prev - 1, 1));
 
-  const toggleInterest = (interest) => {
-    const updated = formData.interests.includes(interest)
-      ? formData.interests.filter((i) => i !== interest)
-      : [...formData.interests, interest];
-    setFormData({ ...formData, interests: updated });
-  };
+  const resendOTP = async () => {
+    if (!formData.email) {
+      toast.error("Email is required to resend OTP.");
+      return;
+    }
 
-  const interestOptions = [
-    { icon: <Music size={16} />, label: "Music" },
-    { icon: <Paintbrush size={16} />, label: "Art" },
-    { icon: <Bitcoin size={16} />, label: "Crypto" },
-    { icon: <Dumbbell size={16} />, label: "Fitness" },
-    { icon: <Gamepad size={16} />, label: "Gaming" },
-    { icon: "🎬", label: "Movies" },
-    { icon: "📚", label: "Books" },
-    { icon: "📷", label: "Photography" },
-    { icon: "🧘‍♀️", label: "Meditation" },
-    { icon: "💼", label: "Business" },
-    { icon: "🌍", label: "Travel" },
-    { icon: "👨‍🍳", label: "Cooking" },
-    { icon: "🎤", label: "Singing" },
-    { icon: "🎨", label: "Design" },
-    { icon: "🧠", label: "Self-Development" },
-    { icon: "🧵", label: "Fashion" },
-    { icon: "🕹️", label: "eSports" },
-    { icon: "💻", label: "Tech" },
-    { icon: "📈", label: "Investing" },
-    { icon: "🏞️", label: "Nature" },
-  ];
+    try {
+      await axios.post("https://gocoin.onrender.com/api/auth/resend-otp", {
+        email: formData.email,
+      });
+
+      toast.success("OTP resent to your email.");
+      setTimer(120);
+      setResendAvailable(false);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to resend OTP.");
+    }
+  };
 
   const renderStep = () => {
     switch (step) {
@@ -195,7 +182,7 @@ const ResetPassword = () => {
             <h2 className={`text-xl font-bold mb-6 ${text}`}>Enter OTP</h2>
             <p className={`text-sm mb-4 ${text}`}>
               An OTP has been sent to your email address{" "}
-              <strong>{formData.email}</strong>. Please enter 6 digits OTP
+              <strong>{formData.email}</strong>. Please enter the 6-digit OTP.
             </p>
             <div className="flex justify-between gap-2 mb-4">
               {otpDigits.map((digit, index) => (
@@ -222,10 +209,7 @@ const ResetPassword = () => {
             ) : (
               <p
                 className="text-sm font-semibold text-orange-500 text-center underline mb-4 cursor-pointer"
-                onClick={() => {
-                  setTimer(120);
-                  setResendAvailable(false);
-                }}
+                onClick={resendOTP}
               >
                 Resend Code
               </p>
@@ -246,7 +230,7 @@ const ResetPassword = () => {
               Create New Password
             </h2>
             <p className={`text-sm mb-4 ${text}`}>
-              Your new password must be diffrent from previously used password.
+              Your new password must be different from previously used passwords.
             </p>
 
             <div className="relative mb-4">
@@ -284,12 +268,10 @@ const ResetPassword = () => {
             </div>
 
             <button
-              onClick={() => {
-                navigate("/login");
-              }}
+              onClick={handleNext}
               className="w-full bg-orange-500 text-sm text-white py-3 mt-5 rounded-full font-semibold"
             >
-              Log in
+              Reset Password
             </button>
           </>
         );
