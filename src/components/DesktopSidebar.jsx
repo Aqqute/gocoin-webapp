@@ -3,6 +3,7 @@ import { Home2, Wallet, Ranking, Profile } from "iconsax-react";
 import { useSidebar } from "../contexts/SidebarContext";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../public/images/logo.svg";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function SideBar() {
     // links array
@@ -16,6 +17,8 @@ export default function SideBar() {
   const { mobileOpen, closeMobile } = useSidebar();
 
     const location = useLocation();
+      const { theme } = useTheme();
+      const isDark = theme === "dark";
   return (
     <>
         {/* Overlay for mobile */}
@@ -27,7 +30,7 @@ export default function SideBar() {
         )}
 
         <div
-        className={`fixed top-0 left-0 h-screen w-[254px] bg-white border-r border-gray-200 py-6 mt-0 space-y-2 px-4 z-40 ${
+        className={`fixed top-0 left-0 h-screen w-[254px] border-r border-gray-200 py-6 mt-0 space-y-2 px-4 z-40 ${isDark ? 'bg-black' : 'bg-white'} ${
             mobileOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 transition-transform duration-300 ease-in-out`}>
         <img src={logo} alt="GoCoin" className="h-10 mb-6 mt-4" />
