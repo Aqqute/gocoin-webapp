@@ -25,7 +25,7 @@ const Navbar = () => {
 
   return (
     <div
-      className={`w-full rounded-t-[32px] fixed bottom-0 left-0 right-0 sm:max-w-md sm:left-1/2 sm:translate-x-[-50%] sm:bottom-2 ${bgColor} sm:rounded-[32px] z-50 ${
+      className={`w-full rounded-t-[32px] fixed bottom-0 left-0 right-0 sm:max-w-md sm:left-1/2 sm:translate-x-[-50%] sm:bottom-2 ${bgColor} sm:rounded-[32px] z-50 md:hidden ${
         isDark ? "shadow-md" : "shadow-[0_0_15px_rgba(0,0,0,0.1)]"
       }`}
     >
