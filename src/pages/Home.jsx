@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import { useTheme } from "../contexts/ThemeContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import GoLogo from "../../public/images/GoLogo.png";
+
 import { useAuth } from "../contexts/AuthContext";
 import { FileQuestion } from "lucide-react";
 
@@ -68,7 +68,15 @@ const Home = () => {
     >
       <Header />
       <div className="h-32" />
-
+      {/* Forgot Password Link */}
+      <div className="w-full flex justify-end px-4 mb-2">
+        <button
+          className="text-orange-500 underline text-sm font-semibold"
+          onClick={() => navigate('/resetpassword')}
+        >
+          Forgot Password?
+        </button>
+      </div>
       {/* Filters */}
       <div className="w-full mb-4 overflow-x-auto hide-scrollbar sm:overflow-visible">
         <div className="flex space-x-2 min-w-max px-4 sm:px-0 sm:flex-wrap sm:justify-center">
@@ -100,13 +108,13 @@ const Home = () => {
               isDark ? "bg-black" : "bg-white"
             }`}
           >
-            <div className="w-20 h-20 mt-20 rounded-full border-[6px] border-orange-500 border-t-transparent animate-spin flex items-center justify-center">
+            {/* <div className="w-20 h-20 mt-20 rounded-full border-[6px] border-orange-500 border-t-transparent animate-spin flex items-center justify-center">
               <img
                 src={GoLogo}
                 alt="Logo"
                 className="w-10 h-10 object-contain"
               />
-            </div>
+            </div> */}
           </div>
         ) : !isAuthenticated ? (
           <div className="text-center mt-20">
@@ -142,13 +150,13 @@ const Home = () => {
                   {activity.description.split(".")[0] || "N/A"}
                 </p>
                 <div className="flex gap-1 items-center">
-                  <div className="w-6 h-6 rounded-full bg-white p-1 shadow-md">
+                  {/* <div className="w-6 h-6 rounded-full bg-white p-1 shadow-md">
                     <img
                       src={GoLogo}
                       alt="Go Logo"
                       className="w-full h-full object-contain"
                     />
-                  </div>
+                  </div> */}
                   <span className="text-[#cc8400] font-medium">
                     {activity.rewards?.goToken || 0}
                   </span>

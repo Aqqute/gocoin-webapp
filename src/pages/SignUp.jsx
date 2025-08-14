@@ -18,12 +18,7 @@ import {
 import WelcomeModal from "../components/WelcomeModal";
 import { useAuth } from "../contexts/AuthContext";
 
-import MetaMaskLogo from "../../public/images/MetaMask.webp";
-import TrustWalletLogo from "../../public/images/TrustWallet.png";
-import TronLogo from "../../public/images/Tron.png";
-import PhantomLogo from "../../public/images/Phantom.jpeg";
-import CoinbaseLogo from "../../public/images/CoinBase.webp";
-import SolflareLogo from "../../public/images/Solflare.png";
+
 
 import { useNavigate } from "react-router-dom";
 

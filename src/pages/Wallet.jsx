@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import Navbar from "../components/Navbar";
-import Icon from "../../public/images/GoLogo.png";
+
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import axios from "axios";
