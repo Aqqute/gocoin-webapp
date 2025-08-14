@@ -19,7 +19,7 @@ export default function BaseLayout({
  
   return (
     <SidebarProvider>
-        <div className="hidden md:flex min-h-screen flex-col md:flex-row">
+        <div className="flex min-h-screen flex-col md:flex-row">
         {/* Sidebar */}
         <div className="w-[254px] flex-none transition-all duration-300 ease-in-out shadow-sm">
             <Sidebar />

@@ -1,5 +1,11 @@
 import download from "../../public/images/download.svg";
 
+function formatReadableDate(isoString) {
+  const date = new Date(isoString);
+  const options = { day: "numeric", month: "short", year: "numeric" };
+  return date.toLocaleDateString("en-GB", options);
+}
+
 
 export default function TransactionsTable ({ data }) {
   return (
@@ -22,9 +28,9 @@ export default function TransactionsTable ({ data }) {
           {data.map((item, index) => (
             <tr
               key={index}
-              className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
+              className="border-b border-gray-200 hover:bg-gray-50 transition-colors capitalize"
             >
-              <td className="px-4 py-3 text-sm text-gray-700">{item.date}</td>
+              <td className="px-4 py-3 text-sm text-gray-700">{formatReadableDate(item.createdAt)}</td>
               <td className="px-4 py-3 text-sm text-gray-700">{item.type}</td>
               <td className="px-4 py-3 text-sm text-gray-700">{item.amount}</td>
               <td className="px-4 py-3 text-sm text-gray-700">{item.method}</td>

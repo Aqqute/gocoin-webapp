@@ -13,6 +13,8 @@ import receive from "../../public/images/recieve.svg";
 import swap from "../../public/images/swap.svg";
 import TransactionsTable from "../components/Table";
 import BaseLayout from "../components/Layout";
+import WithdrawModal from "../components/WithdrawModal";
+import Button from "../components/Button";
 
 function Heading({ heading }) {
   return <h4 className="font-bold text-xl leading-8">{heading}</h4>;
@@ -26,50 +28,52 @@ function Card({ children }) {
   );
 }
 
-const transactionsData = [
-  {
-    date: "1 Jul, 2025",
-    type: "Withdrawal",
-    amount: "₦8,000",
-    method: "Visa 4893",
-    status: "Completed",
-  },
-  {
-    date: "1 Jul, 2025",
-    type: "Received",
-    amount: "₦8,000",
-    method: "Visa 4893",
-    status: "Completed",
-  },
-  {
-    date: "1 Jul, 2025",
-    type: "Sent",
-    amount: "₦8,000",
-    method: "Visa 4893",
-    status: "Completed",
-  },
-  {
-    date: "1 Jul, 2025",
-    type: "Swap",
-    amount: "₦8,000",
-    method: "Visa 4893",
-    status: "Completed",
-  },
-  {
-    date: "1 Jul, 2025",
-    type: "Bill Payment",
-    amount: "₦8,000",
-    method: "Visa 4893",
-    status: "Completed",
-  },
-  {
-    date: "1 Jul, 2025",
-    type: "Savings",
-    amount: "₦8,000",
-    method: "Visa 4893",
-    status: "Completed",
-  },
-];
+
+
+
+//   {
+//     date: "1 Jul, 2025",
+//     type: "Withdrawal",
+//     amount: "₦8,000",
+//     method: "Visa 4893",
+//     status: "Completed",
+//   },
+//   {
+//     date: "1 Jul, 2025",
+//     type: "Received",
+//     amount: "₦8,000",
+//     method: "Visa 4893",
+//     status: "Completed",
+//   },
+//   {
+//     date: "1 Jul, 2025",
+//     type: "Sent",
+//     amount: "₦8,000",
+//     method: "Visa 4893",
+//     status: "Completed",
+//   },
+//   {
+//     date: "1 Jul, 2025",
+//     type: "Swap",
+//     amount: "₦8,000",
+//     method: "Visa 4893",
+//     status: "Completed",
+//   },
+//   {
+//     date: "1 Jul, 2025",
+//     type: "Bill Payment",
+//     amount: "₦8,000",
+//     method: "Visa 4893",
+//     status: "Completed",
+//   },
+//   {
+//     date: "1 Jul, 2025",
+//     type: "Savings",
+//     amount: "₦8,000",
+//     method: "Visa 4893",
+//     status: "Completed",
+//   },
+// ];
 
 const GoWalletComponent = () => {
   const { theme } = useTheme();
@@ -117,7 +121,7 @@ const GoWalletComponent = () => {
   if (loading) return <PageLoader />;
 
   const wallets = [
-    { name: "Go token balance", balance: "0.0046589", amount: "20.00", },
+    { name: "Go token balance", balance: balance, amount: "20.00", },
     { name: "Metamask wallet", balance: "0.0046589", amount: "20.00", },
     { name: "Solana wallet", balance: "0.0046589", amount: "20.00", },
   ];
@@ -143,13 +147,19 @@ const GoWalletComponent = () => {
       >
         {/* wallets */}
         <Card>
+          <div className="flex items-center justify-between">
           <Heading heading={"Your Wallets"} />
+          {/* test btn */}
+          <div className="w-[200px]">
+            <Button content={"Withdraw"} onClick={() => setIsModalOpen(true)}/>
+          </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
             {wallets.map((wallet, idx) => {
               return (
                 <div
                   key={idx}
-                  className="h-[120px] w-full border border-[#E5E7EB] rounded-2xl relative overflow-hidden p-5 cursor-pointer hover:shadow-md transition-all duration-300"
+                  className="h-[120px] w-full border border-[#E5E7EB] rounded-2xl relative p-5 cursor-pointer hover:shadow-md transition-all duration-300"
                 >
                   <img src={watermark} className="absolute top-0 right-10" />
                   <div className="flex justify-between items-center z-10">
@@ -157,8 +167,9 @@ const GoWalletComponent = () => {
                       <p className="text-sm text-[#393A3F] font-normal">
                         {wallet.name}
                       </p>
-                      <h2 className="text-black/90 font-bold text-[28px] leading-11">
+                      <h2 className="text-black/90 font-bold text-[28px] leading-11 truncate w-[200px] relative group">
                         {wallet.balance}
+                        <div className="absolute bg-gray-100 text-gray-950 text-xs p-1 rounded-full -bottom-1 right-0 hidden group-hover:block transition-all duration-300">{wallet.balance}</div>
                       </h2>
                     </div>
                     <div className="bg-[#e7ecf5] border border-[#F3F4F9] rounded-full w-20 h-[35px] px-2.5 py-1.5 text-[#3C3C43] font-bold text-sm flex justify-center items-center">
@@ -179,7 +190,7 @@ const GoWalletComponent = () => {
               return (
                 <div
                   key={idx}
-                  className="h-fit w-full border border-[#E5E7EB] rounded-2xl relative overflow-hidden p-5 space-y-2 cursor-pointer hover:shadow-md transition-all duration-300"
+                  className="h-[150px] w-full border border-[#E5E7EB] rounded-2xl relative overflow-hidden p-5 space-y-2 cursor-pointer hover:shadow-md transition-all duration-300"
                 >
                   <img src={action.image} alt={action.title} />
                   <h3 className="text-black/90 font-bold text-base leading-[26px]">{action.title}</h3>
@@ -194,13 +205,17 @@ const GoWalletComponent = () => {
         <Card>
           <Heading heading={"Recent Transactions"} />
           <div className="m-4">
-            <TransactionsTable data={transactionsData}/>
+            <TransactionsTable data={transactions}/>
           </div>
         </Card>
 
-        {/* Bottom Navbar */}
-        {!isModalOpen && <Navbar />}
+        <Navbar />
       </div>
+
+      <WithdrawModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </BaseLayout>
   );
 };

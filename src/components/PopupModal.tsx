@@ -31,7 +31,7 @@ export default function Modal({
           >
             {/* Modal */}
             <motion.div
-              className="bg-white rounded-2xl shadow-xl p-6 z-50 relative text-black"
+              className="bg-white rounded-[40px] shadow-xl p-6 z-50 relative text-black"
               style={{ 
                 width: width,
                 maxWidth: maxWidth,
