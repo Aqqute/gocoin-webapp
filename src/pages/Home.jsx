@@ -144,9 +144,9 @@ const Home = () => {
               ) : filteredActivities.length === 0 ? (
                 <div className="flex flex-col items-center justify-center mt-20">
                   <img
-                    src={Step2}
+                    src={GoLogo}
                     alt="No Tasks"
-                    className="w-[250px] h-[250px] mb-6"
+                    className="w-[100px] h-[100px] mb-6"
                   />
                   <h3 className="text-lg font-semibold">No tasks found</h3>
                 </div>
