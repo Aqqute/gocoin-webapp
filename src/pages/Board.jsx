@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import Navbar from '../components/Navbar';
-import GoLogo from '../../public/images/GoLogo.png';
+
 import PageLoader from '../components/PageLoader';
 
 const EarningLeaderBoard = () => {

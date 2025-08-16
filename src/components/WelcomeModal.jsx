@@ -2,7 +2,7 @@
 import React from "react";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import Welcome from "../../public/images/welcome.png";
+import Welcome from "../../public/images/welcome.png"; // Adjust the path as necessary
 
 const WelcomeModal = ({ isOpen, onClose, isDark }) => {
   const navigate = useNavigate();

@@ -1,9 +1,9 @@
 import React from "react";
-import GoLogo from "../../public/images/GoLogo.png";
+
 import { Flame, Bell } from "lucide-react";
 import Search from "./Search";
 import { useTheme } from "../contexts/ThemeContext";
-
+import GoLogo from "../../public/images/GoLogo.png"; // Adjust the path as necessary
 const Header = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";

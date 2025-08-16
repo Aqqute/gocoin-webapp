@@ -3,30 +3,27 @@ import { ArrowRight } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
 import { useNavigate } from "react-router-dom";
 
-import StepOne from "../../public/images/Step1.png";
-import StepTwo from "../../public/images/Step2.png";
-import StepThree from "../../public/images/Step3.png";
-import GoLogo from "../../public/images/GoLogo.png";
+
 
 const steps = [
   {
     title: "GoToken, rewarding every action!",
     message:
       "GoToken: Your key to earning rewards.\nEngage with campaigns, complete tasks,\nand watch your tokens grow.",
-    image: StepOne,
+    image: "/images/Step1.png",
   },
   {
     title: "Earn by doing simple tasks",
     message:
       "Complete missions, share content,\nor invite friends to earn GoTokens instantly.",
-    image: StepTwo,
+    image: "/images/Step2.png",
   },
   {
     title: "Engage Today, Earn Today  !",
     message:
       "Start engaging today and watch your\n efforts turn into rewards with Go Token.\nJoin now and begin earning!",
     isFinal: true,
-    image: StepThree,
+    image: "/images/Step3.png",
   },
 ];
 

@@ -2,7 +2,7 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
-import GoLogo from "../../../public/images/GoLogo.png";
+
 
 const ActivityFeed = () => {
   const location = useLocation();
