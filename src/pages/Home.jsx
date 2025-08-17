@@ -1,29 +1,32 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
-import Header from "../components/Header";
-import { useTheme } from "../contexts/ThemeContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import GoLogo from "../../public/images/GoLogo.png";
+
+import Navbar from "../components/Navbar";
+import Header from "../components/Header";
+import Sidebar from "../components/Sidebar";
+import Topbar from "../components/Topbar";
+
+import { useTheme } from "../contexts/ThemeContext";
 import { useAuth } from "../contexts/AuthContext";
+
+import GoLogo from "../../public/images/GoLogo.png";
+import Step2 from "../../public/images/Step2.png";
 import { FileQuestion } from "lucide-react";
 import BaseLayout from "../components/Layout";
 
 const Home = () => {
   const [activeFilter, setActiveFilter] = useState("All");
   const [activities, setActivities] = useState([]);
-  const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedTask, setSelectedTask] = useState(null);
 
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const navigate = useNavigate();
-
   const { token, isAuthenticated } = useAuth();
 
   const filters = ["All", "Social", "Content", "Apps", "Survey", "Polls"];
-
-  const handleFilterChange = (filter) => setActiveFilter(filter);
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -37,7 +40,7 @@ const Home = () => {
             },
           }
         );
-        // console.log("Fetched activities:", response.data);
+        console.log(response.data);
         setActivities(response.data.data.tasks || []);
       } catch (error) {
         console.error("Failed to fetch activities:", error);
@@ -47,11 +50,8 @@ const Home = () => {
       }
     };
 
-    if (token) {
-      fetchActivities();
-    } else {
-      setLoading(false);
-    }
+    if (token) fetchActivities();
+    else setLoading(false);
   }, [token]);
 
   const filteredActivities =
@@ -62,6 +62,7 @@ const Home = () => {
         );
 
   return (
+
     <BaseLayout>
       <div
         className={`min-h-screen flex flex-col ${
@@ -110,6 +111,7 @@ const Home = () => {
                 />
               </div>
             </div>
+
           ) : !isAuthenticated ? (
             <div className="text-center mt-20">
               <FileQuestion size={48} className="mx-auto mb-3 text-gray-400" />
@@ -124,7 +126,9 @@ const Home = () => {
               <h3 className="text-lg font-semibold">No tasks found</h3>
             </div>
           ) : (
+
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 w-full">
+
               {filteredActivities.map((activity) => (
                 <div
                   key={activity._id}
@@ -133,18 +137,22 @@ const Home = () => {
                     isDark ? "bg-[#2a2a2a]" : "bg-white"
                   }`}
                 >
+
                   <h3 className="font-semibold text-left mb-1">
                     {activity.campaignTopic || "Untitled Task"}
                   </h3>
                   <p
                     className={`text-xs text-left mb-4 ${
+
                       isDark ? "text-gray-300" : "text-gray-800"
                     }`}
                   >
                     {activity.description.split(".")[0] || "N/A"}
                   </p>
                   <div className="flex gap-1 items-center">
+
                     <div className="w-6 h-6 rounded-full bg-white p-1 shadow-md">
+
                       <img
                         src={GoLogo}
                         alt="Go Logo"
@@ -168,9 +176,11 @@ const Home = () => {
           )}
         </div>
 
+
         <Navbar />
       </div>
     </BaseLayout>
+
   );
 };
 

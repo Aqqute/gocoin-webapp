@@ -21,11 +21,13 @@ import NotificationsSettings from "./pages/Profile/NotificationSettings";
 import PrivacySettings from "./pages/Profile/PrivacySettings";
 import Referrals from "./pages/Profile/Referrals";
 import ResetPassword from "./pages/ResetPassword";
+
 import Withdraw from "./pages/Wallet/Withdraw";
 import TaskDetails from "./pages/Home/TaskDetails";
 import ChangePassword from "./pages/Profile/ChangePassword";
 import Swap from "./pages/Wallet/Swap"
 import SendPayment from "./pages/Wallet/SendPayment"
+import AddDetails from "./pages/AddDetails";
 
 
 function App() {
@@ -89,6 +91,7 @@ function App() {
           <Route path="/profile/privacy" element={<PrivacySettings />} />
           <Route path="/profile/referrals" element={<Referrals />} />
           <Route path="/profile/password" element={<ChangePassword />} />
+          <Route path="/add-details" element={<AddDetails />} />
         </Routes>
       ) : (
         <Onboarding

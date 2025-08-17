@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ArrowLeft, Copy } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
-import Referral from "../../../public/images/Referrals.png";
+
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";

@@ -3,30 +3,27 @@ import { ArrowRight } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
 import { useNavigate } from "react-router-dom";
 
-import StepOne from "../../public/images/Step1.png";
-import StepTwo from "../../public/images/Step2.png";
-import StepThree from "../../public/images/Step3.png";
-import GoLogo from "../../public/images/GoLogo.png";
+
 
 const steps = [
   {
     title: "GoToken, rewarding every action!",
     message:
       "GoToken: Your key to earning rewards.\nEngage with campaigns, complete tasks,\nand watch your tokens grow.",
-    image: StepOne,
+    image: "/images/Step1.png",
   },
   {
     title: "Earn by doing simple tasks",
     message:
       "Complete missions, share content,\nor invite friends to earn GoTokens instantly.",
-    image: StepTwo,
+    image: "/images/Step2.png",
   },
   {
     title: "Engage Today, Earn Today  !",
     message:
       "Start engaging today and watch your\n efforts turn into rewards with Go Token.\nJoin now and begin earning!",
     isFinal: true,
-    image: StepThree,
+    image: "/images/Step3.png",
   },
 ];
 
@@ -55,14 +52,14 @@ const Onboarding = ({ onAccept }) => {
       }`}
     >
       <div className="hidden md:block">
-        <div className="flex p-4  items-center gap-2">
+        <div className="flex p-6 items-center gap-2">
           <img src={GoLogo} alt="GoCoin Logo" width={30} height={40} />
           <h1
-            className={`font-semibold font-mono text-xl ${
+            className={`font-semibold font-mono text-2xl ${
               isDark ? "text-white" : "text-black"
             }`}
           >
-            GOTOKEN
+            GOCOIN
           </h1>
         </div>
       </div>
@@ -73,7 +70,7 @@ const Onboarding = ({ onAccept }) => {
           <img
             src={currentStep.image}
             alt="Onboarding visual"
-            className="w-[80%] max-w-[400px]"
+            className="w-1/2"
           />
         </div>
 
