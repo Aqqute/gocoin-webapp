@@ -54,7 +54,7 @@ const EditProfile = () => {
     }
   }, [token]);
 
-  const handleBack = () => navigate("/profile");
+  const handleBack = () => navigate('/profile'); // Now goes back to the profile dashboard
 
   const handleEditImage = () => {
     toast("Profile image edit not implemented yet");
@@ -93,7 +93,7 @@ const EditProfile = () => {
           user: res.data.user,
         })
       );
-      navigate("/profile");
+      navigate("/profile"); // Now goes back to the profile dashboard
     } catch (error) {
       console.error("Update failed:", error);
       toast.error(error?.response?.data?.message || "Failed to update profile");
@@ -102,7 +102,7 @@ const EditProfile = () => {
     }
   };
 
-  const handleCancel = () => navigate("/profile");
+  const handleCancel = () => navigate("/profile"); // Now goes back to the profile dashboard
 
   const cardStyle = `${
     isDark ? "bg-[#2a2a2a]" : "bg-white shadow-sm"
@@ -184,7 +184,7 @@ const EditProfile = () => {
           onClick={handleSaveChanges}
           disabled={loading}
           className={`w-full py-2 rounded-xl text-sm font-medium ${
-            loading ? "bg-gray-400" : "bg-orange-500 hover:bg-[#b67300]"
+            loading ? "bg-gray-400 cursor-not-allowed" : "bg-orange-500 hover:bg-[#b67300]"
           } text-white`}
         >
           {loading ? "Saving..." : "Save"}

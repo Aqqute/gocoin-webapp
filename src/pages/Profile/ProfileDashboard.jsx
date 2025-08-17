@@ -11,13 +11,11 @@ import DesktopSidebar from '../components/DesktopSidebar';
 import DesktopHeader from '../components/DesktopHeader';
 
 // Sub-components for the right pane
-import ProfileSettingsMenu from './Profile/ProfileSettingsMenu'; // Renamed and modified
-import Activity from './Profile/Activity';
-import ChangePassword from './Profile/ChangePassword';
-import PrivacySettings from './Profile/PrivacySettings';
-import ManageWallet from './Profile/ManageWallet'; 
-import Referrals from './Profile/Referrals';
-import Notifications from './Profile/NotificationSettings';
+import ProfileSettingsMenu from './ProfileSettingsMenu'; // Renamed and modified
+import Activity from './Activity'; // Modified
+import ChangePassword from './ChangePassword'; // Modified
+import PrivacySettings from './PrivacySettings'; // New
+import ManageWallet from './ManageWallet'; // New
 
 const ProfileDashboard = () => {
   const navigate = useNavigate();
@@ -86,9 +84,9 @@ const ProfileDashboard = () => {
       case 'notifications':
         return <div className="p-4">Notifications content...</div>;
       case 'referrals':
-        return <Referrals />;
+        return <div className="p-4">Referrals content...</div>;
       case 'terms':
-        return <Notifications />;
+        return <div className="p-4">Terms of Service content...</div>;
       default:
         // Default to Activity if an unknown section is active or for 'profile' card click
         return <Activity />;
