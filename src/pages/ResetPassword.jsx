@@ -90,35 +90,27 @@ const ResetPassword = () => {
   const handleNext = async () => {
     if (step === 1) {
       if (!formData.email) {
-
         toast.error("Please enter your email.");
         return;
       }
-      console.log('Requesting OTP for email:', formData.email);
-      
-      // TODO: Add API call to request OTP
-      // try {
-      //   const res = await axios.post(`https://gocoin.onrender.com/api/auth/request-reset`, {
-      //     email: formData.email
-      //   });
-      //   console.log('OTP request response:', res.data);
-      //   toast.success("OTP sent to your email!");
-      // } catch (err) {
-      //   console.error('OTP request error:', err);
-      //   toast.error(err.response?.data?.message || "Failed to send OTP.");
-      //   return;
-      // }
-      
-      setStep(2);
+      setIsLoading(true);
+      try {
+        const res = await axios.post(`https://gocoin.onrender.com/api/auth/forgot-password`, {
+          email: formData.email
+        });
+        toast.success(res.data?.message || "OTP sent to your email!");
+        setStep(2);
+      } catch (err) {
+        toast.error(err.response?.data?.message || "Failed to send OTP.");
+        return;
+      } finally {
+        setIsLoading(false);
+      }
     } else if (step === 2) {
       if (!formData.emailCode || formData.emailCode.length !== 6) {
         toast.error("Please enter the 6-digit OTP sent to your email.");
         return;
       }
-      console.log('Verifying OTP:', formData.emailCode);
-      setStep(3);
-    } else if (step === 3) {
-      // Validation
       if (!formData.password) {
         toast.error("Please enter a new password.");
         return;
@@ -128,7 +120,6 @@ const ResetPassword = () => {
         return;
       }
       if (formData.password !== formData.confirmPassword) {
-
         toast.error("Passwords do not match.");
         return;
       }
@@ -136,40 +127,19 @@ const ResetPassword = () => {
         toast.error("Password must be at least 6 characters long.");
         return;
       }
-
-      // Log the data being sent
-      console.log('Attempting password reset with data:', {
-        email: formData.email,
-        otp: formData.emailCode,
-        newPassword: formData.password,
-        confirmPassword: formData.confirmPassword,
-      });
-
       setIsLoading(true);
-      
       try {
-        const res = await axios.post(`https://gocoin.onrender.com/api/auth/forgot-password`, {
+        const res = await axios.post(`https://gocoin.onrender.com/api/auth/reset-password`, {
           email: formData.email,
           otp: formData.emailCode,
           newPassword: formData.password,
           confirmPassword: formData.confirmPassword,
         });
-        
-        console.log('Password reset response:', res.data);
-        console.log('Password reset successful!');
-        
         toast.success(res.data?.message || "Password reset successful!");
-        
         setTimeout(() => {
           navigate("/login");
         }, 1200);
-        
-
       } catch (err) {
-        console.error('Password reset error:', err);
-        console.error('Error response data:', err.response?.data);
-        console.error('Error status:', err.response?.status);
-        
         toast.error(err.response?.data?.message || "Failed to reset password.");
       } finally {
         setIsLoading(false);
@@ -217,7 +187,7 @@ const ResetPassword = () => {
             <h2 className={`text-xl font-bold mb-6 ${text}`}>Reset Password</h2>
             <p className={`text-sm  mb-4 ${text}`}>
               Enter the email address associated with your account to receive
-              instruction for password reset.
+              instructions for password reset.
             </p>
             <input
               type="email"
@@ -236,14 +206,12 @@ const ResetPassword = () => {
             </button>
           </>
         );
-
       case 2:
         return (
           <>
-            <h2 className={`text-xl font-bold mb-6 ${text}`}>Enter OTP</h2>
+            <h2 className={`text-xl font-bold mb-6 ${text}`}>Reset Password</h2>
             <p className={`text-sm mb-4 ${text}`}>
-              An OTP has been sent to your email address{" "}
-              <strong>{formData.email}</strong>. Please enter 6 digits OTP
+              Enter the OTP sent to your email and your new password.
             </p>
             <div className="flex justify-between gap-2 mb-4">
               {otpDigits.map((digit, index) => (
@@ -259,45 +227,6 @@ const ResetPassword = () => {
                 />
               ))}
             </div>
-
-            {!resendAvailable ? (
-              <p className="text-base mb-6 mt-4 flex justify-between font-semibold">
-                <span className={`text-sm text-center ${text}`}>
-                  {formatTime()}{" "}
-                </span>
-                <span className="text-orange-500 text-sm ">Resend code</span>
-              </p>
-            ) : (
-              <p
-                className="text-sm font-semibold text-orange-500 text-center underline mb-4 cursor-pointer"
-                onClick={() => {
-                  setTimer(120);
-                  setResendAvailable(false);
-                }}
-              >
-                Resend Code
-              </p>
-            )}
-            <button
-              onClick={handleNext}
-              disabled={isLoading}
-              className="w-full text-sm bg-orange-500 text-white py-3 rounded-full font-semibold disabled:opacity-50"
-            >
-              {isLoading ? "Verifying..." : "Continue"}
-            </button>
-          </>
-        );
-
-      case 3:
-        return (
-          <>
-            <h2 className={`text-xl font-bold mb-6 ${text}`}>
-              Create New Password
-            </h2>
-            <p className={`text-sm mb-4 ${text}`}>
-              Your new password must be different from previously used password.
-            </p>
-
             <div className="relative mb-4">
               <input
                 type={showPassword ? "text" : "password"}
@@ -314,7 +243,6 @@ const ResetPassword = () => {
                 {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
               </div>
             </div>
-
             <div className="relative mb-6">
               <input
                 type={showConfirmPassword ? "text" : "password"}
@@ -331,7 +259,6 @@ const ResetPassword = () => {
                 {showConfirmPassword ? <Eye size={18} /> : <EyeOff size={18} />}
               </div>
             </div>
-
             <button
               onClick={handleNext}
               disabled={isLoading}
@@ -353,13 +280,13 @@ const ResetPassword = () => {
               <ArrowLeft size={20} className={`${text}`} />
             </button>
           )}
-          <p className={`text-base font-bold ${text}`}>Step {step}/3</p>
+          <p className={`text-base font-bold ${text}`}>Step {step}/2</p>
         </div>
 
         <div className="w-full h-1 bg-gray-200 rounded mb-6">
           <div
             className="h-1 bg-orange-500 rounded-full"
-            style={{ width: `${(step / 3) * 100}%` }}
+            style={{ width: `${(step / 2) * 100}%` }}
           />
         </div>
 
