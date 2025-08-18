@@ -16,16 +16,16 @@ const ManageWallet = () => {
   useEffect(() => {
     const fetchWallets = async () => {
       try {
-        const res = await axios.get("https://gocoin.onrender.com/api/users/me", {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        const res = await axios.get("https://gocoin.onrender.com/api/wallet/get-wallet", {
+          headers: { Authorization: `Bearer ${token}` },
         });
-        setWallets(res.data.user.connectedWallets || []);
+        setWallets(res.data.data || []);
       } catch (error) {
         setWallets([]);
       }
     };
-    fetchWallets();
-  }, []);
+    if (token) fetchWallets();
+  }, [token]);
 
   // Connect Metamask
   const handleConnectWallet = async () => {
@@ -39,8 +39,6 @@ const ManageWallet = () => {
       const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
       const account = accounts[0];
       const newWallet = { walletType: "Metamask Wallet", address: account };
-      
-      console.log("i am the token", token);
       const response = await axios.post(
         "https://gocoin.onrender.com/api/wallet/add-wallet",
         newWallet,
@@ -51,6 +49,13 @@ const ManageWallet = () => {
       setWallets(response.data.data.connectedWallets || []);
       setConnecting(false);
     } catch (error) {
+     
+      if (error?.response?.data?.message?.includes("already connected")) {
+        const res = await axios.get("https://gocoin.onrender.com/wallet/get-wallet", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setWallets(res.data.user.connectedWallets || []);
+      }
       console.error("Failed to connect wallet:", error);
       alert("Error connecting wallet");
       setConnecting(false);
