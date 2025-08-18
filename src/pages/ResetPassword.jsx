@@ -84,11 +84,13 @@ const ResetPassword = () => {
     return `${m}:${s < 10 ? "0" + s : s}`;
   };
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleNext = async () => {
     if (step === 1) {
       if (!formData.email) {
+
         toast.error("Please enter your email.");
         return;
       }
@@ -126,6 +128,7 @@ const ResetPassword = () => {
         return;
       }
       if (formData.password !== formData.confirmPassword) {
+
         toast.error("Passwords do not match.");
         return;
       }
@@ -161,6 +164,7 @@ const ResetPassword = () => {
           navigate("/login");
         }, 1200);
         
+
       } catch (err) {
         console.error('Password reset error:', err);
         console.error('Error response data:', err.response?.data);

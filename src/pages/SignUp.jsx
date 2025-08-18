@@ -15,6 +15,7 @@ import {
   Camera,
   House,
 } from "lucide-react";
+
 import WelcomeModal from "../components/WelcomeModal";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -219,21 +220,23 @@ const Signup = ({ stepOverride }) => {
   };
 
   const interestOptions = [
-    { icon: "📚", label: "Books & Literature" },
-    { icon: <Music size={16} />, label: "Music & Concerts" },
-    { icon: <Bitcoin size={16} />, label: "Crypto & web3" },
-    { icon: <Dumbbell size={16} />, label: "Sports & Fitness" },
-    { icon: <Gamepad size={16} />, label: "Online Gaming & Esports" },
-    { icon: "🎬", label: "Movies & TV Shows" },
-    { icon: "📷", label: "Photography" },
-    { icon: <Plane size={16}/>, label: "Travel & Adventure" },
-    { icon: "🧵", label: "Fashion & Style" },
-    { icon: "💻", label: "Technology & Gadgets" },
-    { icon: "📈", label: "Finance & Investments" },
-    { icon: <GraduationCap size={16}/>, label: "Education and Learning" },
-    {icon: <Camera size={16}/>, label: "Social Media & Influencing" },
-    {icon: <House size={16}/>, label: "Real Estate" }
-  ];
+  { icon: "📚", label: "Books & Literature" },
+  { icon: <GraduationCap size={16} />, label: "Education & Learning" },
+  { icon: <Dumbbell size={16} />, label: "Sports & Fitness" },
+  { icon: <Gamepad size={16} />, label: "Online Gaming & Esports" },
+  { icon: <House size={16} />, label: "Real Estate" },
+  { icon: "🧘", label: "Health & Wellness" },
+  { icon: <Bitcoin size={16} />, label: "Crypto & Web3" },
+  { icon: "💻", label: "Technology & Gadgets" },
+  { icon: <Camera size={16} />, label: "Social Media & Influencing" },
+  { icon: "📷", label: "Photography" },
+  { icon: "🧵", label: "Fashion & Style" },
+  { icon: "📈", label: "Finance & Investments" },
+  { icon: <Music size={16} />, label: "Music & Concerts" },
+  { icon: <Plane size={16} />, label: "Travel & Adventure" },
+  { icon: "🎬", label: "Movies & TV Shows" },
+  { icon: "💅", label: "Beauty & Skincare" }
+];
 
   const [error, setError] = useState("");
 
@@ -384,7 +387,7 @@ const Signup = ({ stepOverride }) => {
                 <button
                   key={item.label}
                   onClick={() => toggleInterest(item.label)}
-                  className={`grid grid-col-2 md:grid-col-3 items-center gap-2 px-4 py-2 rounded-full text-sm border ${
+                  className={`items-center gap-2 px-4 py-2 rounded-full text-sm border ${
                     formData.interests.includes(item.label)
                       ? "bg-orange-500 text-white border-orange-500"
                       : `${inputBg} border ${borderColor}`

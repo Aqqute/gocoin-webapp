@@ -1,54 +1,60 @@
-import React from 'react';
-import { Home, Wallet, Settings } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
-import { useTheme } from '../contexts/ThemeContext';
 
-const DesktopSidebar = () => {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
-  const location = useLocation(); // Get current path
+import { Home2, Wallet, Ranking, Profile } from "iconsax-react";
+import { useSidebar } from "../contexts/SidebarContext";
+import { Link, useLocation } from "react-router-dom";
+// Use public path for logo image
+import { useTheme } from "../contexts/ThemeContext";
 
-  const navItems = [
-    { name: "Home", icon: Home, path: "/home" },
-    { name: "Wallet", icon: Wallet, path: "/wallet" },
-    // { name: "Leaderboard", icon: Leaderboard, path: "/leaderboard" },
-    { name: "Profile settings", icon: Settings, path: "/profile" },
+export default function SideBar() {
+    // links array
+  const links = [
+    { name: "Home", icon: Home2, route:"/" },
+    { name: "Wallet", icon: Wallet, route:"/wallet" },
+    { name: "Leaderboard", icon: Ranking, route:"/board" },
+    { name: "Profile", icon: Profile, route:"/profile" },
   ];
 
+  const { mobileOpen, closeMobile } = useSidebar();
+
+    const location = useLocation();
+      const { theme } = useTheme();
+      const isDark = theme === "dark";
   return (
-    <div className={`w-64 min-h-screen p-6 flex flex-col ${isDark ? 'bg-[#1e1e1e] border-r border-gray-800 text-white' : 'bg-white border-r border-gray-200 text-black'}`}>
-      {/* Logo */}
-      <div className="mb-8 flex items-center justify-start">
-        {/* Placeholder for Go Coin Icon */}
-        <img src="https://via.placeholder.com/24x24/FF8C00/FFFFFF?text=G" alt="GO COIN Logo" className="h-6 w-6 mr-2" />
-        <span className="text-xl font-bold">GO COIN</span>
-      </div>
+    <>
+        {/* Overlay for mobile */}
+        {mobileOpen && (
+            <div
+            className="fixed inset-0 bg-black/50 z-30 md:hidden"
+            onClick={closeMobile}
+            />
+        )}
 
-      {/* Navigation Items */}
-      <nav className="flex-1 space-y-2">
-        {navItems.map((item) => {
-          const isActive = location.pathname.startsWith(item.path);
+        <div
+        className={`fixed top-0 left-0 h-screen w-[254px] border-r border-gray-200 py-6 mt-0 space-y-2 px-4 z-40 ${isDark ? 'bg-black' : 'bg-white'} ${
+            mobileOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0 transition-transform duration-300 ease-in-out`}>
+        <img src="/images/logo.svg" alt="GoCoin" className="h-10 mb-6 mt-4" />
+        {links.map((link, idx) => {
+            const isActive = location.pathname === link.route;
+            const IconComponent = link.icon; //component for icon
 
-          return (
+            return (
             <Link
-              key={item.name}
-              to={item.path}
-              className={`flex items-center p-3 rounded-lg text-sm font-medium transition-colors
-                ${isActive
-                  ? 'bg-orange-500 text-white'
-                  : isDark
-                    ? 'text-gray-300 hover:bg-gray-800'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
+                to={link.route}
+                key={idx}
+                className={`h-[50px] w-full rounded-full py-3 px-5 flex gap-3 items-center cursor-pointer transition-colors
+                ${isActive ? "bg-[#F58300] text-white" : "hover:bg-gray-200 text-[#919297]"}`}
             >
-              <item.icon size={20} className="mr-3" />
-              {item.name}
+                <IconComponent
+                size={20}
+                variant={isActive ? "Bold" : "Linear"}
+                color={isActive ? "#fff" : "#919297"}
+                />
+                <span className="text-sm font-medium">{link.name}</span>
             </Link>
-          );
+            );
         })}
-      </nav>
-    </div>
+        </div>
+    </>
   );
-};
-
-export default DesktopSidebar;
+}

@@ -6,7 +6,7 @@ import { useTheme } from "../contexts/ThemeContext";
 
 const Loading = ({ onComplete }) => {
   const [text, setText] = useState("");
-  const fullText = "GoToken";
+  const fullText = "GoCoin";
   const { theme } = useTheme();
 
   const isDark = theme === "dark";

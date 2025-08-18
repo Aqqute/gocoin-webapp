@@ -52,14 +52,14 @@ const Onboarding = ({ onAccept }) => {
       }`}
     >
       <div className="hidden md:block">
-        <div className="flex p-4  items-center gap-2">
+        <div className="flex p-6 items-center gap-2">
           <img src={GoLogo} alt="GoCoin Logo" width={30} height={40} />
           <h1
-            className={`font-semibold font-mono text-xl ${
+            className={`font-semibold font-mono text-2xl ${
               isDark ? "text-white" : "text-black"
             }`}
           >
-            GOTOKEN
+            GOCOIN
           </h1>
         </div>
       </div>
@@ -70,7 +70,7 @@ const Onboarding = ({ onAccept }) => {
           <img
             src={currentStep.image}
             alt="Onboarding visual"
-            className="w-[80%] max-w-[400px]"
+            className="w-1/2"
           />
         </div>
 

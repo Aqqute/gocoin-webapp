@@ -4,11 +4,11 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { AlertTriangle } from 'lucide-react';
 
-import { useTheme } from '../contexts/ThemeContext';
-import { useAuth } from '../contexts/AuthContext';
-import PageLoader from '../components/PageLoader';
-import DesktopSidebar from '../components/DesktopSidebar';
-import DesktopHeader from '../components/DesktopHeader';
+import { useTheme } from '../../contexts/ThemeContext';
+import { useAuth } from '../../contexts/AuthContext';
+import PageLoader from '../../components/PageLoader';
+import DesktopSidebar from '../../components/DesktopSidebar';
+import DesktopHeader from '../../components/DesktopHeader';
 
 // Sub-components for the right pane
 import ProfileSettingsMenu from './ProfileSettingsMenu'; // Renamed and modified
@@ -16,6 +16,8 @@ import Activity from './Activity'; // Modified
 import ChangePassword from './ChangePassword'; // Modified
 import PrivacySettings from './PrivacySettings'; // New
 import ManageWallet from './ManageWallet'; // New
+import Referrals from './Referrals';
+import Notifications from './NotificationSettings';
 
 const ProfileDashboard = () => {
   const navigate = useNavigate();
@@ -82,9 +84,9 @@ const ProfileDashboard = () => {
         return <PrivacySettings />;
       // Add other cases for notifications, referrals, terms if created
       case 'notifications':
-        return <div className="p-4">Notifications content...</div>;
+        return <Notifications />;
       case 'referrals':
-        return <div className="p-4">Referrals content...</div>;
+        return <Referrals />;
       case 'terms':
         return <div className="p-4">Terms of Service content...</div>;
       default:
@@ -98,69 +100,48 @@ const ProfileDashboard = () => {
   }
 
   return (
-    <div className={`flex min-h-screen ${isDark ? 'bg-black text-white' : 'bg-white text-black'}`}>
-      {/* Left Fixed Sidebar */}
-      <DesktopSidebar />
-
+    <div>
+    <DesktopSidebar />
+    <div
+      className={`flex min-h-screen ${
+        isDark ? "bg-black text-white" : "bg-white text-black"
+      } ml-[254px]`}  // 👈 add margin-left to offset global sidebar
+    >
       {/* Main content area */}
       <div className="flex-1 flex flex-col">
-        {/* Top Header (Search, Filters, Icons) */}
+        {/* Top Header */}
         <DesktopHeader title="Profile settings" />
 
         {/* Two-pane content */}
-        <div className="flex flex-1 p-6 gap-6"> {/* Padding and gap for content */}
+        <div className="flex flex-1 p-6 gap-6">
           {/* Left Profile Settings Menu */}
-          <div className={`w-1/3 min-w-[300px] ${isDark ? 'bg-[#1e1e1e]' : 'bg-[#f9f9f9]'} rounded-xl p-4 shadow-sm`}>
-            <ProfileSettingsMenu 
-              user={user} 
-              activeSection={activeSection} 
-              setActiveSection={setActiveSection} 
-              toggleTheme={toggleTheme} 
-              handleLogout={handleLogout} 
-              navigate={navigate} // Pass navigate for direct page navigation if needed
+          <div
+            className={`w-1/3 min-w-[300px] ${
+              isDark ? "bg-[#1e1e1e]" : "bg-[#f9f9f9]"
+            } rounded-xl p-4 shadow-sm`}
+          >
+            <ProfileSettingsMenu
+              user={user}
+              activeSection={activeSection}
+              setActiveSection={setActiveSection}
+              toggleTheme={toggleTheme}
+              handleLogout={handleLogout}
+              navigate={navigate}
             />
           </div>
 
           {/* Right Content Pane */}
-          <div className={`flex-1 ${isDark ? 'bg-[#1e1e1e]' : 'bg-[#f9f9f9]'} rounded-xl p-4 shadow-sm`}>
+          <div
+            className={`flex-1 ${
+              isDark ? "bg-[#1e1e1e]" : "bg-[#f9f9f9]"
+            } rounded-xl p-4 shadow-sm`}
+          >
             {renderContent()}
           </div>
         </div>
       </div>
-
-      {/* Logout Confirmation Modal */}
-      {logoutModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-          <div
-            className={`w-full max-w-md p-6 rounded-xl shadow-lg flex flex-col space-y-4 ${
-              isDark ? "bg-[#2a2a2a] text-white" : "bg-white text-black"
-            }`}
-          >
-            <div className="flex flex-col items-center text-center space-y-2">
-              <AlertTriangle className="text-yellow-500" size={36} />
-              <h2 className="text-lg font-semibold">Confirm Logout</h2>
-            </div>
-            <p className="text-sm text-center">
-              Are you sure you want to logout? You will have to login again to access your account.
-            </p>
-            <div className="flex flex-col justify-between gap-3 pt-2">
-              <button
-                onClick={confirmLogout}
-                className="w-full px-4 py-2 rounded-3xl text-sm font-medium bg-red-600 text-white hover:bg-red-700"
-              >
-                Logout
-              </button>
-              <button
-                onClick={() => setLogoutModal(false)}
-                className={`w-full px-4 py-2 rounded-3xl text-sm font-medium border ${isDark ? 'border-gray-600 text-white hover:bg-gray-700' : 'border-gray-400 text-black hover:bg-gray-100'}`}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+      </div> 
+      </div>
   );
 };
 
