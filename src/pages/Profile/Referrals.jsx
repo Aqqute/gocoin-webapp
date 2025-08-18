@@ -22,11 +22,11 @@ const Referrals = () => { // onBack prop is removed
   });
   const [loading, setLoading] = useState(true);
 
+
   useEffect(() => {
     const fetchReferralData = async () => {
       try {
-        // Fetch referral code
-        const codeResponse = await axios.get(
+        const res = await axios.get(
           "https://gocoin.onrender.com/api/referral/my-code",
           {
             headers: {
@@ -34,27 +34,19 @@ const Referrals = () => { // onBack prop is removed
             },
           }
         );
-        setReferralCode(codeResponse.data?.data?.referralCode || "");
-
-        // Fetch referral stats (assuming a similar endpoint structure)
-        // This is a placeholder; you'd replace with your actual API call for stats
-        const statsResponse = await new Promise(resolve => setTimeout(() => resolve({
-          data: {
-            totalInvites: 32,
-            conversions: 20,
-            pendingBonus: 0,
-          }
-        }), 500)); // Simulate API call for stats
-
-        setStats(statsResponse.data);
-
+        const data = res.data?.data || {};
+        setReferralCode(data.referralCode || "");
+        setStats({
+          totalInvites: data.totalInvites ?? 0,
+          conversions: data.conversions ?? 0,
+          pendingBonus: data.pendingBonus?.goToken ?? 0,
+        });
         setLoading(false);
       } catch (error) {
         toast.error("Could not load referral data");
         setLoading(false);
       }
     };
-
     fetchReferralData();
   }, [token]);
 

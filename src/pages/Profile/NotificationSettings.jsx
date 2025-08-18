@@ -1,58 +1,53 @@
-import React from 'react';
-// import { ArrowLeft } from 'lucide-react'; // Removed as it's no longer a standalone page header
-import { useTheme } from '../../contexts/ThemeContext';
-// Importing specific icons based on the image for visual distinction
-import { AlertCircle, CheckCircle, Smile, Bell } from 'lucide-react'; 
 
-const Notifications = () => { // Removed onBack prop, as navigation is handled by parent dashboard
+import React, { useEffect, useState } from 'react';
+import { useTheme } from '../../contexts/ThemeContext';
+import { useAuth } from '../../contexts/AuthContext';
+import axios from 'axios';
+import { AlertCircle, CheckCircle, Smile, Bell } from 'lucide-react';
+
+
+const Notifications = () => {
   const { theme } = useTheme();
+  const { token } = useAuth();
   const isDark = theme === 'dark';
 
-  // Dummy data for notifications based on the provided image
-  const unreadNotifications = [
-    {
-      id: 1,
-      icon: AlertCircle, // Representing a general alert/new item (orange icon)
-      iconColor: 'text-orange-600',
-      iconBg: 'bg-orange-100',
-      title: "New Task Alert!",
-      description: "A new task is available. Earn Go Tokens by completing it now!",
-      time: "08:44",
-    },
-    {
-      id: 2,
-      icon: CheckCircle, // Representing completion/success (green icon)
-      iconColor: 'text-green-600',
-      iconBg: 'bg-green-100',
-      title: "Task Completed!",
-      description: "Your proof of activity has been verified, and you've earned [X] Go Tokens.",
-      time: "08:44",
-    },
-  ];
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const todayNotifications = [
-    {
-      id: 3,
-      icon: AlertCircle, // Representing a reminder (orange icon)
-      iconColor: 'text-orange-600',
-      iconBg: 'bg-orange-100',
-      title: "Reminder",
-      description: "You have a task due soon. Complete it by [Time/date] to earn Go Tokens.",
-      time: "08:44",
-    },
-    {
-      id: 4,
-      icon: Smile, // Representing a positive event like a referral (blue icon)
-      iconColor: 'text-blue-600',
-      iconBg: 'bg-blue-100',
-      title: "Congratulations!",
-      description: "Your friend [Friend's Name] joined Go Token using your referral. You've earned [X] Go Tokens!",
-      time: "08:44",
-    },
-  ];
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get('https://gocoin.onrender.com/api/notifications/all-notification', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setNotifications(res.data.data.notifications || []);
+      } catch (err) {
+        setNotifications([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (token) fetchNotifications();
+  }, [token]);
+
 
   // Common styling for notification cards
   const cardStyle = `${isDark ? 'bg-[#2a2a2a]' : 'bg-white'} rounded-xl p-3 shadow-sm`;
+
+  // Map notification type to icon and color
+  const getIconProps = (type) => {
+    switch (type) {
+      case 'transaction_status':
+        return { icon: AlertCircle, iconColor: 'text-orange-600', iconBg: 'bg-orange-100' };
+      case 'success':
+        return { icon: CheckCircle, iconColor: 'text-green-600', iconBg: 'bg-green-100' };
+      case 'referral':
+        return { icon: Smile, iconColor: 'text-blue-600', iconBg: 'bg-blue-100' };
+      default:
+        return { icon: Bell, iconColor: 'text-gray-500', iconBg: 'bg-gray-200' };
+    }
+  };
 
   // Reusable component for individual notification items
   const NotificationItem = ({ icon: Icon, iconColor, iconBg, title, description, time }) => (
@@ -75,31 +70,29 @@ const Notifications = () => { // Removed onBack prop, as navigation is handled b
   return (
     <div className={`flex flex-col h-full ${isDark ? 'text-white' : 'text-black'}`}>
       <h2 className="text-lg font-semibold mb-4">Notifications</h2>
-
       <div className="space-y-6">
-        {/* Unread Section */}
-        <div>
-          <h3 className={`text-sm font-medium mb-3 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-            Unread
-          </h3>
+        {loading ? (
+          <div className="text-center py-8 text-gray-400">Loading...</div>
+        ) : notifications.length === 0 ? (
+          <div className="text-center py-8 text-gray-400">No notifications found.</div>
+        ) : (
           <div className="space-y-3">
-            {unreadNotifications.map((notification) => (
-              <NotificationItem key={notification.id} {...notification} />
-            ))}
+            {notifications.map((notification) => {
+              const { icon, iconColor, iconBg } = getIconProps(notification.type);
+              return (
+                <NotificationItem
+                  key={notification._id}
+                  icon={icon}
+                  iconColor={iconColor}
+                  iconBg={iconBg}
+                  title={notification.type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  description={notification.message}
+                  time={new Date(notification.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                />
+              );
+            })}
           </div>
-        </div>
-
-        {/* Today Section */}
-        <div>
-          <h3 className={`text-sm font-medium mb-3 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-            Today
-          </h3>
-          <div className="space-y-3">
-            {todayNotifications.map((notification) => (
-              <NotificationItem key={notification.id} {...notification} />
-            ))}
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

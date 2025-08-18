@@ -18,6 +18,7 @@ import PrivacySettings from './PrivacySettings'; // New
 import ManageWallet from './ManageWallet'; // New
 import Referrals from './Referrals';
 import Notifications from './NotificationSettings';
+import TermsOfService from './Terms';
 
 const ProfileDashboard = () => {
   const navigate = useNavigate();
@@ -88,7 +89,7 @@ const ProfileDashboard = () => {
       case 'referrals':
         return <Referrals />;
       case 'terms':
-        return <div className="p-4">Terms of Service content...</div>;
+        return <TermsOfService />;
       default:
         // Default to Activity if an unknown section is active or for 'profile' card click
         return <Activity />;
@@ -101,47 +102,73 @@ const ProfileDashboard = () => {
 
   return (
     <div>
-    <DesktopSidebar />
-    <div
-      className={`flex min-h-screen ${
-        isDark ? "bg-black text-white" : "bg-white text-black"
-      } ml-[254px]`}  // 👈 add margin-left to offset global sidebar
-    >
-      {/* Main content area */}
-      <div className="flex-1 flex flex-col">
-        {/* Top Header */}
-        <DesktopHeader title="Profile settings" />
+      <DesktopSidebar />
+      <div
+        className={`flex min-h-screen ${
+          isDark ? "bg-black text-white" : "bg-white text-black"
+        } ml-[254px]`}
+      >
+        {/* Main content area */}
+        <div className="flex-1 flex flex-col">
+          {/* Top Header */}
+          <DesktopHeader title="Profile settings" />
 
-        {/* Two-pane content */}
-        <div className="flex flex-1 p-6 gap-6">
-          {/* Left Profile Settings Menu */}
-          <div
-            className={`w-1/3 min-w-[300px] ${
-              isDark ? "bg-[#1e1e1e]" : "bg-[#f9f9f9]"
-            } rounded-xl p-4 shadow-sm`}
-          >
-            <ProfileSettingsMenu
-              user={user}
-              activeSection={activeSection}
-              setActiveSection={setActiveSection}
-              toggleTheme={toggleTheme}
-              handleLogout={handleLogout}
-              navigate={navigate}
-            />
-          </div>
+          {/* Two-pane content */}
+          <div className="flex flex-1 p-6 gap-6">
+            {/* Left Profile Settings Menu */}
+            <div
+              className={`w-1/3 min-w-[300px] ${
+                isDark ? "bg-[#1e1e1e]" : "bg-[#f9f9f9]"
+              } rounded-xl p-4 shadow-sm`}
+            >
+              <ProfileSettingsMenu
+                user={user}
+                activeSection={activeSection}
+                setActiveSection={setActiveSection}
+                toggleTheme={toggleTheme}
+                handleLogout={handleLogout}
+                navigate={navigate}
+              />
+            </div>
 
-          {/* Right Content Pane */}
-          <div
-            className={`flex-1 ${
-              isDark ? "bg-[#1e1e1e]" : "bg-[#f9f9f9]"
-            } rounded-xl p-4 shadow-sm`}
-          >
-            {renderContent()}
+            {/* Right Content Pane */}
+            <div
+              className={`flex-1 ${
+                isDark ? "bg-[#1e1e1e]" : "bg-[#f9f9f9]"
+              } rounded-xl p-4 shadow-sm`}
+            >
+              {renderContent()}
+            </div>
           </div>
         </div>
+        {/* Logout Confirmation Modal */}
+        {logoutModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className={`rounded-xl p-6 shadow-lg w-full max-w-sm ${isDark ? 'bg-[#232323] text-white' : 'bg-white text-black'}`}>
+              <div className="flex flex-col items-center gap-3">
+                <AlertTriangle size={40} className="text-orange-500 mb-2" />
+                <h3 className="text-lg font-semibold mb-2">Confirm Logout</h3>
+                <p className="mb-4 text-center">Are you sure you want to logout?</p>
+                <div className="flex gap-3 w-full">
+                  <button
+                    onClick={confirmLogout}
+                    className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-2 rounded-full font-semibold"
+                  >
+                    Logout
+                  </button>
+                  <button
+                    onClick={() => setLogoutModal(false)}
+                    className="flex-1 bg-gray-200 hover:bg-gray-300 text-black py-2 rounded-full font-semibold"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-      </div> 
-      </div>
+    </div>
   );
 };
 
