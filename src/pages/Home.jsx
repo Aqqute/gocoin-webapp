@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 import Navbar from "../components/Navbar";
 import Header from "../components/Header";
@@ -12,13 +13,15 @@ import { useAuth } from "../contexts/AuthContext";
 
 import GoLogo from "../../public/images/GoLogo.png";
 import Step2 from "../../public/images/Step2.png";
-import { FileQuestion } from "lucide-react";
+import { FileQuestion, FileText } from "lucide-react";
 
 const Home = () => {
   const [activeFilter, setActiveFilter] = useState("All");
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [inputValue, setInputValue] = useState("");
+  const [file, setFile] = useState(null);
 
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -59,6 +62,73 @@ const Home = () => {
       : activities.filter((activity) =>
           activity.type?.toLowerCase().includes(activeFilter.toLowerCase())
         );
+
+  const getButtonLabel = (type) => {
+    switch (type?.toLowerCase()) {
+      case "social_media":
+        return "Link Social Media";
+      case "content_creation":
+        return "Create Content";
+      case "app_download_reviews":
+        return "Download App";
+      case "survey_polls":
+        return "Answer Survey Questions";
+      case "watch_video":
+        return "Watch Video";
+      case "email_subscription":
+        return "Subscribe via Email";
+      case "product_testing":
+        return "Start Product Testing";
+      case "join_community":
+        return "Join Community";
+      default:
+        return "Start Task";
+    }
+  };
+  const handleSubmit = async () => {
+    if (!selectedTask) return;
+
+    try {
+      if (selectedTask.submissionMethod === "link") {
+        if (!inputValue) return toast.error("Please provide a valid link");
+
+        await axios.post(
+          `https://gocoin.onrender.com/api/tasks/${selectedTask._id}/submit`,
+          { submissionData: inputValue },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        toast.success("Link submitted successfully!");
+      } else {
+        if (!file) return toast.error("Please upload a screenshot");
+
+        const formData = new FormData();
+        formData.append("submissionData", file);
+
+        await axios.post(
+          `https://gocoin.onrender.com/api/tasks/${selectedTask._id}/submit`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        toast.success("Screenshot submitted successfully!");
+      }
+
+      setInputValue("");
+      setFile(null);
+    } catch (error) {
+      console.error("Submission failed:", error);
+      toast.error(error?.response?.data?.message || "Failed to submit task");
+    }
+  };
 
   return (
     <div
@@ -117,7 +187,9 @@ const Home = () => {
                 </button>
               </div>
 
-              <h2 className="text-lg text-left font-bold mb-4">Task Timeline</h2>
+              <h2 className="text-lg text-left font-bold mb-4">
+                Task Timeline
+              </h2>
 
               {/* Task List */}
               {loading ? (
@@ -194,33 +266,144 @@ const Home = () => {
                 </div>
               )}
             </div>
-
-            {/* Right column: Task details or illustration */}
-            <div className="hidden md:flex flex-col max-w-sm w-full p-4">
+            {/* Right column: Task details */}
+            <div
+              className={`hidden md:flex flex-col max-w-sm w-full p-6 rounded-2xl shadow-lg ${
+                isDark ? "bg-black" : "bg-white"
+              } overflow-y-auto`}
+              style={{ maxHeight: "calc(100vh - 2rem)" }}
+            >
               {selectedTask ? (
                 <>
-                  <h2 className="text-lg font-bold mb-2">
+                  {/* Header */}
+                  <h1 className="text-lg text-left mb-1 font-semibold">
+                    Task details
+                  </h1>
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="text-sm">
+                      Status:{" "}
+                      <span className="font-bold text-green-600">Open</span>
+                    </span>
+                    <div className="flex items-center mb-6 text-sm text-gray-500 dark:text-gray-400">
+                      <div className="flex -space-x-2">
+                        <img
+                          src="https://img.freepik.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg"
+                          alt="user"
+                          className="w-6 h-6 rounded-full border"
+                        />
+                        <img
+                          src="https://img.freepik.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg"
+                          alt="user"
+                          className="w-6 h-6 rounded-full border"
+                        />
+                        <img
+                          src="https://img.freepik.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg"
+                          alt="user"
+                          className="w-6 h-6 rounded-full border"
+                        />
+                      </div>
+                      <span className="ml-2">
+                        {selectedTask.joined || 0}/
+                        {selectedTask.maxJoined || 30} Joined
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Campaign Topic */}
+                  <h2 className="text-lg text-left font-bold mb-2">
                     {selectedTask.campaignTopic}
                   </h2>
-                  <p className="mb-4">{selectedTask.description}</p>
-                  <div className="flex gap-1 items-center">
-                    <div className="w-6 h-6 p-1 shadow-md">
-                      <img
-                        src={GoLogo}
-                        alt="Go Logo"
-                        className="w-full h-full object-contain"
-                      />
+                  <p
+                    className={`mb-4 text-left text-sm ${
+                      isDark ? "text-gray-300" : "text-gray-600"
+                    }`}
+                  >
+                    {selectedTask.description}
+                  </p>
+
+                  {/* Instructions */}
+                  <div
+                    className={`p-4 rounded-xl mb-6 ${
+                      isDark ? "bg-[#3a3a3a]" : "bg-gray-100"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-3">
+                      <FileText className="text-orange-500" size={20} />
+                      <h3 className="font-medium text-sm">Instructions</h3>
                     </div>
-                    <span className="text-[#cc8400] font-medium">
-                      {selectedTask.rewards?.goToken || 0}
-                    </span>
-                    <span
-                      className={`ml-2 text-xs ${
-                        isDark ? "text-gray-400" : "text-gray-700"
+                    <ol
+                      className={`list-decimal text-left list-inside text-sm space-y-2 ${
+                        isDark ? "text-white" : "text-black"
                       }`}
                     >
-                      ~${selectedTask.rewards?.fiatEquivalent || 0}
-                    </span>
+                      {selectedTask.instructions?.map((step, idx) => (
+                        <li key={idx}>{step}</li>
+                      ))}
+                    </ol>
+                  </div>
+
+                  {/* Rewards */}
+                  <div className="flex justify-between">
+                    <h1 className="text-sm font-bold">Rewards:</h1>
+                    <div className="flex items-center gap-2 mb-6">
+                      <div className="flex p-1 shadow-md">
+                        <img
+                          src={GoLogo}
+                          alt="Go Logo"
+                          className="w-4 h-4 object-contain"
+                        />
+                      </div>
+                      <span className="text-[#cc8400] font-medium text-sm">
+                        {selectedTask.rewards?.goToken || 0}
+                      </span>
+                      <span
+                        className={`ml-2 text-xs ${
+                          isDark ? "text-gray-400" : "text-gray-600"
+                        }`}
+                      >
+                        ~${selectedTask.rewards?.fiatEquivalent || 0}
+                      </span>
+                    </div>
+                  </div>
+                  {/* Action Button with getButtonLabel */}
+                  <button className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 rounded-full text-sm transition mt-2">
+                    {getButtonLabel(selectedTask.type)}
+                  </button>
+
+                  {/* Submit Link */}
+                  <div
+                    className={`p-4 mt-10 rounded-2xl ${
+                      isDark ? "bg-[#3a3a3a]" : "bg-gray-100"
+                    }`}
+                  >
+                    <h3 className="font-medium text-lg mb-2">Submit link</h3>
+                    <p
+                      className={`text-xs mb-3 ${
+                        isDark ? "text-white" : "text-black"
+                      }`}
+                      
+                    >
+                      Submit the link to the content you have created to receive
+                      your reward.
+                    </p>
+
+                    <input
+                      type="text"
+                      placeholder="Enter Link"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      className="w-full p-2 rounded-lg border mb-3 text-sm dark:bg-[#2a2a2a] dark:border-gray-600"
+                    />
+
+                    <button
+                      onClick={handleSubmit}
+                      className="w-full py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm"
+                    >
+                      Submit{" "}
+                      {selectedTask.submissionMethod === "link"
+                        ? "Link"
+                        : "Screenshot"}
+                    </button>
                   </div>
                 </>
               ) : (
