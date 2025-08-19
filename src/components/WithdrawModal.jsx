@@ -3,29 +3,145 @@ import Modal from "./PopupModal";
 import { ArrowLeft } from "lucide-react";
 import Button from "./Button";
 import flag from "../../public/images/nigerian-flag.svg";
+import { useAuth } from "../contexts/AuthContext";
+import { withdrawToBank } from "../config/wallet";
+import toast from "react-hot-toast";
 
 export default function WithdrawModal({ isOpen, onClose }) {
   const [step, setStep] = useState(1);
   const [selectedMethod, setSelectedMethod] = useState(null);
-  const [formData, setFormData] = useState({
+
+  // Connected Wallet Data
+  const [walletWithdrawalData, setWalletWithdrawalData] = useState({
     amount: "",
-    accountNumber: "",
-    bank: "",
-    sortCode: "",
-    description: "",
+    walletAddress: "",
     password: "",
   });
 
+  // Bank Account Data
+  const [bankWithdrawalData, setBankWithdrawalData] = useState({
+    accountNumber: "",
+    bankName: "",
+    amountGoToken: "",
+    amountFiat: "",
+    fiatCurrency: "USD",
+    paymentDescription: "",
+    password: "",
+  });
+
+  const { token } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [receipt, setReceipt] = useState([]);
+
   if (!isOpen) return null;
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+// Handle changes for bank withdrawal
+const handleBankChange = (e) => {
+  const { name, value } = e.target;
+
+  // auto-sync Fiat ↔ GoToken
+  if (name === "amountFiat") {
+    const fiat = value === "" ? "" : Number(value);
+    setBankWithdrawalData((prev) => ({
+      ...prev,
+      amountFiat: fiat,
+      amountGoToken: fiat !== "" ? fiat + 5 : "", // example: add conversion logic
+    }));
+    return;
+  }
+
+  if (name === "amountGoToken") {
+    const tokenAmt = value === "" ? "" : Number(value);
+    setBankWithdrawalData((prev) => ({
+      ...prev,
+      amountGoToken: tokenAmt,
+      amountFiat: tokenAmt !== "" ? tokenAmt - 5 : "", // example: subtract conversion logic
+    }));
+    return;
+  }
+
+  // everything else (accountNumber, bankName, password, etc.)
+  setBankWithdrawalData((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
+
+
+
+  // Handle changes for wallet withdrawal
+  const handleWalletChange = (e) => {
+    const { name, value } = e.target;
+    setWalletWithdrawalData({ ...walletWithdrawalData, [name]: value });
   };
 
-  const handleWithdraw = () => {
-    console.log("Withdraw data:", formData);
-    onClose();
-  };
+  // Handle Withdraw
+const handleWithdraw = async () => {
+  // Validation
+  const {
+    accountNumber,
+    bankName,
+    amountGoToken,
+    amountFiat,
+    fiatCurrency,
+    paymentDescription,
+    password,
+  } = bankWithdrawalData;
+
+  if (
+    !accountNumber ||
+    !bankName ||
+    !amountGoToken ||
+    !amountFiat ||
+    !fiatCurrency ||
+    !password
+  ) {
+    toast.error("Please fill in all required fields");
+    return;
+  }
+
+  try {
+    setIsLoading(true);
+
+    // Build payload exactly like API expects
+    const payload = {
+      accountNumber: String(accountNumber),
+      bankName,
+      amountGoToken: Number(amountGoToken),
+      amountFiat: Number(amountFiat),
+      fiatCurrency: fiatCurrency || "USD", // maybe change to NGN if backend expects it
+      paymentDescription: paymentDescription || "Withdrawal",
+      password,
+    };
+
+    const result = await withdrawToBank(payload, token);
+
+    if (result.success) {
+      const updatedReceipt = [
+        { name: "Transaction ID", value: result.data.transactionId || "$123456" },
+        { name: "Status", value: result.data.status || "Processing" },
+        { name: "Amount Remitted", value: `${payload.amountFiat} ${payload.fiatCurrency}` },
+        { name: "Transfer fee", value: result.data.fee || "Free" },
+        { name: "Total amount", value: `${payload.amountFiat} ${payload.fiatCurrency}` },
+        { name: "Date", value: new Date().toLocaleDateString() },
+        { name: "Time", value: new Date().toLocaleTimeString() },
+      ];
+
+      setReceipt(updatedReceipt);
+      toast.success("Withdrawal Successful!");
+      setStep(6); // show receipt step instead of closing modal
+    } else {
+      console.error("Withdrawal failed:", result.error);
+      toast.error(`Withdrawal Failed: ${result.error}`);
+    }
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    toast.error("Unexpected error occurred");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const handleMethodSelect = (nextStep) => {
     setSelectedMethod(nextStep);
@@ -53,27 +169,17 @@ export default function WithdrawModal({ isOpen, onClose }) {
 
   const confirm = [
     {
-        heading: "Amount",
-        value: "0.0005BTC",
+      heading: "Amount",
+      value: `${bankWithdrawalData.amountFiat} ${bankWithdrawalData.fiatCurrency}`,
     },
     {
-        heading: "Transfer",
-        value: "Free",
+      heading: "Transfer",
+      value: "Free",
     },
     {
-        heading: "Total amount",
-        value: "0.0005BTC",
+      heading: "Total amount",
+      value: `${bankWithdrawalData.amountFiat} ${bankWithdrawalData.fiatCurrency}`,
     },
-  ];
-
-  const receipt = [
-    { name: "Transaction ID", value: "$123456" },
-    { name: "Status", value: "Received" },
-    { name: "Amount Remitted", value: "0.0005BTC" },
-    { name: "Transfer fee", value: "Free" },
-    { name: "Total amount", value: "0.0005BTC" },
-    { name: "Date", value: "27 Jun 2025" },
-    { name: "Time", value: "12:25 AM" },
   ];
 
   return (
@@ -93,17 +199,23 @@ export default function WithdrawModal({ isOpen, onClose }) {
                 key={idx}
                 onClick={() => handleMethodSelect(stepItem.nextStep)}
                 className={`border-b border-[#CBC9C970] h-[85px] w-full py-4 px-3 cursor-pointer hover:border-[#F58300] ${
-                  selectedMethod === stepItem.nextStep ? 'border-[#F58300] bg-orange-50' : ''
+                  selectedMethod === stepItem.nextStep
+                    ? "border-[#F58300] bg-orange-50"
+                    : ""
                 }`}
               >
-                <h4 className="text-[#2B2B2B] font-bold leading-[26px]">{stepItem.method}</h4>
-                <p className="text-xs text-[#20283E] font-normal leading-[23px]">{stepItem.subtitle}</p>
+                <h4 className="text-[#2B2B2B] font-bold leading-[26px]">
+                  {stepItem.method}
+                </h4>
+                <p className="text-xs text-[#20283E] font-normal leading-[23px]">
+                  {stepItem.subtitle}
+                </p>
               </div>
             ))}
           </div>
-          <Button 
-            onClick={handleNextStep} 
-            content={"Withdraw"} 
+          <Button
+            onClick={handleNextStep}
+            content={"Withdraw"}
             disabled={!selectedMethod}
           />
         </>
@@ -113,7 +225,12 @@ export default function WithdrawModal({ isOpen, onClose }) {
       {step === 2 && (
         <div className="space-y-4">
           <div className="flex items-center gap-4 ">
-            <ArrowLeft onClick={() => setStep(1)} size={25} color="black" className="cursor-pointer" />
+            <ArrowLeft
+              onClick={() => setStep(1)}
+              size={25}
+              color="black"
+              className="cursor-pointer"
+            />
             <h4 className="font-bold text-xl leading-8 text-[#393A3F]">
               Withdraw to a Connected Wallet
             </h4>
@@ -122,11 +239,11 @@ export default function WithdrawModal({ isOpen, onClose }) {
             type="text"
             name="amount"
             placeholder="Enter amount"
-            value={formData.amount}
-            onChange={handleChange}
+            value={walletWithdrawalData.amount}
+            onChange={handleWalletChange}
             className="outline-none bg-[#F3F4F6] border border-[#F3F4F6] focus:border-[#F69626] py-4 px-3 h-14 rounded-lg w-full"
           />
-          <Button onClick={() => setStep(4)} content={"Withdraw"}/>
+          <Button onClick={() => setStep(4)} content={"Withdraw"} />
         </div>
       )}
 
@@ -136,15 +253,19 @@ export default function WithdrawModal({ isOpen, onClose }) {
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-100">
             <div className="flex items-center gap-3">
-              <ArrowLeft 
-                onClick={() => setStep(1)} 
-                size={20} 
-                color="#666" 
-                className="cursor-pointer" 
+              <ArrowLeft
+                onClick={() => setStep(1)}
+                size={20}
+                color="#666"
+                className="cursor-pointer"
               />
-              <h2 className="text-lg font-medium text-gray-800">Withdraw to Bank Account</h2>
+              <h2 className="text-lg font-medium text-gray-800">
+                Withdraw to Bank Account
+              </h2>
             </div>
-            <button onClick={onClose} className="text-gray-400 text-xl">×</button>
+            <button onClick={onClose} className="text-gray-400 text-xl">
+              ×
+            </button>
           </div>
 
           {/* Form Content */}
@@ -158,8 +279,8 @@ export default function WithdrawModal({ isOpen, onClose }) {
                 type="text"
                 name="accountNumber"
                 placeholder="Enter account number"
-                value={formData.accountNumber}
-                onChange={handleChange}
+                value={bankWithdrawalData.accountNumber}
+                onChange={handleBankChange}
                 className="outline-none bg-[#F3F4F6] border border-[#F3F4F6] focus:border-[#F69626] py-4 px-3 h-14 rounded-lg w-full"
               />
             </div>
@@ -171,39 +292,54 @@ export default function WithdrawModal({ isOpen, onClose }) {
               </label>
               <div className="relative">
                 <select
-                  name="bank"
-                  value={formData.bank}
-                  onChange={handleChange}
+                  name="bankName"
+                  value={bankWithdrawalData.bankName}
+                  onChange={handleBankChange}
                   className="outline-none bg-[#F3F4F6] border border-[#F3F4F6] focus:border-[#F69626] py-4 px-3 h-14 rounded-lg w-full"
                 >
                   <option value="">Select Bank</option>
-                  <option value="access">Access Bank</option>
-                  <option value="gtbank">GTBank</option>
-                  <option value="firstbank">First Bank</option>
-                  <option value="zenith">Zenith Bank</option>
-                  <option value="uba">UBA</option>
+                  <option value="Access Bank">Access Bank</option>
+                  <option value="GTBank">GTBank</option>
+                  <option value="First Bank">First Bank</option>
+                  <option value="Zenith Bank">Zenith Bank</option>
+                  <option value="UBA">UBA</option>
                 </select>
               </div>
             </div>
 
-            {/* Amount */}
+            {/* amount fiat */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Amount
               </label>
               <div className="relative">
                 <input
-                  type="text"
-                  name="amount"
+                  type="number"
+                  name="amountFiat"
                   placeholder="Enter Amount"
-                  value={formData.amount}
-                  onChange={handleChange}
+                  value={bankWithdrawalData.amountFiat}
+                  onChange={handleBankChange}
                   className="outline-none bg-[#F3F4F6] border border-[#F3F4F6] focus:border-[#F69626] py-4 px-3 h-14 rounded-lg w-full"
                 />
                 <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
                   <img src={flag} alt="NGN" />
                 </div>
               </div>
+            </div>
+
+            {/* Go Token Amount */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Go Token Amount
+              </label>
+              <input
+                type="number"
+                name="amountGoToken"
+                placeholder="Enter Go Token amount"
+                value={bankWithdrawalData.amountGoToken}
+                onChange={handleBankChange}
+                className="outline-none bg-[#F3F4F6] border border-[#F3F4F6] focus:border-[#F69626] py-4 px-3 h-14 rounded-lg w-full"
+              />
             </div>
 
             {/* Payment Description */}
@@ -213,10 +349,10 @@ export default function WithdrawModal({ isOpen, onClose }) {
               </label>
               <input
                 type="text"
-                name="description"
+                name="paymentDescription"
                 placeholder="Enter description"
-                value={formData.description}
-                onChange={handleChange}
+                value={bankWithdrawalData.paymentDescription}
+                onChange={handleBankChange}
                 className="outline-none bg-[#F3F4F6] border border-[#F3F4F6] focus:border-[#F69626] py-4 px-3 h-14 rounded-lg w-full"
               />
             </div>
@@ -238,7 +374,12 @@ export default function WithdrawModal({ isOpen, onClose }) {
       {step === 4 && (
         <div className="space-y-4">
           <div className="flex items-center gap-4 ">
-            <ArrowLeft onClick={() => setStep(1)} size={25} color="black" className="cursor-pointer" />
+            <ArrowLeft
+              onClick={() => setStep(selectedMethod === 2 ? 2 : 3)}
+              size={25}
+              color="black"
+              className="cursor-pointer"
+            />
             <h4 className="font-bold text-xl leading-8 text-[#393A3F]">
               Enter Password
             </h4>
@@ -248,11 +389,17 @@ export default function WithdrawModal({ isOpen, onClose }) {
             type="password"
             name="password"
             placeholder="Enter your password"
-            value={formData.password}
-            onChange={handleChange}
+            value={
+              selectedMethod === 2
+                ? walletWithdrawalData.password
+                : bankWithdrawalData.password
+            }
+            onChange={
+              selectedMethod === 2 ? handleWalletChange : handleBankChange
+            }
             className="outline-none bg-[#F3F4F6] border border-[#F3F4F6] focus:border-[#F69626] py-4 px-3 h-14 rounded-lg w-full"
           />
-          <Button onClick={() => setStep(5)} content={"Submit"}/>
+          <Button onClick={() => setStep(5)} content={"Submit"} />
         </div>
       )}
 
@@ -260,44 +407,59 @@ export default function WithdrawModal({ isOpen, onClose }) {
       {step === 5 && (
         <div className="space-y-4">
           <div className="flex items-center gap-4 ">
-            <ArrowLeft onClick={() => setStep(4)} size={25} color="black" className="cursor-pointer" />
+            <ArrowLeft
+              onClick={() => setStep(4)}
+              size={25}
+              color="black"
+              className="cursor-pointer"
+            />
             <h4 className="font-bold text-xl leading-8 text-[#393A3F]">
               Confirm Withdrawal
             </h4>
           </div>
-         <div className="space-y-2 my-4">
+          <div className="space-y-2 my-4">
             {confirm.map((stepItem, idx) => (
               <div
                 key={idx}
-                className={`border-b border-[#CBC9C970] h-[85px] w-full py-4 px-3 cursor-pointer hover:border-[#F58300 flex justify-between items-center`}
+                className={`border-b border-[#CBC9C970] h-[85px] w-full py-4 px-3 cursor-pointer hover:border-[#F58300] flex justify-between items-center`}
               >
-                <p className="text-[#20283E] font-normal text-base">{stepItem.heading}</p>
-                <h4 className="text-[#20283E] font-bold text-base ">{stepItem.value}</h4>
+                <p className="text-[#20283E] font-normal text-base">
+                  {stepItem.heading}
+                </p>
+                <h4 className="text-[#20283E] font-bold text-base ">
+                  {stepItem.value}
+                </h4>
               </div>
             ))}
           </div>
-          <Button onClick={() => setStep(6)} content={"Withdraw"}/>
+          <Button
+            onClick={handleWithdraw}
+            content={isLoading ? "Loading..." : "Withdraw"}
+            disabled={isLoading}
+          />
         </div>
       )}
 
       {/* Step 6 – Transaction receipt */}
       {step === 6 && (
         <div className="space-y-4">
-            <h4 className="font-bold text-xl leading-8 text-[#393A3F]">
-              Transaction receipt
-            </h4>
-         <div className="my-2">
+          <h4 className="font-bold text-xl leading-8 text-[#393A3F]">
+            Transaction receipt
+          </h4>
+          <div className="my-2">
             {receipt.map((r, idx) => (
               <div
                 key={idx}
-                className={`border-b border-[#CBC9C970] h-[80px] w-full py-2 px-3 cursor-pointer hover:border-[#F58300 flex justify-between items-center`}
+                className={`border-b border-[#CBC9C970] h-[80px] w-full py-2 px-3 cursor-pointer hover:border-[#F58300] flex justify-between items-center`}
               >
                 <p className="text-[#20283E] font-normal text-base">{r.name}</p>
-                <h4 className="text-[#20283E] font-bold text-base ">{r.value}</h4>
+                <h4 className="text-[#20283E] font-bold text-base ">
+                  {r.value}
+                </h4>
               </div>
             ))}
           </div>
-          <Button onClick={handleWithdraw} content={"Download"}/>
+          {/* <Button onClick={handleWithdraw} content={isLoading ? "Loading..." : "Download"} disabled={isLoading}/> */}
         </div>
       )}
     </Modal>
