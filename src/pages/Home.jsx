@@ -22,6 +22,7 @@ const Home = () => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [file, setFile] = useState(null);
+  const [showSubmit, setShowSubmit] = useState(false);
 
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -90,6 +91,7 @@ const Home = () => {
 
     try {
       if (selectedTask.submissionMethod === "link") {
+        // --- Link submission flow ---
         if (!inputValue) return toast.error("Please provide a valid link");
 
         await axios.post(
@@ -104,24 +106,37 @@ const Home = () => {
         );
         toast.success("Link submitted successfully!");
       } else {
+        // --- Screenshot submission flow ---
         if (!file) return toast.error("Please upload a screenshot");
 
+        // Upload to Cloudinary
         const formData = new FormData();
-        formData.append("submissionData", file);
+        formData.append("file", file);
+        formData.append("upload_preset", "your_unsigned_preset");
 
+        const cloudinaryRes = await axios.post(
+          "https://api.cloudinary.com/v1_1/dg8arrtyn/image/upload",
+          formData
+        );
+
+        const fileUrl = cloudinaryRes.data.secure_url;
+
+        //  Send URL to backend
         await axios.post(
           `https://gocoin.onrender.com/api/tasks/${selectedTask._id}/submit`,
-          formData,
+          { submissionData: fileUrl },
           {
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
+              "Content-Type": "application/json",
             },
           }
         );
+
         toast.success("Screenshot submitted successfully!");
       }
 
+      // Reset input states
       setInputValue("");
       setFile(null);
     } catch (error) {
@@ -289,17 +304,17 @@ const Home = () => {
                         <img
                           src="https://img.freepik.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg"
                           alt="user"
-                          className="w-6 h-6 rounded-full border"
+                          className="w-6 rounded-full border"
                         />
                         <img
                           src="https://img.freepik.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg"
                           alt="user"
-                          className="w-6 h-6 rounded-full border"
+                          className="w-6 rounded-full border"
                         />
                         <img
                           src="https://img.freepik.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg"
                           alt="user"
-                          className="w-6 h-6 rounded-full border"
+                          className="w-6 rounded-full border"
                         />
                       </div>
                       <span className="ml-2">
@@ -366,45 +381,95 @@ const Home = () => {
                     </div>
                   </div>
                   {/* Action Button with getButtonLabel */}
-                  <button className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 rounded-full text-sm transition mt-2">
+                  <button
+                    onClick={() => {
+                      setShowSubmit(true);
+                      toast.success("scroll to submit task link or screenshot");
+                    }}
+                    className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 rounded-full text-sm transition mt-2"
+                  >
                     {getButtonLabel(selectedTask.type)}
                   </button>
 
-                  {/* Submit Link */}
-                  <div
-                    className={`p-4 mt-10 rounded-2xl ${
-                      isDark ? "bg-[#3a3a3a]" : "bg-gray-100"
-                    }`}
-                  >
-                    <h3 className="font-medium text-lg mb-2">Submit link</h3>
-                    <p
-                      className={`text-xs mb-3 ${
-                        isDark ? "text-white" : "text-black"
+                  {/* Submit Section - only visible if showSubmit is true */}
+                  {showSubmit && (
+                    <div
+                      className={`p-4 mt-10 rounded-2xl ${
+                        isDark ? "bg-[#3a3a3a]" : "bg-gray-100"
                       }`}
-                      
                     >
-                      Submit the link to the content you have created to receive
-                      your reward.
-                    </p>
+                      {selectedTask.submissionMethod === "link" ? (
+                        // LINK SUBMISSION UI
+                        <>
+                          <h3 className="font-medium text-lg mb-2">
+                            Submit Link
+                          </h3>
+                          <p
+                            className={`text-xs mb-3 ${
+                              isDark ? "text-white" : "text-black"
+                            }`}
+                          >
+                            Paste the link to the content you created to receive
+                            your reward.
+                          </p>
 
-                    <input
-                      type="text"
-                      placeholder="Enter Link"
-                      value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
-                      className="w-full p-2 rounded-lg border mb-3 text-sm dark:bg-[#2a2a2a] dark:border-gray-600"
-                    />
+                          <input
+                            type="text"
+                            placeholder="Enter Link"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            className="w-full p-2 rounded-lg border mb-3 text-sm dark:bg-[#2a2a2a] dark:border-gray-600"
+                          />
 
-                    <button
-                      onClick={handleSubmit}
-                      className="w-full py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm"
-                    >
-                      Submit{" "}
-                      {selectedTask.submissionMethod === "link"
-                        ? "Link"
-                        : "Screenshot"}
-                    </button>
-                  </div>
+                          <button
+                            onClick={handleSubmit}
+                            className="w-full py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm"
+                          >
+                            Submit Link
+                          </button>
+                        </>
+                      ) : (
+                        // FILE SUBMISSION UI
+                        <>
+                          {/* <h3 className="font-medium text-lg mb-2">
+                            Submit Screenshot
+                          </h3> */}
+                          <p
+                            className={`font-medium text-lg mb-3 ${
+                              isDark ? "text-white" : "text-black"
+                            }`}
+                          >
+                            Coming Soon
+                          </p>
+
+                          {/* <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => setFile(e.target.files[0])}
+                            className="w-full mb-3 text-sm"
+                          /> */}
+
+                          {/* Preview uploaded file
+                          {file && (
+                            <div className="mb-3">
+                              <img
+                                src={URL.createObjectURL(file)}
+                                alt="Preview"
+                                className="w-full h-40 object-cover rounded-lg shadow"
+                              />
+                            </div>
+                          )} */}
+
+                          <button
+                            onClick={handleSubmit}
+                            className="w-full py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm"
+                          >
+                            Submit Screenshot
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </>
               ) : (
                 <div className="flex flex-1 items-center justify-center">
@@ -423,7 +488,7 @@ const Home = () => {
       {/* Mobile Layout */}
       <div className="lg:hidden">
         <Header />
-        <div className="h-32" />
+        <div className="h-22" />
 
         {/* Filters */}
         <div className="w-full mb-4 overflow-x-auto hide-scrollbar sm:overflow-visible">
