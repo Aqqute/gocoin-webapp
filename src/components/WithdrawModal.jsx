@@ -103,13 +103,12 @@ const handleWithdraw = async () => {
   try {
     setIsLoading(true);
 
-    // Build payload exactly like API expects
     const payload = {
       accountNumber: String(accountNumber),
       bankName,
       amountGoToken: Number(amountGoToken),
       amountFiat: Number(amountFiat),
-      fiatCurrency: fiatCurrency || "USD", // maybe change to NGN if backend expects it
+      fiatCurrency: fiatCurrency || "USD",
       paymentDescription: paymentDescription || "Withdrawal",
       password,
     };

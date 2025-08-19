@@ -6,7 +6,6 @@ import Icon from "../../public/images/GoLogo.png";
 import { X } from "lucide-react";
 import axios from "axios";
 import PageLoader from "../components/PageLoader";
-import { useAuth } from "../contexts/AuthContext";
 import watermark from "../../public/images/watermark.svg";
 import withdraw from "../../public/images/withdraw.svg";
 import send from "../../public/images/send.svg";
