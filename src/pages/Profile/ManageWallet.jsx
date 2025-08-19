@@ -5,8 +5,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 import WalletCard from "../../components/WalletCard";
 
 // Icons
-import MetaMaskLogo from "../../../public/images/MetaMask.webp";
-import TrustWalletLogo from "../../../public/images/TrustWallet.png";
+
 
 const ManageWallet = () => {
   const navigate = useNavigate();

@@ -1,16 +1,18 @@
 import React from "react";
-import GoLogo from "../../public/images/GoLogo.png";
+
 import { Flame, Bell } from "lucide-react";
 import Search from "./Search";
 import { useTheme } from "../contexts/ThemeContext";
-
+import GoLogo from "../../public/images/GoLogo.png"; // Adjust the path as necessary
 const Header = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
   return (
     <header
+
       className={`p-4 shadow-md fixed top-0 left-0 right-0 z-10 transition-colors ${
+
         isDark ? "bg-black" : "bg-white"
       }`}
     >
@@ -23,7 +25,7 @@ const Header = () => {
               isDark ? "text-white" : "text-black"
             }`}
           >
-            GOTOKEN
+            GOCOIN
           </h1>
         </div>
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
+import { useAuth } from "../contexts/AuthContext";
 import Navbar from "../components/Navbar";
 import Icon from "../../public/images/GoLogo.png";
 import { X } from "lucide-react";
@@ -28,6 +29,7 @@ function Card({ children }) {
   return (
     <div className={`${isDark ? "bg-black text-white" : "bg-gray-50 text-black"} h-fit w-full rounded-2xl shadow-sm p-6`}>
       {children}
+
     </div>
   );
 }
@@ -82,19 +84,17 @@ function Card({ children }) {
 const GoWalletComponent = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const { token } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [balance, setBalance] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { token } = useAuth();
 
   useEffect(() => {
     const fetchWalletData = async () => {
       try {
         const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         };
 
         const [balanceRes, txRes] = await Promise.all([
@@ -104,11 +104,8 @@ const GoWalletComponent = () => {
             config
           ),
         ]);
-        console.log("Balance response:", balanceRes.data);
-        console.log("Transactions response:", txRes.data);
 
         setBalance(balanceRes.data.data.goTokenBalance || "0.000000");
-        // setFiatEquivalent(balanceRes.data.data.fiatEquivalent || 0);
         setTransactions(txRes.data.data.transactions || []);
       } catch (error) {
         console.error("Failed to fetch wallet data:", error);
@@ -123,6 +120,7 @@ const GoWalletComponent = () => {
   }, [token]);
 
   if (loading) return <PageLoader />;
+
 
   const wallets = [
     { name: "Go token balance", balance: balance, amount: "20.00", },
@@ -217,10 +215,13 @@ const GoWalletComponent = () => {
       </div>
 
       <WithdrawModal
+
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+
     </BaseLayout>
+
   );
 };
 
