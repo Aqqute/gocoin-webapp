@@ -63,6 +63,12 @@ const ProfileSettingsMenu = ({ user, activeSection, setActiveSection, toggleThem
       action: () => setActiveSection("referrals"),
     },
     {
+      id: "add-details",
+      title: "Add Details",
+      icon: FileText, // You can use a more appropriate icon if desired
+      action: () => setActiveSection("add-details"),
+    },
+    {
       id: "terms",
       title: "Terms of service",
       icon: FileText,

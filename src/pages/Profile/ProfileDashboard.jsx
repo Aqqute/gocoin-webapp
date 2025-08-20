@@ -19,6 +19,7 @@ import ManageWallet from './ManageWallet'; // New
 import Referrals from './Referrals';
 import Notifications from './NotificationSettings';
 import TermsOfService from './Terms';
+import AddDetails from '../AddDetails';
 
 const ProfileDashboard = () => {
   const navigate = useNavigate();
@@ -83,13 +84,14 @@ const ProfileDashboard = () => {
         return <ChangePassword />;
       case 'privacy':
         return <PrivacySettings />;
-      // Add other cases for notifications, referrals, terms if created
       case 'notifications':
         return <Notifications />;
       case 'referrals':
         return <Referrals />;
       case 'terms':
         return <TermsOfService />;
+      case 'add-details':
+        return <AddDetails />;
       default:
         // Default to Activity if an unknown section is active or for 'profile' card click
         return <Activity />;
