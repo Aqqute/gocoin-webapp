@@ -48,9 +48,9 @@ const Header = () => {
       </div>
 
       {/* Search Bar */}
-      <div className="mt-4">
+      {/* <div className="mt-4">
         <Search />
-      </div>
+      </div> */}
     </header>
   );
 };

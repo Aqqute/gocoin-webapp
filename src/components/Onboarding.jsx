@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import GoLogo from "../../public/images/GoLogo.png";
 
 
+
 const steps = [
   {
     title: "GoToken, rewarding every action!",
