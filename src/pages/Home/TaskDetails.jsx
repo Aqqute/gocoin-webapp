@@ -6,6 +6,7 @@ import { ArrowLeft, FileText, X } from "lucide-react";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 import toast from "react-hot-toast";
+import GoLogo from "../../../public/images/GoLogo.png";
 
 const getButtonLabel = (type) => {
   switch (type?.toLowerCase()) {
@@ -159,33 +160,47 @@ const TaskDetail = () => {
                 </button>
                 <h3 className="text-lg font-semibold mb-2">
                   {task.submissionMethod === "link"
-                    ? "Submit Content Link"
+                    ? ""
                     : "Submit Screenshot"}
                 </h3>
                 <p className="text-sm mb-4">
                   {task.submissionMethod === "link"
-                    ? "Paste the link to your content (e.g. YouTube, TikTok)"
+                    ? ""
                     : "Upload a screenshot (PNG only, 2MB max)."}
                 </p>
 
                 {task.submissionMethod === "link" ? (
-                  <input
-                    type="text"
-                    placeholder="https://your-content-link.com"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm"
-                  />
-                ) : (
-                  <label className="w-full border border-dashed border-gray-400 dark:border-gray-600 rounded-xl flex items-center justify-center py-8 cursor-pointer text-center">
+                  // LINK SUBMISSION UI
+                  <>
+                    <h3 className="font-medium text-lg mb-2">Submit Link</h3>
+                    <p
+                      className={`text-xs mb-3 ${
+                        isDark ? "text-white" : "text-black"
+                      }`}
+                    >
+                      Paste the link to the content you created to receive your
+                      reward.
+                    </p>
+
                     <input
-                      type="file"
-                      accept="image/png"
-                      onChange={handleFileChange}
-                      className="hidden"
+                      type="text"
+                      placeholder="Enter Link"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      className="w-full p-2 rounded-lg border mb-3 text-sm dark:bg-[#2a2a2a] dark:border-gray-600"
                     />
-                    {file ? file.name : "Click to upload image"}
-                  </label>
+                  </>
+                ) : (
+                  // FILE SUBMISSION UI
+                  <>
+                    <p
+                      className={`font-medium text-lg mb-3 ${
+                        isDark ? "text-white" : "text-black"
+                      }`}
+                    >
+                      Coming Soon
+                    </p>
+                  </>
                 )}
 
                 <button

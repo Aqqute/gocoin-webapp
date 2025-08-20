@@ -34,19 +34,6 @@ export default function BaseLayout({
             <nav className={`h-[89px] w-full p-4 flex justify-between items-center sticky top-0 ${isDark ? 'bg-black' : 'bg-white'}`}>
         <div className="flex items-center gap-20">
             <Heading heading="Dashboard" />
-
-            {/* search and filter */}
-            <div className="hidden md:flex items-center gap-4">
-                <div className={`${isDark ? 'bg-black/60' : 'bg-[#F3F4F6]'} w-[352px] h-[45px] rounded-full border border-[#E5E7EB] py-1 px-4 flex gap-2 items-center`}>
-                    <SearchNormal size={25} color={isDark ? '#fff' : '#6D7280'} variant="Linear" />
-                    <input
-                    type="text"
-                    placeholder="Search..."
-                    className={`bg-transparent outline-none text-sm placeholder-gray-400 ml-2 w-full ${isDark ? 'text-white' : 'text-gray-700'}`}
-                    />
-                </div>
-                <Filter color={isDark ? '#fff' : '#6D7280'} size={25}/>
-            </div>
         </div>
         {/* fire icon and count */}
         <div className="gap-2 md:w-[111px] flex items-center">
@@ -67,7 +54,7 @@ export default function BaseLayout({
             </div> */}
         </div>
     </nav>
-            <div className={`flex-grow overflow-y-auto p-3 ${isDark ? 'md:bg-black/90' : 'md:bg-gray-100'}`}>
+            <div className={`flex-grow overflow-y-auto  ${isDark ? 'md:bg-black/90' : 'md:bg-gray-100'}`}>
             {children}
             </div>
         </section>
