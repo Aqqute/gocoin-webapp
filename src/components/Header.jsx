@@ -1,16 +1,17 @@
 import React from "react";
-
 import { Flame, Bell } from "lucide-react";
 import Search from "./Search";
 import { useTheme } from "../contexts/ThemeContext";
-import GoLogo from "../../public/images/GoLogo.png"; // Adjust the path as necessary
+import GoLogo from "../../public/images/GoLogo.png"; 
 const Header = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
   return (
     <header
-      className={`lg:hidden p-4 shadow-md fixed top-0 left-0 right-0 z-50 transition-colors ${
+
+      className={`p-4 shadow-md fixed top-0 left-0 right-0 z-10 transition-colors ${
+
         isDark ? "bg-black" : "bg-white"
       }`}
     >
@@ -19,7 +20,7 @@ const Header = () => {
         <div className="flex items-center gap-2">
           <img src={GoLogo} alt="GoCoin Logo" width={30} height={40} />
           <h1
-            className={`font-semibold font-mono text-xl ${
+            className={`font-semibold font-mono text-3xl ${
               isDark ? "text-white" : "text-black"
             }`}
           >
@@ -46,9 +47,9 @@ const Header = () => {
       </div>
 
       {/* Search Bar */}
-      <div className="mt-4">
+      {/* <div className="mt-4">
         <Search />
-      </div>
+      </div> */}
     </header>
   );
 };
