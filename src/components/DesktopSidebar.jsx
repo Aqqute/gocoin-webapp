@@ -2,7 +2,7 @@
 import { Home2, Wallet, Ranking, Profile } from "iconsax-react";
 import { useSidebar } from "../contexts/SidebarContext";
 import { Link, useLocation } from "react-router-dom";
-import logo from "../../public/images/logo.svg";
+// Use public path for logo image
 import { useTheme } from "../contexts/ThemeContext";
 
 export default function SideBar() {
@@ -33,7 +33,7 @@ export default function SideBar() {
         className={`fixed top-0 left-0 h-screen w-[254px] border-r border-gray-200 py-6 mt-0 space-y-2 px-4 z-40 ${isDark ? 'bg-black' : 'bg-white'} ${
             mobileOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 transition-transform duration-300 ease-in-out`}>
-        <img src={logo} alt="GoCoin" className="h-10 mb-6 mt-4" />
+        <img src="/images/logo.svg" alt="GoCoin" className="h-10 mb-6 mt-4" />
         {links.map((link, idx) => {
             const isActive = location.pathname === link.route;
             const IconComponent = link.icon; //component for icon
