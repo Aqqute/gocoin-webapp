@@ -1,285 +1,391 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { toast } from "react-hot-toast";
-import { useTheme } from "../contexts/ThemeContext";
-import { useAuth } from "../contexts/AuthContext";
-import { Globe, Phone, User, Instagram, Twitter, Facebook,  Send } from "lucide-react";
+import React, { useState } from "react";
+import { 
+  CheckCircle, 
+  Loader2, 
+  User, 
+  Phone, 
+  Globe, 
+  MapPin, 
+  Facebook, 
+  Twitter, 
+  Instagram, 
+  Send,
+  ArrowLeft,
+  Edit3
+} from "lucide-react";
+
+const fields = [
+  { 
+    key: "telegram", 
+    label: "Telegram", 
+    placeholder: "@username", 
+    endpoint: "/api/user/socials/telegram",
+    icon: Send,
+    category: "social"
+  },
+  { 
+    key: "facebook", 
+    label: "Facebook", 
+    placeholder: "Facebook profile URL", 
+    endpoint: "/api/user/socials/facebook",
+    icon: Facebook,
+    category: "social"
+  },
+  { 
+    key: "twitter", 
+    label: "Twitter", 
+    placeholder: "@username", 
+    endpoint: "/api/user/socials/twitter",
+    icon: Twitter,
+    category: "social"
+  },
+  { 
+    key: "instagram", 
+    label: "Instagram", 
+    placeholder: "@username", 
+    endpoint: "/api/user/socials/instagram",
+    icon: Instagram,
+    category: "social"
+  },
+  { 
+    key: "phone", 
+    label: "Phone Number", 
+    placeholder: "+234 801 234 5678", 
+    endpoint: "/api/user/phone",
+    icon: Phone,
+    category: "contact"
+  },
+  { 
+    key: "country", 
+    label: "Country", 
+    placeholder: "Select country", 
+    endpoint: "/api/user/country",
+    icon: Globe,
+    category: "location"
+  },
+  { 
+    key: "state", 
+    label: "State/Region", 
+    placeholder: "Enter state or region", 
+    endpoint: "/api/user/state",
+    icon: MapPin,
+    category: "location"
+  },
+];
 
 const AddDetails = () => {
-  const { theme } = useTheme();
-  const { token } = useAuth();
+  // Mock theme context for demo
+  const [theme, setTheme] = useState("light");
   const isDark = theme === "dark";
 
-  const [country, setCountry] = useState("");
-  const [stateRegion, setStateRegion] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [socials, setSocials] = useState({
-    telegram: "",
-    x: "",
-    instagram: "",
-    discord: "",
-    facebook: "",
-  });
-  const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null);
+  const [values, setValues] = useState({});
+  const [status, setStatus] = useState({}); // idle | saving | success | error
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch user data on mount
-  useEffect(() => {
-    const fetchUser = async () => {
-      setLoading(true);
-      try {
-        const res = await axios.get("https://gocoin.onrender.com/api/users/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const u = res.data.user;
-        setUser(u);
-        setCountry(u.country || "");
-        setStateRegion(u.stateRegion || u.state || "");
-        setPhoneNumber(u.phoneNumber || "");
-        setSocials({
-          telegram: u.telegram || "",
-          x: u.x || "",
-          instagram: u.instagram || "",
-          discord: u.discord || "",
-          facebook: u.facebook || "",
-        });
-      } catch (err) {
-        toast.error("Failed to load user details");
-      } finally {
-        setLoading(false);
+  const handleBlur = async (field) => {
+    if (!values[field.key]) return;
+
+    try {
+      setStatus((prev) => ({ ...prev, [field.key]: "saving" }));
+      
+      // Mock API call - replace with your actual API endpoint
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      setStatus((prev) => ({ ...prev, [field.key]: "success" }));
+
+      // Reset after 2s
+      setTimeout(() => {
+        setStatus((prev) => ({ ...prev, [field.key]: "idle" }));
+      }, 2000);
+    } catch (err) {
+      setStatus((prev) => ({ ...prev, [field.key]: "error" }));
+      // Reset error after 3s
+      setTimeout(() => {
+        setStatus((prev) => ({ ...prev, [field.key]: "idle" }));
+      }, 3000);
+    }
+  };
+
+  const handleSaveAll = async () => {
+    setIsLoading(true);
+    try {
+      // Mock API calls - replace with your actual API endpoints
+      const fieldsToSave = fields.filter(field => values[field.key]);
+      
+      for (let field of fieldsToSave) {
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
-    };
-    fetchUser();
-    // eslint-disable-next-line
-  }, []);
-
-  const handleSocialChange = (e) => {
-    setSocials({ ...socials, [e.target.name]: e.target.value });
-  };
-
-  // Update country
-  const handleCountrySubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await axios.post(
-        "https://gocoin.onrender.com/api/auth/update-country",
-        { country },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      toast.success(res.data.message);
-      setUser((prev) => ({ ...prev, country }));
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to update country");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Update state/region
-  const handleStateSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await axios.post(
-        "https://gocoin.onrender.com/api/users/me/state",
-        { state: stateRegion },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      toast.success(res.data.message || "State updated");
-      setUser((prev) => ({ ...prev, stateRegion }));
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to update state");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Update phone
-  const handlePhoneSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await axios.post(
-        "https://gocoin.onrender.com/api/users/me/phone",
-        { phoneNumber },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      toast.success(res.data.message);
-      setUser((prev) => ({ ...prev, phoneNumber }));
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to update phone number");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Update socials (each field separately)
-  const handleSocialUpdate = async (e) => {
-    const { name, value } = e.target;
-    setSocials((prev) => ({ ...prev, [name]: value }));
-    // Update immediately on change
-    setLoading(true);
-    let url = "";
-    let body = {};
-    switch (name) {
-      case "telegram":
-        url = "https://gocoin.onrender.com/api/users/me/socials/telegram";
-        body = { telegram: value };
-        break;
-      case "x":
-        url = "https://gocoin.onrender.com/api/users/me/socials/x";
-        body = { x: value };
-        break;
-      case "instagram":
-        url = "https://gocoin.onrender.com/api/users/me/socials/instagram";
-        body = { instagram: value };
-        break;
-      case "discord":
-        url = "https://gocoin.onrender.com/api/users/me/socials/discord";
-        body = { discord: value };
-        break;
-      case "facebook":
-        url = "https://gocoin.onrender.com/api/users/me/socials/facebook";
-        body = { facebook: value };
-        break;
-      default:
-        setLoading(false);
-        return;
-    }
-    try {
-      const res = await axios.post(url, body, {
-        headers: { Authorization: `Bearer ${token}` },
+      
+      // Show success for all fields
+      const successStatus = {};
+      fields.forEach(field => {
+        if (values[field.key]) {
+          successStatus[field.key] = "success";
+        }
       });
-      toast.success(res.data.message || `${name} updated`);
-      setUser((prev) => ({ ...prev, [name]: value }));
+      setStatus(successStatus);
+
+      // Reset after 2s
+      setTimeout(() => {
+        setStatus({});
+      }, 2000);
     } catch (err) {
-      toast.error(err.response?.data?.message || `Failed to update ${name}`);
+      console.error("Error saving profile:", err);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
+
+  const groupedFields = {
+    social: fields.filter(f => f.category === "social"),
+    contact: fields.filter(f => f.category === "contact"),
+    location: fields.filter(f => f.category === "location")
+  };
+
+  const getStatusIcon = (fieldKey) => {
+    const currentStatus = status[fieldKey];
+    switch (currentStatus) {
+      case "saving":
+        return <Loader2 className="animate-spin text-orange-500" size={20} />;
+      case "success":
+        return <CheckCircle className="text-green-500" size={20} />;
+      case "error":
+        return (
+          <div className="flex items-center gap-1">
+            <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+            <span className="text-red-500 text-xs font-medium">Failed</span>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const containerStyle = `min-h-screen ${
+    isDark 
+      ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900" 
+      : "bg-gradient-to-br from-gray-50 via-white to-gray-100"
+  }`;
+
+  const cardStyle = `${
+    isDark 
+      ? "bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700" 
+      : "bg-white border-gray-200"
+  } backdrop-blur-sm shadow-lg rounded-2xl border transition-all duration-300 hover:shadow-xl`;
+
+  const inputWrapperStyle = `relative flex items-center gap-3 ${
+    isDark 
+      ? "bg-gray-700/50 border-gray-600 focus-within:border-orange-500" 
+      : "bg-gray-50/80 border-gray-300 focus-within:border-orange-500"
+  } rounded-xl border-2 transition-all duration-200 focus-within:shadow-md`;
+
+  const inputStyle = `flex-1 bg-transparent px-4 py-3.5 text-sm font-medium focus:outline-none ${
+    isDark ? "text-white placeholder-gray-400" : "text-gray-900 placeholder-gray-500"
+  }`;
+
+  const iconStyle = `flex-shrink-0 ${
+    isDark ? "text-gray-400" : "text-gray-500"
+  } transition-colors duration-200`;
+
+  const sectionTitleStyle = `text-lg font-semibold mb-4 flex items-center gap-2 ${
+    isDark ? "text-white" : "text-gray-900"
+  }`;
+
+  const hasValues = Object.keys(values).some(key => values[key]);
 
   return (
-    <div
-      className={`min-h-screen w-full flex items-center justify-center px-2 py-6 landscape:flex-row flex-col ${isDark ? "bg-gradient-to-br from-[#0f2027] via-[#2c5364] to-[#232526] text-white" : "bg-gradient-to-br from-[#f8ffae] via-[#43cea2] to-[#185a9d] text-black"}`}
-      style={{ minHeight: '100dvh' }}
-    >
-      <div
-        className="w-full max-w-2xl mx-auto rounded-3xl shadow-2xl p-8 flex flex-col gap-8 backdrop-blur-md bg-white/10 border border-white/20"
-        style={{
-          boxShadow: isDark
-            ? '0 8px 32px 0 rgba(31, 38, 135, 0.37)'
-            : '0 8px 32px 0 rgba(67, 206, 162, 0.25)',
-        }}
-      >
-        <h2 className="text-3xl md:text-4xl font-extrabold text-center tracking-tight flex items-center justify-center gap-2">
-          <User className="inline-block text-orange-500" size={32} />
-          Complete Your Profile
-        </h2>
-        {/* Country */}
-        <form onSubmit={handleCountrySubmit} className="flex flex-col md:flex-row items-center gap-4 mb-2">
-          <label className="flex items-center gap-2 font-semibold text-lg">
-            <Globe className="text-blue-500" size={22} /> Country
-          </label>
-          <input
-            type="text"
-            className="flex-1 px-4 py-3 rounded-xl border-none shadow-inner bg-white/70 dark:bg-[#232526]/70 text-base focus:outline-none focus:ring-2 focus:ring-orange-500"
-            value={country}
-            onChange={e => setCountry(e.target.value)}
-            placeholder="e.g. Nigeria"
-            required
-          />
-          <button type="submit" className="flex items-center gap-2 bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-xl font-bold shadow-md hover:scale-105 transition-transform" disabled={loading}>
-            <Send size={18} /> {loading ? "Saving..." : "Save"}
-          </button>
-        </form>
-        {/* State/Region */}
-        <form onSubmit={handleStateSubmit} className="flex flex-col md:flex-row items-center gap-4 mb-2">
-          <label className="flex items-center gap-2 font-semibold text-lg">
-            <Globe className="text-blue-500" size={22} /> State/Region
-          </label>
-          <input
-            type="text"
-            className="flex-1 px-4 py-3 rounded-xl border-none shadow-inner bg-white/70 dark:bg-[#232526]/70 text-base focus:outline-none focus:ring-2 focus:ring-orange-500"
-            value={stateRegion}
-            onChange={e => setStateRegion(e.target.value)}
-            placeholder="e.g. Rivers State"
-            required
-          />
-          <button type="submit" className="flex items-center gap-2 bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-xl font-bold shadow-md hover:scale-105 transition-transform" disabled={loading}>
-            <Send size={18} /> {loading ? "Saving..." : "Save"}
-          </button>
-        </form>
-        {/* Phone Number */}
-        <form onSubmit={handlePhoneSubmit} className="flex flex-col md:flex-row items-center gap-4 mb-2">
-          <label className="flex items-center gap-2 font-semibold text-lg">
-            <Phone className="text-green-500" size={22} /> Phone
-          </label>
-          <input
-            type="tel"
-            className="flex-1 px-4 py-3 rounded-xl border-none shadow-inner bg-white/70 dark:bg-[#232526]/70 text-base focus:outline-none focus:ring-2 focus:ring-orange-500"
-            value={phoneNumber}
-            onChange={e => setPhoneNumber(e.target.value)}
-            placeholder="e.g. +1234567890"
-            required
-          />
-          <button type="submit" className="flex items-center gap-2 bg-gradient-to-r from-orange-400 to-pink-500 text-white px-6 py-2 rounded-xl font-bold shadow-md hover:scale-105 transition-transform" disabled={loading}>
-            <Send size={18} /> {loading ? "Saving..." : "Save"}
-          </button>
-        </form>
-        {/* Socials */}
-        <div className="flex flex-col gap-4">
-          <label className="flex items-center gap-2 font-semibold text-lg">
-            <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Socials</span>
-          </label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="flex items-center gap-2 bg-white/60 dark:bg-[#232526]/60 rounded-xl px-3 py-2">
-              <TelegramIcon />
-              <input type="text" name="telegram" value={socials.telegram} onChange={handleSocialUpdate} placeholder="Telegram" className="flex-1 bg-transparent outline-none text-base" />
+    <div className={containerStyle}>
+      <div className="max-w-6xl mx-auto p-4 md:p-8">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-4 mb-2">
+            <button className={`p-2 rounded-xl ${
+              isDark ? "bg-gray-800 hover:bg-gray-700" : "bg-white hover:bg-gray-50"
+            } border ${
+              isDark ? "border-gray-700" : "border-gray-200"
+            } transition-colors duration-200`}>
+              <ArrowLeft size={20} className={isDark ? "text-gray-300" : "text-gray-600"} />
+            </button>
+            <div>
+              <h1 className={`text-2xl md:text-3xl font-bold ${
+                isDark ? "text-white" : "text-gray-900"
+              }`}>
+                Edit Profile
+              </h1>
+              <p className={`text-sm ${
+                isDark ? "text-gray-400" : "text-gray-600"
+              } mt-1`}>
+                Step 3/5 • Complete your profile information
+              </p>
             </div>
-            <div className="flex items-center gap-2 bg-white/60 dark:bg-[#232526]/60 rounded-xl px-3 py-2">
-              <Twitter className="text-blue-400" size={20} />
-              <input type="text" name="x" value={socials.x} onChange={handleSocialUpdate} placeholder="X (Twitter)" className="flex-1 bg-transparent outline-none text-base" />
+          </div>
+          <div className="flex items-center gap-2 mt-4">
+            <div className="h-2 bg-orange-500 rounded-full flex-1 max-w-xs"></div>
+            <span className={`text-xs font-medium ${
+              isDark ? "text-gray-400" : "text-gray-600"
+            }`}>
+              60% Complete
+            </span>
+          </div>
+        </div>
+
+        {/* Social Media Section */}
+        <div className={`${cardStyle} p-6 md:p-8 mb-6`}>
+          <h2 className={sectionTitleStyle}>
+            <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
+              <Edit3 size={18} className="text-orange-600 dark:text-orange-400" />
             </div>
-            <div className="flex items-center gap-2 bg-white/60 dark:bg-[#232526]/60 rounded-xl px-3 py-2">
-              <Instagram className="text-pink-500" size={20} />
-              <input type="text" name="instagram" value={socials.instagram} onChange={handleSocialUpdate} placeholder="Instagram" className="flex-1 bg-transparent outline-none text-base" />
+            Social Media Accounts
+          </h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            {groupedFields.social.map((field) => {
+              const Icon = field.icon;
+              return (
+                <div key={field.key} className="space-y-2">
+                  <label className={`block text-sm font-semibold ${
+                    isDark ? "text-gray-300" : "text-gray-700"
+                  }`}>
+                    {field.label}
+                  </label>
+                  <div className={inputWrapperStyle}>
+                    <Icon size={18} className={iconStyle} />
+                    <input
+                      type="text"
+                      placeholder={field.placeholder}
+                      value={values[field.key] || ""}
+                      onChange={(e) => setValues({ ...values, [field.key]: e.target.value })}
+                      onBlur={() => handleBlur(field)}
+                      className={inputStyle}
+                    />
+                    <div className="flex-shrink-0 w-6 flex justify-center">
+                      {getStatusIcon(field.key)}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Contact & Location Section */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* Contact Information */}
+          <div className={`${cardStyle} p-6 md:p-8`}>
+            <h2 className={sectionTitleStyle}>
+              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                <Phone size={18} className="text-blue-600 dark:text-blue-400" />
+              </div>
+              Contact Information
+            </h2>
+            <div className="space-y-6">
+              {groupedFields.contact.map((field) => {
+                const Icon = field.icon;
+                return (
+                  <div key={field.key} className="space-y-2">
+                    <label className={`block text-sm font-semibold ${
+                      isDark ? "text-gray-300" : "text-gray-700"
+                    }`}>
+                      {field.label}
+                    </label>
+                    <div className={inputWrapperStyle}>
+                      <Icon size={18} className={iconStyle} />
+                      <input
+                        type="text"
+                        placeholder={field.placeholder}
+                        value={values[field.key] || ""}
+                        onChange={(e) => setValues({ ...values, [field.key]: e.target.value })}
+                        onBlur={() => handleBlur(field)}
+                        className={inputStyle}
+                      />
+                      <div className="flex-shrink-0 w-6 flex justify-center">
+                        {getStatusIcon(field.key)}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-            <div className="flex items-center gap-2 bg-white/60 dark:bg-[#232526]/60 rounded-xl px-3 py-2">
-              <input type="text" name="discord" value={socials.discord} onChange={handleSocialUpdate} placeholder="Discord" className="flex-1 bg-transparent outline-none text-base" />
-            </div>
-            <div className="flex items-center gap-2 bg-white/60 dark:bg-[#232526]/60 rounded-xl px-3 py-2">
-              <Facebook className="text-blue-700" size={20} />
-              <input type="text" name="facebook" value={socials.facebook} onChange={handleSocialUpdate} placeholder="Facebook" className="flex-1 bg-transparent outline-none text-base" />
+          </div>
+
+          {/* Location Information */}
+          <div className={`${cardStyle} p-6 md:p-8`}>
+            <h2 className={sectionTitleStyle}>
+              <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                <Globe size={18} className="text-green-600 dark:text-green-400" />
+              </div>
+              Location Details
+            </h2>
+            <div className="space-y-6">
+              {groupedFields.location.map((field) => {
+                const Icon = field.icon;
+                return (
+                  <div key={field.key} className="space-y-2">
+                    <label className={`block text-sm font-semibold ${
+                      isDark ? "text-gray-300" : "text-gray-700"
+                    }`}>
+                      {field.label}
+                    </label>
+                    <div className={inputWrapperStyle}>
+                      <Icon size={18} className={iconStyle} />
+                      <input
+                        type="text"
+                        placeholder={field.placeholder}
+                        value={values[field.key] || ""}
+                        onChange={(e) => setValues({ ...values, [field.key]: e.target.value })}
+                        onBlur={() => handleBlur(field)}
+                        className={inputStyle}
+                      />
+                      <div className="flex-shrink-0 w-6 flex justify-center">
+                        {getStatusIcon(field.key)}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
-        {/* Show current values */}
-        {user && (
-          <div className="mt-6 text-sm text-center">
-            <div className="mb-1">Current Country: <span className="font-semibold">{user.country || "-"}</span></div>
-            <div className="mb-1">Current State/Region: <span className="font-semibold">{user.stateRegion || user.state || "-"}</span></div>
-            <div className="mb-1">Current Phone: <span className="font-semibold">{user.phoneNumber || "-"}</span></div>
-            <div className="mb-1">Telegram: <span className="font-semibold">{user.telegram || "-"}</span></div>
-            <div className="mb-1">X: <span className="font-semibold">{user.x || "-"}</span></div>
-            <div className="mb-1">Instagram: <span className="font-semibold">{user.instagram || "-"}</span></div>
-            <div className="mb-1">Discord: <span className="font-semibold">{user.discord || "-"}</span></div>
-            <div className="mb-1">Facebook: <span className="font-semibold">{user.facebook || "-"}</span></div>
+
+        {/* Action Buttons */}
+        <div className="sticky bottom-4 mt-8 flex flex-col sm:flex-row gap-4 justify-between items-center">
+          <div className={`text-sm ${
+            isDark ? "text-gray-400" : "text-gray-600"
+          }`}>
+            {hasValues ? "Changes will be saved automatically" : "Fill in your details to continue"}
           </div>
-        )}
+          
+          <div className="flex gap-3 w-full sm:w-auto">
+            <button className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+              isDark 
+                ? "bg-gray-700 hover:bg-gray-600 text-white border border-gray-600" 
+                : "bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-300"
+            } flex-1 sm:flex-none`}>
+              Skip for now
+            </button>
+            
+            <button
+              onClick={handleSaveAll}
+              disabled={!hasValues || isLoading}
+              className={`px-8 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 flex-1 sm:flex-none ${
+                hasValues && !isLoading
+                  ? "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                  : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+              }`}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="animate-spin" size={18} />
+                  Saving...
+                </>
+              ) : (
+                "Continue"
+              )}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default AddDetails;
-// Custom SVG for Telegram (since Lucide doesn't have one)
-function TelegramIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="12" cy="12" r="12" fill="#229ED9" />
-      <path d="M17.5 7.5L15.5 16.5C15.5 16.5 15.25 17.25 14.5 17.25C13.75 17.25 10.25 14.5 10.25 14.5L8.5 13.75L6.75 13.25C6.75 13.25 6.25 13 6.5 12.5C6.75 12 10.5 8.5 10.5 8.5C10.5 8.5 11 8 11.5 8C12 8 16.5 7.25 16.5 7.25C16.5 7.25 17.75 7 17.5 7.5Z" fill="white" />
-    </svg>
-  );
-}

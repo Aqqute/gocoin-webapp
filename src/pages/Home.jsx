@@ -14,6 +14,7 @@ import { useAuth } from "../contexts/AuthContext";
 import GoLogo from "../../public/images/GoLogo.png";
 import Step2 from "../../public/images/Step2.png";
 import { FileQuestion, FileText } from "lucide-react";
+import BaseLayout from "../components/Layout";
 
 const Home = () => {
   const [activeFilter, setActiveFilter] = useState("All");
@@ -485,18 +486,22 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Mobile Layout */}
-      <div className="lg:hidden">
+    <BaseLayout>
+      <div
+        className={`min-h-screen flex flex-col ${
+          isDark ? "bg-black text-white" : "bg-white text-black"
+        }`}
+      >
         <Header />
         <div className="h-22" />
 
         {/* Filters */}
         <div className="w-full mb-4 overflow-x-auto hide-scrollbar sm:overflow-visible">
-          <div className="flex justify-center space-x-2 min-w-max px-4 sm:px-0 sm:flex-wrap">
+          <div className="flex space-x-2 min-w-max px-4 sm:px-0 sm:flex-wrap sm:justify-center">
             {filters.map((filter) => (
               <button
                 key={filter}
-                onClick={() => setActiveFilter(filter)}
+                onClick={() => handleFilterChange(filter)}
                 className={`px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                   activeFilter === filter
                     ? "bg-gray-200 border border-orange-500 text-orange-500"
@@ -511,12 +516,17 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Tasks */}
+        {/* Task Timeline */}
         <div className="px-4 pb-32 w-full">
           <h2 className="text-left text-base font-bold mb-4">Task Timeline</h2>
+
           {loading ? (
-            <div className="flex justify-center mt-20">
-              <div className="w-20 h-20 rounded-full border-[6px] border-orange-500 border-t-transparent animate-spin flex items-center justify-center">
+            <div
+              className={`flex items-center justify-center ${
+                isDark ? "bg-black" : "bg-white"
+              }`}
+            >
+              <div className="w-20 h-20 mt-20 rounded-full border-[6px] border-orange-500 border-t-transparent animate-spin flex items-center justify-center">
                 <img
                   src={GoLogo}
                   alt="Logo"
@@ -524,6 +534,7 @@ const Home = () => {
                 />
               </div>
             </div>
+
           ) : !isAuthenticated ? (
             <div className="text-center mt-20">
               <FileQuestion size={48} className="mx-auto mb-3 text-gray-400" />
@@ -538,7 +549,9 @@ const Home = () => {
               <h3 className="text-lg font-semibold">No tasks found</h3>
             </div>
           ) : (
-            <div className="grid gap-3">
+
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 w-full">
+
               {filteredActivities.map((activity) => (
                 <div
                   key={activity._id}
@@ -547,18 +560,22 @@ const Home = () => {
                     isDark ? "bg-[#2a2a2a]" : "bg-white"
                   }`}
                 >
-                  <h3 className="text-left font-semibold mb-1">
-                    {activity.campaignTopic}
+
+                  <h3 className="font-semibold text-left mb-1">
+                    {activity.campaignTopic || "Untitled Task"}
                   </h3>
                   <p
-                    className={`text-xs mb-4 text-left ${
+                    className={`text-xs text-left mb-4 ${
+
                       isDark ? "text-gray-300" : "text-gray-800"
                     }`}
                   >
                     {activity.description.split(".")[0] || "N/A"}
                   </p>
                   <div className="flex gap-1 items-center">
-                    <div className="w-6 h-6  p-1 shadow-md">
+
+                    <div className="w-6 h-6 rounded-full bg-white p-1 shadow-md">
+
                       <img
                         src={GoLogo}
                         alt="Go Logo"
@@ -581,9 +598,12 @@ const Home = () => {
             </div>
           )}
         </div>
+
+
         <Navbar />
       </div>
-    </div>
+    </BaseLayout>
+
   );
 };
 

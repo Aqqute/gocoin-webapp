@@ -32,6 +32,7 @@ const Signup = ({ stepOverride }) => {
     email: "",
     password: "",
     confirmPassword: "",
+    referralCode: "", // Optional referral code
     emailCode: "",
     interests: [],
     country: "",
@@ -57,7 +58,7 @@ const Signup = ({ stepOverride }) => {
 
   const handleNext = async () => {
     if (step === 1) {
-      const { username, email, password, confirmPassword } = formData;
+      const { username, email, password, confirmPassword, referralCode } = formData;
       if (!username || !email || !password || password !== confirmPassword) {
         toast.error("Please complete all fields correctly.");
         return;
@@ -65,13 +66,17 @@ const Signup = ({ stepOverride }) => {
 
       setLoading(true);
       try {
+        const signupPayload = {
+          username,
+          email,
+          password,
+        };
+        if (referralCode) {
+          signupPayload.referralCode = referralCode;
+        }
         const response = await axios.post(
           "https://gocoin.onrender.com/api/auth/signup",
-          {
-            username,
-            email,
-            password,
-          }
+          signupPayload
         );
 
         setUserId(response.data.userId);
@@ -296,6 +301,15 @@ const Signup = ({ stepOverride }) => {
                 {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
+            {/* Optional Referral Code Field */}
+            <input
+              type="text"
+              name="referralCode"
+              placeholder="Referral code (optional)"
+              value={formData.referralCode}
+              onChange={handleChange}
+              className={`w-full mb-2 px-4 py-3 rounded-md ${inputBg} text-sm outline-none border ${borderColor}`}
+            />
             {error && <p className="text-xs text-red-500 mb-2">{error}</p>}
             <button
               onClick={(e) => {
