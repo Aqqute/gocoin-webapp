@@ -212,21 +212,21 @@ const AddDetails = () => {
               }`}>
                 Edit Profile
               </h1>
-              <p className={`text-sm ${
+              {/* <p className={`text-sm ${
                 isDark ? "text-gray-400" : "text-gray-600"
               } mt-1`}>
                 Step 3/5 • Complete your profile information
-              </p>
+              </p> */}
             </div>
           </div>
-          <div className="flex items-center gap-2 mt-4">
+          {/* <div className="flex items-center gap-2 mt-4">
             <div className="h-2 bg-orange-500 rounded-full flex-1 max-w-xs"></div>
             <span className={`text-xs font-medium ${
               isDark ? "text-gray-400" : "text-gray-600"
             }`}>
               60% Complete
             </span>
-          </div>
+          </div> */}
         </div>
 
         {/* Social Media Section */}
@@ -355,13 +355,13 @@ const AddDetails = () => {
           </div>
           
           <div className="flex gap-3 w-full sm:w-auto">
-            <button className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+            {/* <button className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
               isDark 
                 ? "bg-gray-700 hover:bg-gray-600 text-white border border-gray-600" 
                 : "bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-300"
             } flex-1 sm:flex-none`}>
               Skip for now
-            </button>
+            </button> */}
             
             <button
               onClick={handleSaveAll}

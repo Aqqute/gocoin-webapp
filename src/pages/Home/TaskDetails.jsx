@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
-
+import  GoLogo  from '../../../public/images/GoLogo.png';
 import { ArrowLeft, FileText, X } from "lucide-react";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
@@ -219,8 +219,8 @@ const TaskDetail = () => {
                           formData,
                           {
                             headers: {
-                              Authorization: `Bearer ${token}`,
-                              "Content-Type": "multipart/form-data",
+                              Authorization: `Bearer ${token}`
+                              // Do NOT set Content-Type manually for FormData; browser will set it with boundary
                             },
                           }
                         );
