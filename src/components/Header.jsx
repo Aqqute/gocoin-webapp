@@ -1,9 +1,8 @@
 import React from "react";
-
 import { Flame, Bell } from "lucide-react";
 import Search from "./Search";
 import { useTheme } from "../contexts/ThemeContext";
-import GoLogo from "../../public/images/GoLogo.png"; // Adjust the path as necessary
+import GoLogo from "../../public/images/GoLogo.png"; 
 const Header = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -21,7 +20,7 @@ const Header = () => {
         <div className="flex items-center gap-2">
           <img src={GoLogo} alt="GoCoin Logo" width={30} height={40} />
           <h1
-            className={`font-semibold font-mono text-xl ${
+            className={`font-semibold font-mono text-3xl ${
               isDark ? "text-white" : "text-black"
             }`}
           >
