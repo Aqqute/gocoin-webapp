@@ -10,7 +10,7 @@ export default function SideBar() {
   const links = [
     { name: "Home", icon: Home2, route:"/" },
     { name: "Wallet", icon: Wallet, route:"/wallet" },
-    { name: "Leaderboard", icon: Ranking, route:"/board" },
+    // { name: "Leaderboard", icon: Ranking, route:"/board" },
     { name: "Profile", icon: Profile, route:"/profile" },
   ];
 
