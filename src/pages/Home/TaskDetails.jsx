@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
-import  GoLogo  from '../../../public/images/GoLogo.png';
+// import  GoLogo  from '../../../public/images/GoLogo.png';
 import { ArrowLeft, FileText, X } from "lucide-react";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
