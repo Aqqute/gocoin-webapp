@@ -17,7 +17,7 @@ import {
   SlidersHorizontal,
   Plus,
   Search as SearchIcon,
-   FileText,  
+  FileText,
 } from "lucide-react";
 
 const Home = () => {
@@ -28,6 +28,7 @@ const Home = () => {
   const [query, setQuery] = useState("");
   const [showSubmit, setShowSubmit] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const [file, setFile] = useState(null);
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const navigate = useNavigate();
@@ -38,27 +39,27 @@ const Home = () => {
     []
   );
   const getButtonLabel = (type) => {
-  switch (type?.toLowerCase()) {
-    case "social_media":
-      return "Link Social Media";
-    case "content_creation":
-      return "Create Content";
-    case "app_download_reviews":
-      return "Download App";
-    case "survey_polls":
-      return "Answer Survey Questions";
-    case "watch_video":
-      return "Watch Video";
-    case "email_subscription":
-      return "Subscribe via Email";
-    case "product_testing":
-      return "Start Product Testing";
-    case "join_community":
-      return "Join Community";
-    default:
-      return "Start Task";
-  }
-};
+    switch (type?.toLowerCase()) {
+      case "social_media":
+        return "Link Social Media";
+      case "content_creation":
+        return "Create Content";
+      case "app_download_reviews":
+        return "Download App";
+      case "survey_polls":
+        return "Answer Survey Questions";
+      case "watch_video":
+        return "Watch Video";
+      case "email_subscription":
+        return "Subscribe via Email";
+      case "product_testing":
+        return "Start Product Testing";
+      case "join_community":
+        return "Join Community";
+      default:
+        return "Start Task";
+    }
+  };
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -105,26 +106,17 @@ const Home = () => {
         // --- Screenshot submission flow ---
         if (!file) return toast.error("Please upload a screenshot");
 
-        // Upload to Cloudinary
+        // Send file directly to backend as form-data
         const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", "your_unsigned_preset");
+        formData.append("submissionData", file);
 
-        const cloudinaryRes = await axios.post(
-          "https://api.cloudinary.com/v1_1/dg8arrtyn/image/upload",
-          formData
-        );
-
-        const fileUrl = cloudinaryRes.data.secure_url;
-
-        //  Send URL to backend
         await axios.post(
           `https://gocoin.onrender.com/api/tasks/${selectedTask._id}/submit`,
-          { submissionData: fileUrl },
+          formData,
           {
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+              // Do NOT set Content-Type manually for FormData; browser will set it with boundary
             },
           }
         );
@@ -266,7 +258,7 @@ const Home = () => {
                   isDark
                     ? "border-orange-500 text-orange-400"
                     : "border-orange-500 text-orange-500"
-                } bg-orange-500  text-white hover:opacity-90`}
+                } bg-orange-500  text-white hover:opacity-90`}
               >
                 <Plus size={18} />
                 Create Task
@@ -448,34 +440,34 @@ const Home = () => {
                         ) : (
                           // FILE SUBMISSION UI
                           <>
-                            {/* <h3 className="font-medium text-lg mb-2">
-                            Submit Screenshot
-                          </h3> */}
+                            <h3 className="font-medium text-lg mb-2">
+                              Submit Screenshot
+                            </h3>
                             <p
-                              className={`font-medium text-lg mb-3 ${
+                              className={`text-xs mb-3 ${
                                 isDark ? "text-white" : "text-black"
                               }`}
                             >
-                              Coming Soon
+                              Upload a screenshot as proof to receive your reward.
                             </p>
 
-                            {/* <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => setFile(e.target.files[0])}
-                            className="w-full mb-3 text-sm"
-                          /> */}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => setFile(e.target.files[0])}
+                              className="w-full mb-3 text-sm"
+                            />
 
-                            {/* Preview uploaded file
-                          {file && (
-                            <div className="mb-3">
-                              <img
-                                src={URL.createObjectURL(file)}
-                                alt="Preview"
-                                className="w-full h-40 object-cover rounded-lg shadow"
-                              />
-                            </div>
-                          )} */}
+                            {/* Preview uploaded file */}
+                            {file && (
+                              <div className="mb-3">
+                                <img
+                                  src={URL.createObjectURL(file)}
+                                  alt="Preview"
+                                  className="w-full h-40 object-cover rounded-lg shadow"
+                                />
+                              </div>
+                            )}
 
                             <button
                               onClick={handleSubmit}
@@ -489,12 +481,18 @@ const Home = () => {
                     )}
                   </>
                 ) : (
-                  <div className="flex flex-1 items-center justify-center">
+                  <div className="flex flex-col items-center justify-center h-full">
                     <img
                       src={Step2}
-                      alt="Tasks"
-                      className="w-[300px] h-[300px]"
+                      alt="Select a task"
+                      className="w-2/3 object-contain"
                     />
+                    <h3 className="mt-6 font-semibold text-center">
+                      Select a Task to View Details
+                    </h3>
+                    <p className="text-sm text-center text-gray-500 dark:text-gray-400 mt-2">
+                      Choose any task from the left to see its instructions and rewards.
+                    </p>
                   </div>
                 )}
               </div>
@@ -502,7 +500,7 @@ const Home = () => {
           </div>
         </div>
 
-        {/* ====== MOBILE (<1024px) ====== */}
+        {/* Mobile (<=1023px) */}
         <div className="lg:hidden flex flex-col min-h-screen">
           <Header />
 
