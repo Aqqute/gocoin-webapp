@@ -37,16 +37,16 @@ export default function BaseLayout({
         </div>
         {/* fire icon and count */}
         <div className="gap-2 md:w-[111px] flex items-center">
-            <div className="h-8 w-[71px] rounded-[20px] border border-[#DBDBDB] py-1 px-2 bg-[#F3F4F6] flex justify-center items-center gap-2">
+            {/* <div className="h-8 w-[71px] rounded-[20px] border border-[#DBDBDB] py-1 px-2 bg-[#F3F4F6] flex justify-center items-center gap-2">
                 <Icon icon={"bi:fire"} color="#F69626" />
                 <span className="text-sm font-bold text-[#393A3F] leading-[23px]">20</span>
-            </div>
+            </div> */}
 
             {/* notification */}
-            <div className="relative cursor-pointer">
+            {/* <div className="relative cursor-pointer">
                 <Notification size={25} color="#393A3F" variant="Linear" /> 
                 <div className="h-2.5 w-2.5 bg-[#C70030] rounded-[8px] border border-white absolute top-0 right-0"></div>
-            </div>
+            </div> */}
 
             {/* menu icon on mobile */}
             {/* <div onClick={openMobile}>
