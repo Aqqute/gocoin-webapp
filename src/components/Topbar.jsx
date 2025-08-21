@@ -48,8 +48,8 @@ const Topbar = () => {
             isDark ? "bg-[#2a2a2a]" : "bg-gray-200"
           }`}
         >
-          <Flame className="text-orange-500" size={18} />
-          <span className={`ml-1 ${textColor}`}>20</span>
+          {/* <Flame className="text-orange-500" size={18} />
+          <span className={`ml-1 ${textColor}`}>20</span> */}
         </div>
 
         <div className="relative">

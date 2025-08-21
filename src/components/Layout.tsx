@@ -40,6 +40,7 @@ export default function BaseLayout({
         {/* fire icon and count */}
         <div className="gap-2 md:w-[111px] flex items-center">
 
+
          <div className="flex items-center gap-6 relative">
                    <div className={`rounded-full flex py-1 px-2 text-sm font-medium ${isDark ? "bg-[#2a2a2a]" : "bg-gray-300"}`}>
                      <Flame className="text-orange-500" size={20} />

@@ -7,9 +7,11 @@ import GoLogo from "../../public/images/GoLogo.png";
 export default function SideBar() {
   // links array
   const links = [
+
     { name: "Home", icon: Home2, route: "/" },
     { name: "Wallet", icon: Wallet, route: "/wallet" },
     { name: "Profile", icon: Profile, route: "/profile" },
+
   ];
 
   const { mobileOpen, closeMobile } = useSidebar();

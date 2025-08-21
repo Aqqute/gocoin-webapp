@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
-
+// import  GoLogo  from '../../../public/images/GoLogo.png';
 import { ArrowLeft, FileText, X } from "lucide-react";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
@@ -193,13 +193,20 @@ const TaskDetail = () => {
                 ) : (
                   // FILE SUBMISSION UI
                   <>
-                    <p
-                      className={`font-medium text-lg mb-3 ${
-                        isDark ? "text-white" : "text-black"
-                      }`}
-                    >
-                      Coming Soon
-                    </p>
+                    <label className="block mb-2 font-medium text-sm">
+                      Upload Screenshot (PNG only, 2MB max)
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/png"
+                      onChange={handleFileChange}
+                      className="mb-3 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
+                    />
+                    {file && (
+                      <div className="mb-2 text-xs text-green-600">
+                        Selected: {file.name}
+                      </div>
+                    )}
                   </>
                 )}
 
@@ -234,8 +241,8 @@ const TaskDetail = () => {
                           formData,
                           {
                             headers: {
-                              Authorization: `Bearer ${token}`,
-                              "Content-Type": "multipart/form-data",
+                              Authorization: `Bearer ${token}`
+                              // Do NOT set Content-Type manually for FormData; browser will set it with boundary
                             },
                           }
                         );
