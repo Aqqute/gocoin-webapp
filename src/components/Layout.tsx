@@ -4,6 +4,8 @@ import { SidebarProvider } from "../contexts/SidebarContext";
 import { Icon } from "@iconify/react";
 import { SearchNormal, Notification, Filter, Menu } from "iconsax-react";
 import { useTheme } from "../contexts/ThemeContext";
+import { Flame, Bell } from "lucide-react";
+
 
 
 function Heading({ heading }) {
@@ -24,30 +26,35 @@ export default function BaseLayout({
     <SidebarProvider>
         <div className="flex min-h-screen flex-col md:flex-row">
         {/* Sidebar */}
-        <div className="w-[254px] flex-none transition-all duration-300 ease-in-out shadow-sm">
+        <div className="w-[240px] flex-none transition-all duration-300 ease-in-out shadow-sm">
             <Sidebar />
         </div>
 
         {/* Main content */}
         <section className="flex-grow flex flex-col overflow-hidden">
             {/* nav */}
-            <nav className={`h-[89px] w-full p-4 flex justify-between items-center sticky top-0 ${isDark ? 'bg-black' : 'bg-white'}`}>
+            <nav className={` w-full p-4 flex justify-between items-center sticky top-0 ${isDark ? 'bg-black' : 'bg-white'}`}>
         <div className="flex items-center gap-20">
-            <Heading heading="Dashboard" />
+            {/* <Heading heading="Dashboard" /> */}
         </div>
         {/* fire icon and count */}
         <div className="gap-2 md:w-[111px] flex items-center">
-            <div className="h-8 w-[71px] rounded-[20px] border border-[#DBDBDB] py-1 px-2 bg-[#F3F4F6] flex justify-center items-center gap-2">
-                <Icon icon={"bi:fire"} color="#F69626" />
-                <span className="text-sm font-bold text-[#393A3F] leading-[23px]">20</span>
-            </div>
 
-            {/* notification */}
-            <div className="relative cursor-pointer">
-                <Notification size={25} color="#393A3F" variant="Linear" /> 
-                <div className="h-2.5 w-2.5 bg-[#C70030] rounded-[8px] border border-white absolute top-0 right-0"></div>
-            </div>
-
+         <div className="flex items-center gap-6 relative">
+                   <div className={`rounded-full flex py-1 px-2 text-sm font-medium ${isDark ? "bg-[#2a2a2a]" : "bg-gray-300"}`}>
+                     <Flame className="text-orange-500" size={20} />
+                     <span className={`text-sm font-medium ${isDark ? "text-white" : "text-black"}`}>
+                       20
+                     </span>
+                   </div>
+                   
+                   <div className="relative">
+                     <Bell className={isDark ? "text-gray-300" : "text-black"} size={22} />
+                     <span className="absolute -top-2 -right-2 bg-orange-500 text-white rounded-full px-1.5 text-xs">
+                       0
+                     </span>
+                   </div>
+                 </div>
             {/* menu icon on mobile */}
             {/* <div onClick={openMobile}>
                 <Menu color="gray" size={25} className="block md:hidden" variant="Outline" />

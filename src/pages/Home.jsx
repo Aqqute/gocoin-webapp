@@ -17,7 +17,7 @@ import {
   SlidersHorizontal,
   Plus,
   Search as SearchIcon,
-   FileText,  
+  FileText,
 } from "lucide-react";
 
 const Home = () => {
@@ -38,27 +38,27 @@ const Home = () => {
     []
   );
   const getButtonLabel = (type) => {
-  switch (type?.toLowerCase()) {
-    case "social_media":
-      return "Link Social Media";
-    case "content_creation":
-      return "Create Content";
-    case "app_download_reviews":
-      return "Download App";
-    case "survey_polls":
-      return "Answer Survey Questions";
-    case "watch_video":
-      return "Watch Video";
-    case "email_subscription":
-      return "Subscribe via Email";
-    case "product_testing":
-      return "Start Product Testing";
-    case "join_community":
-      return "Join Community";
-    default:
-      return "Start Task";
-  }
-};
+    switch (type?.toLowerCase()) {
+      case "social_media":
+        return "Link Social Media";
+      case "content_creation":
+        return "Create Content";
+      case "app_download_reviews":
+        return "Download App";
+      case "survey_polls":
+        return "Answer Survey Questions";
+      case "watch_video":
+        return "Watch Video";
+      case "email_subscription":
+        return "Subscribe via Email";
+      case "product_testing":
+        return "Start Product Testing";
+      case "join_community":
+        return "Join Community";
+      default:
+        return "Start Task";
+    }
+  };
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -196,11 +196,11 @@ const Home = () => {
   const Card = ({ activity, onClick }) => (
     <div
       onClick={onClick}
-      className={`rounded-3xl p-5 text-sm shadow-[0_8px_24px_rgba(0,0,0,0.06)] cursor-pointer transition hover:shadow-[0_10px_28px_rgba(0,0,0,0.09)] ${
+      className={`rounded-3xl p-4 text-sm shadow-[0_8px_24px_rgba(0,0,0,0.06)] cursor-pointer transition hover:shadow-[0_10px_28px_rgba(0,0,0,0.09)] ${
         isDark ? "bg-[#2a2a2a] text-white" : "bg-white text-black"
       }`}
     >
-      <h3 className="text-left font-semibold text-base mb-1">
+      <h3 className="text-left font-semibold text-sm mb-1">
         {activity.campaignTopic || "Untitled Task"}
       </h3>
       <p
@@ -211,7 +211,7 @@ const Home = () => {
         {activity.description?.split(".")[0] || "N/A"}
       </p>
       <div className="flex items-center gap-2">
-        <div className="w-7 h-7 rounded-full bg-white shadow-md flex items-center justify-center">
+        <div className="w-7 h-7 rounded-full  shadow-md flex items-center justify-center">
           <img src={GoLogo} alt="Go Logo" className="w-5 h-5 object-contain" />
         </div>
         <span className="font-semibold text-[15px] text-[#cc8400]">
@@ -236,10 +236,10 @@ const Home = () => {
         }`}
       >
         {/* ====== DESKTOP (>=1024px) ====== */}
-        <div className="hidden lg:flex">
-          <div className="flex-1 flex flex-col max-h-screen overflow-hidden">
-            {/* Top spacing similar to Figma container inset */}
-            <div className="px-8 flex items-center justify-between">
+        <div className="hidden lg:flex h-screen">
+          <div className="flex-1 flex flex-col overflow-hidden">
+            {/* Top bar */}
+            <div className="px-4 py-2 flex items-center justify-between">
               {/* Filters */}
               <div className="flex items-center gap-2 flex-wrap">
                 {filters.map((filter) => {
@@ -248,7 +248,7 @@ const Home = () => {
                     <button
                       key={filter}
                       onClick={() => setActiveFilter(filter)}
-                      className={`px-4 h-9 rounded-full text-sm font-medium transition-colors ${
+                      className={`px-4.5 h-6 rounded-full text-xs font-medium transition-colors ${
                         active
                           ? "border border-orange-500 text-orange-500 bg-transparent"
                           : isDark
@@ -261,30 +261,32 @@ const Home = () => {
                   );
                 })}
               </div>
+
               <button
-                className={`flex items-center gap-2 rounded-full text-sm font-medium h-9 px-4 border ${
+                className={`flex items-center gap-1 rounded-full text-xs font-medium h-8 px-3 border ${
                   isDark
                     ? "border-orange-500 text-orange-400"
                     : "border-orange-500 text-orange-500"
-                } bg-orange-500  text-white hover:opacity-90`}
+                } bg-orange-500 text-white hover:opacity-90`}
               >
-                <Plus size={18} />
+                <Plus size={14} />
                 Create Task
               </button>
             </div>
 
-            <div className="flex flex-1 overflow-y-auto px-8 pt-4 gap-8">
+            {/* Main Content */}
+            <div className="flex flex-1 overflow-hidden px-4 pt-2 gap-4">
               {/* Left column */}
-              <div className="flex-1 overflow-y-auto pr-2 hide-scrollbar">
-                <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-left text-xl font-extrabold">
+              <div className="flex-1 overflow-y-auto hide-scrollbar pr-1">
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-left text-base mb-2 font-bold">
                     Task Timeline
                   </h2>
                 </div>
 
                 {renderState() ||
                   (filteredActivities.length > 0 && (
-                    <div className="grid gap-4 pb-12">
+                    <div className="grid gap-2 pb-6">
                       {filteredActivities.map((activity) => (
                         <Card
                           key={activity._id}
@@ -296,55 +298,47 @@ const Home = () => {
                   ))}
               </div>
 
-              {/* Right illustration / details column (as in desktop figma) */}
+              {/* Right column */}
               <div
-                className={`hidden md:flex flex-col max-w-sm w-full p-6 rounded-2xl shadow-lg ${
+                className={`hidden md:flex flex-col max-w-sm w-full p-4 rounded-xl shadow-md ${
                   isDark ? "bg-black" : "bg-white"
-                } overflow-y-auto`}
-                style={{ maxHeight: "calc(100vh - 2rem)" }}
+                } overflow-y-auto hide-scrollbar`}
               >
                 {selectedTask ? (
                   <>
                     {/* Header */}
-                    <h1 className="text-lg text-left mb-1 font-semibold">
-                      Task details
+                    <h1 className="text-lg mb-2 text-left font-semibold">
+                      Task Details
                     </h1>
-                    <div className="flex justify-between items-center mb-4">
+                    <div className="flex justify-between items-center mb-3">
                       <span className="text-sm">
                         Status:{" "}
                         <span className="font-bold text-green-600">Open</span>
                       </span>
-                      <div className="flex items-center mb-6 text-sm text-gray-500 dark:text-gray-400">
-                        <div className="flex -space-x-2">
-                          <img
-                            src="https://img.freepik.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg"
-                            alt="user"
-                            className="w-6 rounded-full border"
-                          />
-                          <img
-                            src="https://img.freepik.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg"
-                            alt="user"
-                            className="w-6 rounded-full border"
-                          />
-                          <img
-                            src="https://img.freepik.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg"
-                            alt="user"
-                            className="w-6 rounded-full border"
-                          />
+                      <div className="flex items-center text-xs text-gray-500 dark:text-gray-800">
+                        <div className="flex -space-x-1">
+                          {[...Array(3)].map((_, i) => (
+                            <img
+                              key={i}
+                              src="https://img.freepik.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg"
+                              alt="user"
+                              className="w-5 h-5 rounded-full border"
+                            />
+                          ))}
                         </div>
                         <span className="ml-2">
                           {selectedTask.joined || 0}/
-                          {selectedTask.maxJoined || 30} Joined
+                          {selectedTask.maxJoined || 30}
                         </span>
                       </div>
                     </div>
 
                     {/* Campaign Topic */}
-                    <h2 className="text-lg text-left font-bold mb-2">
+                    <h2 className="text-sm text-left font-bold mb-1">
                       {selectedTask.campaignTopic}
                     </h2>
                     <p
-                      className={`mb-4 text-left text-sm ${
+                      className={`mb-3 text-left text-xs ${
                         isDark ? "text-gray-300" : "text-gray-600"
                       }`}
                     >
@@ -353,16 +347,16 @@ const Home = () => {
 
                     {/* Instructions */}
                     <div
-                      className={`p-4 rounded-xl mb-6 ${
+                      className={`p-3 text-sm text-left rounded-lg mb-4 ${
                         isDark ? "bg-[#3a3a3a]" : "bg-gray-100"
                       }`}
                     >
-                      <div className="flex items-center gap-2 mb-3">
-                        <FileText className="text-orange-500" size={20} />
+                      <div className="flex items-center gap-1 mb-2">
+                        <FileText className="text-orange-500" size={14} />
                         <h3 className="font-medium text-sm">Instructions</h3>
                       </div>
                       <ol
-                        className={`list-decimal text-left list-inside text-sm space-y-2 ${
+                        className={`list-decimal list-inside text-xs space-y-1 ${
                           isDark ? "text-white" : "text-black"
                         }`}
                       >
@@ -373,21 +367,19 @@ const Home = () => {
                     </div>
 
                     {/* Rewards */}
-                    <div className="flex justify-between">
-                      <h1 className="text-sm font-bold">Rewards:</h1>
-                      <div className="flex items-center gap-2 mb-6">
-                        <div className="flex p-1 shadow-md">
-                          <img
-                            src={GoLogo}
-                            alt="Go Logo"
-                            className="w-4 h-4 object-contain"
-                          />
-                        </div>
-                        <span className="text-[#cc8400] font-medium text-sm">
+                    <div className="flex justify-between mt-4 mb-6">
+                      <h1 className="text-xs font-bold">Rewards:</h1>
+                      <div className="flex items-center gap-1">
+                        <img
+                          src={GoLogo}
+                          alt="Go Logo"
+                          className="w-3 h-3 object-contain"
+                        />
+                        <span className="text-[#cc8400] font-medium text-xs">
                           {selectedTask.rewards?.goToken || 0}
                         </span>
                         <span
-                          className={`ml-2 text-xs ${
+                          className={`ml-1 text-[10px] ${
                             isDark ? "text-gray-400" : "text-gray-600"
                           }`}
                         >
@@ -395,7 +387,8 @@ const Home = () => {
                         </span>
                       </div>
                     </div>
-                    {/* Action Button with getButtonLabel */}
+
+                    {/* Action Button */}
                     <button
                       onClick={() => {
                         setShowSubmit(true);
@@ -403,98 +396,52 @@ const Home = () => {
                           "scroll to submit task link or screenshot"
                         );
                       }}
-                      className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 rounded-full text-sm transition mt-2"
+                      className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-1.5 rounded-full text-sm transition"
                     >
                       {getButtonLabel(selectedTask.type)}
                     </button>
 
-                    {/* Submit Section - only visible if showSubmit is true */}
+                    {/* Submit Section */}
                     {showSubmit && (
                       <div
-                        className={`p-4 mt-10 rounded-2xl ${
+                        className={`p-3 mt-6 rounded-xl ${
                           isDark ? "bg-[#3a3a3a]" : "bg-gray-100"
                         }`}
                       >
                         {selectedTask.submissionMethod === "link" ? (
-                          // LINK SUBMISSION UI
                           <>
-                            <h3 className="font-medium text-lg mb-2">
+                            <h3 className="font-medium text-sm mb-2">
                               Submit Link
                             </h3>
-                            <p
-                              className={`text-xs mb-3 ${
-                                isDark ? "text-white" : "text-black"
-                              }`}
-                            >
-                              Paste the link to the content you created to
-                              receive your reward.
-                            </p>
-
                             <input
                               type="text"
                               placeholder="Enter Link"
                               value={inputValue}
                               onChange={(e) => setInputValue(e.target.value)}
-                              className="w-full p-2 rounded-lg border mb-3 text-sm dark:bg-[#2a2a2a] dark:border-gray-600"
+                              className="w-full p-2 rounded-lg border mb-2 text-xs dark:bg-white dark:border-gray-600"
                             />
-
                             <button
                               onClick={handleSubmit}
-                              className="w-full py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm"
+                              className="w-full py-1.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-xs"
                             >
-                              Submit Link
+                              Submit
                             </button>
                           </>
                         ) : (
-                          // FILE SUBMISSION UI
-                          <>
-                            {/* <h3 className="font-medium text-lg mb-2">
-                            Submit Screenshot
-                          </h3> */}
-                            <p
-                              className={`font-medium text-lg mb-3 ${
-                                isDark ? "text-white" : "text-black"
-                              }`}
-                            >
-                              Coming Soon
-                            </p>
-
-                            {/* <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => setFile(e.target.files[0])}
-                            className="w-full mb-3 text-sm"
-                          /> */}
-
-                            {/* Preview uploaded file
-                          {file && (
-                            <div className="mb-3">
-                              <img
-                                src={URL.createObjectURL(file)}
-                                alt="Preview"
-                                className="w-full h-40 object-cover rounded-lg shadow"
-                              />
-                            </div>
-                          )} */}
-
-                            <button
-                              onClick={handleSubmit}
-                              className="w-full py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm"
-                            >
-                              Submit Screenshot
-                            </button>
-                          </>
+                          <p
+                            className={`font-medium text-xs ${
+                              isDark ? "text-white" : "text-black"
+                            }`}
+                          >
+                            Coming Soon
+                          </p>
                         )}
                       </div>
                     )}
                   </>
                 ) : (
                   <div className="flex flex-1 items-center justify-center">
-                    <img
-                      src={Step2}
-                      alt="Tasks"
-                      className="w-[300px] h-[300px]"
-                    />
+                    <img src={Step2} alt="Tasks" className="w-85 h-85" />
                   </div>
                 )}
               </div>
@@ -507,7 +454,7 @@ const Home = () => {
           <Header />
 
           {/* Filters + Create Task */}
-          <div className="px-4 mt-3">
+          <div className="px-4 mt-4">
             <div className="flex items-center justify-between">
               <div className="flex gap-2 overflow-x-auto hide-scrollbar pr-2">
                 {filters.map((filter) => {
@@ -516,7 +463,7 @@ const Home = () => {
                     <button
                       key={filter}
                       onClick={() => setActiveFilter(filter)}
-                      className={`px-4 h-9 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+                      className={`px-4 h-6 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                         active
                           ? "bg-transparent border border-orange-500 text-orange-500"
                           : isDark
@@ -531,13 +478,14 @@ const Home = () => {
               </div>
 
               <button
-                className={`ml-3 flex items-center rounded-full text-xs font-medium h-9 px-3 border ${
-                  isDark
-                    ? "border-orange-500 text-orange-400"
-                    : "border-orange-500 text-orange-500"
+                className={`ml-3 flex items-center rounded-full  font-medium h-9 px-4  ${
+                  isDark ? " text-orange-400" : " text-orange-500"
                 } bg-orange-500 text-white hover:opacity-90`}
               >
-                <Plus size={16} /> Create Task
+                <span>
+                  <Plus size={16} />
+                </span>
+                <h1 className="text-xs">Create Task</h1>
               </button>
             </div>
           </div>
