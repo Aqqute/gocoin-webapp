@@ -202,15 +202,15 @@ const GoWalletComponent = () => {
   return (
     <BaseLayout>
       {/* MOBILE VIEW */}
-      <Header />
+      {/* <Header /> */}
       <div
         className={`min-h-screen lg:hidden flex flex-col ${
           isDark ? "bg-black text-white" : "bg-[#f9f9f9] text-black"
         }`}
       >
-        <h1 className="pt-6 px-4 text-lg font-semibold">Go Wallet</h1>
+        {/* <h1 className="pt-6 px-4 text-lg font-semibold">Go Wallet</h1> */}
         {/* Balance Card */}
-        <div className="px-1 pt-6 space-y-2">
+        <div className=" space-y-2">
           <Card>
             <div className="grid grid-cols-1 gap-4">
               {wallets

@@ -37,7 +37,7 @@ export default function SideBar() {
       )}
 
       <div
-        className={`fixed top-0 left-0 h-screen w-[240px] border-r py-6 px-4 z-40 flex flex-col justify-between transition-transform duration-300 ease-in-out
+        className={`fixed top-0 left-0 h-screen w-[240px]  py-6 px-4 z-40 flex flex-col justify-between transition-transform duration-300 ease-in-out
           ${isDark ? "bg-black" : "bg-white"}
           ${
             mobileOpen ? "translate-x-0" : "-translate-x-full"
