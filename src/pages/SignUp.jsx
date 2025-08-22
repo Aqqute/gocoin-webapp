@@ -16,12 +16,12 @@ import {
   House,
 } from "lucide-react";
 
-import CoinbaseLogo from "../../public/images/coinbase.webp";
-import MetaMaskLogo from "../../public/images/MetaMask.webp";
-import TronLogo from "../../public/images/tron.png";
-import PhantomLogo from "../../public/images/phantom.jpeg";
-import TrustWalletLogo from "../../public/images/trustwallet.png";
-import SolflareLogo from "../../public/images/solflare.png";
+// import CoinbaseLogo from "../../public/images/coinbase.webp";
+// import MetaMaskLogo from "../../public/images/MetaMask.webp";
+// import TronLogo from "../../public/images/tron.png";
+// import PhantomLogo from "../../public/images/phantom.jpeg";
+// import TrustWalletLogo from "../../public/images/trustwallet.png";
+// import SolflareLogo from "../../public/images/solflare.png";
 // import { GraduationCap, Dumbbell, Gamepad, Bitcoin } from "lucide-react";
 import WelcomeModal from "../components/WelcomeModal";
 import { useAuth } from "../contexts/AuthContext";
