@@ -32,7 +32,7 @@ export default function TransactionsTable ({ data }) {
             >
               <td className="px-4 py-3 text-sm text-gray-700">{formatReadableDate(item.createdAt)}</td>
               <td className="px-4 py-3 text-sm text-gray-700">{item.type}</td>
-              <td className="px-4 py-3 text-sm text-gray-700">{item.amount}</td>
+              <td className="px-4 py-3 text-sm text-gray-700">${item.amount}</td>
               <td className="px-4 py-3 text-sm text-gray-700">{item.method}</td>
               <td className="px-4 py-3 text-sm">
                 <span
