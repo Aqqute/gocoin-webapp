@@ -15,7 +15,7 @@ export default function TransactionsTable({ data, isDark }) {
         }`}
       >
         {/* Table Head */}
-        <thead>
+        <thead className="bg-pink-400/20">
           <tr className="">
             <th className="px-4 py-3 text-sm font-medium">Date</th>
             <th className="px-4 py-3 text-sm font-medium">Type</th>
