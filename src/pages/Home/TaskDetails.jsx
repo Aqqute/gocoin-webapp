@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
-
+// import  GoLogo  from '../../../public/images/GoLogo.png';
 import { ArrowLeft, FileText, X } from "lucide-react";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 import toast from "react-hot-toast";
+import GoLogo from "../../../public/images/GoLogo.png";
 
 const getButtonLabel = (type) => {
   switch (type?.toLowerCase()) {
@@ -159,33 +160,54 @@ const TaskDetail = () => {
                 </button>
                 <h3 className="text-lg font-semibold mb-2">
                   {task.submissionMethod === "link"
-                    ? "Submit Content Link"
+                    ? ""
                     : "Submit Screenshot"}
                 </h3>
                 <p className="text-sm mb-4">
                   {task.submissionMethod === "link"
-                    ? "Paste the link to your content (e.g. YouTube, TikTok)"
+                    ? ""
                     : "Upload a screenshot (PNG only, 2MB max)."}
                 </p>
 
                 {task.submissionMethod === "link" ? (
-                  <input
-                    type="text"
-                    placeholder="https://your-content-link.com"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm"
-                  />
+                  // LINK SUBMISSION UI
+                  <>
+                    <h3 className="font-medium text-lg mb-2">Submit Link</h3>
+                    <p
+                      className={`text-xs mb-3 ${
+                        isDark ? "text-white" : "text-black"
+                      }`}
+                    >
+                      Paste the link to the content you created to receive your
+                      reward.
+                    </p>
+
+                    <input
+                      type="text"
+                      placeholder="Enter Link"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      className="w-full p-2 rounded-lg border mb-3 text-sm dark:bg-[#2a2a2a] dark:border-gray-600"
+                    />
+                  </>
                 ) : (
-                  <label className="w-full border border-dashed border-gray-400 dark:border-gray-600 rounded-xl flex items-center justify-center py-8 cursor-pointer text-center">
+                  // FILE SUBMISSION UI
+                  <>
+                    <label className="block mb-2 font-medium text-sm">
+                      Upload Screenshot (PNG only, 2MB max)
+                    </label>
                     <input
                       type="file"
                       accept="image/png"
                       onChange={handleFileChange}
-                      className="hidden"
+                      className="mb-3 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
                     />
-                    {file ? file.name : "Click to upload image"}
-                  </label>
+                    {file && (
+                      <div className="mb-2 text-xs text-green-600">
+                        Selected: {file.name}
+                      </div>
+                    )}
+                  </>
                 )}
 
                 <button
@@ -219,8 +241,8 @@ const TaskDetail = () => {
                           formData,
                           {
                             headers: {
-                              Authorization: `Bearer ${token}`,
-                              "Content-Type": "multipart/form-data",
+                              Authorization: `Bearer ${token}`
+                              // Do NOT set Content-Type manually for FormData; browser will set it with boundary
                             },
                           }
                         );

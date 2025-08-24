@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ArrowLeft, Camera } from "lucide-react";
+import { Camera } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +14,13 @@ const EditProfile = () => {
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState("");
 
-  const [formData, setFormData] = useState("");
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    country: "",
+    stateRegion: "",
+    avatar: "",
+  });
 
   const fetchUser = async () => {
     try {
@@ -27,10 +33,8 @@ const EditProfile = () => {
         }
       );
       const user = response.data.user;
-      // console.log(user._id)
 
       setUserId(user._id);
-
       setFormData({
         userId: user._id,
         username: user.username || "",
@@ -54,26 +58,20 @@ const EditProfile = () => {
     }
   }, [token]);
 
-  const handleBack = () => navigate("/profile");
-
   const handleEditImage = () => {
     toast("Profile image edit not implemented yet");
   };
 
   const handleSaveChanges = async () => {
-   
-
     try {
       setLoading(true);
-      // console.log("Saving changes with formData:", formData);
       const payload = {
         userId,
         username: formData.username,
         country: formData.country,
         email: formData.email,
+        stateRegion: formData.stateRegion,
       };
-
-      // console.log("Payload:", payload);
 
       const res = await axios.put(
         "https://gocoin.onrender.com/api/users/me/profile",
@@ -104,101 +102,109 @@ const EditProfile = () => {
 
   const handleCancel = () => navigate("/profile");
 
-  const cardStyle = `${
-    isDark ? "bg-[#2a2a2a]" : "bg-white shadow-sm"
-  } rounded-xl p-2`;
-
   return (
     <div
-      className={`h-screen flex flex-col justify-between ${
+      className={`min-h-screen flex ${
         isDark ? "bg-[#1e1e1e] text-white" : "bg-[#f9f9f9] text-black"
       }`}
     >
-      {/* Header */}
-      <div className="flex items-center px-3 pt-6 pb-3">
-        <button onClick={handleBack} className="mr-4">
-          <ArrowLeft
-            size={20}
-            className={isDark ? "text-white" : "text-black"}
-          />
-        </button>
-        <h1 className="text-base font-medium">Edit Profile</h1>
-      </div>
-
-      {/* Profile image & name */}
-      <div className="flex flex-col items-center">
-        <div className="relative">
-          <div className="w-16 h-16 bg-orange-500 rounded-full overflow-hidden">
-            <img
-              src={
-                formData.avatar?.avatar ||
-                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
-              }
-              alt="Profile"
-              className="w-full h-full object-cover"
-            />
+      {/* Left Sidebar Card */}
+      <div
+        className={`w-1/3 max-w-sm rounded-xl shadow-sm p-6 ${
+          isDark ? "bg-[#2a2a2a]" : "bg-white"
+        }`}
+      >
+        <div className="flex flex-col items-center">
+          <div className="relative">
+            <div className="w-20 h-20 bg-gray-200 rounded-full overflow-hidden">
+              <img
+                src={
+                  formData.avatar ||
+                  "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+                }
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <button
+              onClick={handleEditImage}
+              className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow"
+            >
+              <Camera size={14} className="text-black" />
+            </button>
           </div>
+          <h2 className="text-base font-semibold mt-3">{formData.username}</h2>
+          <p className="text-sm text-gray-500">{formData.email}</p>
           <button
             onClick={handleEditImage}
-            className="absolute bottom-0 right-0 bg-white rounded-full p-0.5 shadow"
+            className="mt-2 text-xs text-orange-500 hover:underline"
           >
-            <Camera size={12} className="text-black" />
+            Edit profile image
           </button>
         </div>
-
-        <h2 className="text-sm font-semibold mt-1">{formData.username}</h2>
-        <button
-          onClick={handleEditImage}
-          className="text-xs text-orange-500 hover:underline"
-        >
-          Edit profile image
-        </button>
       </div>
 
-      {/* Form fields */}
-      <div className="px-4 py-6 space-y-2">
-        {["username", "email", "country", "stateRegion"].map((field) => (
-          <div key={field} className={cardStyle}>
-            <input
-              type={field === "email" ? "email" : "text"}
-              placeholder={
-                field === "stateRegion"
-                  ? "State/Region"
-                  : field.charAt(0).toUpperCase() + field.slice(1)
-              }
-              value={formData[field]}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, [field]: e.target.value }))
-              }
-              className={`w-full bg-transparent outline-none placeholder-gray-400 text-xs ${
-                isDark ? "text-white" : "text-black"
-              }`}
-            />
-          </div>
-        ))}
-      </div>
+      {/* Right Form */}
+      <div
+        className={`flex-1 ml-6 rounded-xl shadow-sm p-6 ${
+          isDark ? "bg-[#2a2a2a]" : "bg-white"
+        }`}
+      >
+        <h2 className="text-lg font-semibold mb-6">Edit profile</h2>
+        <div className="space-y-4">
+          {[
+            { name: "username", label: "Username" },
+            { name: "email", label: "Email address", type: "email" },
+            { name: "country", label: "Country" },
+            { name: "stateRegion", label: "State/Region" },
+          ].map((field) => (
+            <div key={field.name}>
+              <label className="block text-sm font-medium mb-1">
+                {field.label}
+              </label>
+              <input
+                type={field.type || "text"}
+                value={formData[field.name]}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    [field.name]: e.target.value,
+                  }))
+                }
+                className={`w-full px-3 py-2 rounded-lg border text-sm outline-none ${
+                  isDark
+                    ? "bg-[#1e1e1e] border-gray-700 text-white"
+                    : "bg-white border-gray-300 text-black"
+                }`}
+              />
+            </div>
+          ))}
+        </div>
 
-      {/* Action buttons */}
-      <div className="px-3 space-y-2 pb-4">
-        <button
-          onClick={handleSaveChanges}
-          disabled={loading}
-          className={`w-full py-2 rounded-xl text-sm font-medium ${
-            loading ? "bg-gray-400" : "bg-orange-500 hover:bg-[#b67300]"
-          } text-white`}
-        >
-          {loading ? "Saving..." : "Save"}
-        </button>
-        <button
-          onClick={handleCancel}
-          className={`w-full py-2 text-sm font-medium rounded-xl ${
-            isDark
-              ? "text-white hover:text-gray-400"
-              : "text-black hover:text-gray-600"
-          }`}
-        >
-          Cancel
-        </button>
+        {/* Buttons */}
+        <div className="flex gap-3 mt-6">
+          <button
+            onClick={handleSaveChanges}
+            disabled={loading}
+            className={`px-6 py-2 rounded-lg text-sm font-medium ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-orange-500 hover:bg-orange-600"
+            } text-white`}
+          >
+            {loading ? "Saving..." : "Save change"}
+          </button>
+          <button
+            onClick={handleCancel}
+            className={`px-6 py-2 rounded-lg text-sm font-medium border ${
+              isDark
+                ? "border-gray-600 text-white hover:bg-gray-700"
+                : "border-gray-300 text-black hover:bg-gray-100"
+            }`}
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   );
