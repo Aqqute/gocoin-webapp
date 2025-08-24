@@ -365,13 +365,13 @@ const GoWalletComponent = () => {
         {/* quick actions */}
         <Card>
           <Heading heading={"Quick Actions"} />
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-5">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-5 ">
             {quickActions.map((action, idx) => {
               return (
                 <div
                   key={idx}
                   onClick={action.onClick}
-                  className="h-[150px] w-full border border-[#E5E7EB] rounded-2xl relative overflow-hidden p-5 space-y-2 cursor-pointer hover:shadow-md transition-all duration-300"
+                  className="h-[130px] w-full border border-[#E5E7EB] rounded-2xl px-2"
                 >
                   <img src={action.image} alt={action.title} />
                   <h3
