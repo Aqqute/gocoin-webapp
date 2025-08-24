@@ -2,7 +2,9 @@ import Sidebar from "./DesktopSidebar";
 import { SidebarProvider } from "../contexts/SidebarContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { Flame, Bell } from "lucide-react";
-import { useLocation } from "react-router-dom"; 
+import { useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import Loader from "../components/ui/LoadingBar";
 
 function Heading({ heading }) {
   const { theme } = useTheme();
@@ -26,41 +28,47 @@ export default function BaseLayout({
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const location = useLocation();
+  const [loading, setLoading] = useState(false);
 
- // routes to page headings
-const routeHeadings: Record<string, string> = {
-  "/": "Dashboard",
-  "/wallet": "Go Wallet",
-  "/profile": "Profile",
-};
+  // simulate loading for demo
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
 
-// Match heading based on pathname (handles subroutes too)
-const currentPath = location.pathname;
-const matchedKey = Object.keys(routeHeadings).find((key) =>
-  currentPath === key || currentPath.startsWith(key + "/")
-);
+  // routes to page headings
+  const routeHeadings: Record<string, string> = {
+    "/": "Dashboard",
+    "/wallet": "Go Wallet",
+    "/profile": "Profile Settings",
+  };
 
-const heading = matchedKey ? routeHeadings[matchedKey] : "Page";
+  // Match heading based on pathname (handles subroutes too)
+  const currentPath = location.pathname;
+  const matchedKey = Object.keys(routeHeadings).find(
+    (key) => currentPath === key || currentPath.startsWith(key + "/")
+  );
 
+  const heading = matchedKey ? routeHeadings[matchedKey] : "Page";
 
   return (
     <SidebarProvider>
       <div className="flex min-h-screen flex-col md:flex-row">
-        {/* Sidebar */}
-        <div className="w-[240px] flex-none transition-all duration-300 ease-in-out shadow-sm">
+        {/* Sidebar - always visible */}
+        <div className="w-[240px] flex-none shadow-sm">
           <Sidebar />
         </div>
 
         {/* Main content */}
-        <section className="flex-grow flex flex-col overflow-hidden">
+        <section className="flex-grow flex flex-col overflow-hidden relative">
           {/* nav */}
           <nav
             className={`w-full p-4 flex justify-between items-center fixed-0 ${
               isDark ? "bg-black" : "bg-white"
             }`}
           >
-            <div className="flex items-center gap-20"> 
-              {/* 👇 Heading updates automatically */}
+            <div className="flex items-center gap-20">
               <Heading heading={heading} />
             </div>
 
@@ -95,13 +103,20 @@ const heading = matchedKey ? routeHeadings[matchedKey] : "Page";
             </div>
           </nav>
 
-          {/* children */}
+          {/* children area */}
           <div
-            className={`flex-grow overflow-y-auto ${
+            className={`flex-grow overflow-y-auto relative ${
               isDark ? "md:bg-black/90" : "md:bg-gray-100"
             }`}
           >
-            {children}
+            <div>{children}</div>
+
+            {/* PageLoader overlays ONLY children */}
+            {loading && (
+              <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                <Loader type="circles" size="lg" color="blue" />
+              </div>
+            )}
           </div>
         </section>
       </div>

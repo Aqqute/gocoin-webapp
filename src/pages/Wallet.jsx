@@ -5,7 +5,6 @@ import Navbar from "../components/Navbar";
 import Icon from "../../public/images/GoLogo.png";
 import { X } from "lucide-react";
 import axios from "axios";
-import PageLoader from "../components/PageLoader";
 import { useNavigate } from "react-router-dom";
 
 import watermark from "../../public/images/watermark.svg";
@@ -117,7 +116,7 @@ function Card({ children }) {
     <div
       className={`${
         isDark ? "bg-black text-white" : "bg-gray-50 text-black"
-      } h-fit w-full rounded-2xl shadow-sm p-6`}
+      } h-fit w-full p-3`}
     >
       {children}
     </div>
@@ -164,7 +163,7 @@ const GoWalletComponent = () => {
     fetchWalletData();
   }, [token]);
 
-  if (loading) return <PageLoader />;
+  // if (loading) return <PageLoader />;
 
   const wallets = [
     { name: "Go token balance", balance: balance, amount: "20.00" },
@@ -212,14 +211,14 @@ const GoWalletComponent = () => {
         {/* Balance Card */}
         <div className=" space-y-2">
           <Card>
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 p-2 gap-4">
               {wallets
                 .filter((wallet) => wallet.name === "Go token balance")
                 .map((wallet, idx) => (
                   <div
                     key={idx}
                     className={`h-[120px] w-full border ${
-                      isDark ? "border-gray-500" : "border-[#E5E7EB]"
+                      isDark ? "border-gray-500" : "border-gray-300"
                     } rounded-2xl relative p-5 cursor-pointer hover:shadow-md transition-all duration-300`}
                   >
                     <img src={watermark} className="absolute top-0 right-10" />

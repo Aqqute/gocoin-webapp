@@ -13,7 +13,14 @@ import {
 } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 
-const ProfileSettingsMenu = ({ user, activeSection, setActiveSection, toggleTheme, handleLogout, navigate }) => {
+const ProfileSettingsMenu = ({
+  user,
+  activeSection,
+  setActiveSection,
+  toggleTheme,
+  handleLogout,
+  navigate,
+}) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
@@ -43,7 +50,13 @@ const ProfileSettingsMenu = ({ user, activeSection, setActiveSection, toggleThem
       icon: Bell,
       action: () => setActiveSection("notifications"),
     },
-    { id: "theme", title: "Dark mode", icon: Moon, isToggle: true, action: toggleTheme },
+    {
+      id: "theme",
+      title: "Dark mode",
+      icon: Moon,
+      isToggle: true,
+      action: toggleTheme,
+    },
     {
       id: "password",
       title: "Change password",
@@ -86,12 +99,18 @@ const ProfileSettingsMenu = ({ user, activeSection, setActiveSection, toggleThem
             onClick={item.action}
             // Apply active styles if the current item is the active section (excluding profile card)
             className={`cursor-pointer transition-colors rounded-lg 
-                        ${item.isProfileCard ?
-                            (isDark ? "bg-[#2a2a2a] hover:bg-[#333]" : "bg-gray-100 hover:bg-gray-200") :
-                            (activeSection === item.id ?
-                                (isDark ? "bg-[#2a2a2a]" : "bg-gray-100") : // Active state
-                                (isDark ? "hover:bg-[#2a2a2a]" : "hover:bg-gray-100")
-                            )
+                        ${
+                          item.isProfileCard
+                            ? isDark
+                              ? "bg-[#2a2a2a] hover:bg-[#333]"
+                              : "bg-gray-100 hover:bg-gray-200"
+                            : activeSection === item.id
+                            ? isDark
+                              ? "bg-[#2a2a2a]"
+                              : "bg-gray-100" // Active state
+                            : isDark
+                            ? "hover:bg-[#2a2a2a]"
+                            : "hover:bg-gray-100"
                         }
                         p-3 flex justify-between items-center`}
           >
@@ -99,9 +118,13 @@ const ProfileSettingsMenu = ({ user, activeSection, setActiveSection, toggleThem
               {item.isProfileCard ? (
                 <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center font-bold text-white text-base overflow-hidden">
                   {user.avatar?.avatar ? (
-                     <img src={user.avatar.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                    <img
+                      src={user.avatar.avatar}
+                      alt="Avatar"
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
-                     user.username?.charAt(0)?.toUpperCase() || "?"
+                    user.username?.charAt(0)?.toUpperCase() || "?"
                   )}
                 </div>
               ) : (
