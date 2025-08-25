@@ -33,6 +33,7 @@ const Home = () => {
   const isDark = theme === "dark";
   const navigate = useNavigate();
   const { token, isAuthenticated } = useAuth();
+  const [submitload, setSubmitload] = useState(false);
 
   const filters = useMemo(
     () => ["All", "Social", "Content", "Apps", "Surveys & Polls"],
@@ -85,11 +86,14 @@ const Home = () => {
   }, [token]);
   const handleSubmit = async () => {
     if (!selectedTask) return;
+    setSubmitload(true);
 
     try {
       if (selectedTask.submissionMethod === "link") {
-        // --- Link submission flow ---
-        if (!inputValue) return toast.error("Please provide a valid link");
+        if (!inputValue) {
+          toast.error("Please provide a valid link");
+          return;
+        }
 
         await axios.post(
           `https://gocoin.onrender.com/api/tasks/${selectedTask._id}/submit`,
@@ -101,35 +105,33 @@ const Home = () => {
             },
           }
         );
+
         toast.success("Link submitted successfully!");
       } else {
-        // --- Screenshot submission flow ---
-        if (!file) return toast.error("Please upload a screenshot");
+        if (!file) {
+          toast.error("Please upload a screenshot");
+          return;
+        }
 
-        // Send file directly to backend as form-data
         const formData = new FormData();
         formData.append("submissionData", file);
 
         await axios.post(
           `https://gocoin.onrender.com/api/tasks/${selectedTask._id}/submit`,
           formData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              // Do NOT set Content-Type manually for FormData; browser will set it with boundary
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
 
         toast.success("Screenshot submitted successfully!");
       }
 
-      // Reset input states
       setInputValue("");
       setFile(null);
     } catch (error) {
       console.error("Submission failed:", error);
       toast.error(error?.response?.data?.message || "Failed to submit task");
+    } finally {
+      setSubmitload(false);
     }
   };
 
@@ -259,9 +261,8 @@ const Home = () => {
                   isDark
                     ? "border-orange-500 text-orange-400"
                     : "border-orange-500 text-orange-500"
-
                 } bg-orange-500 text-white hover:opacity-90`}
-
+              >
                 <Plus size={14} />
                 Create Task
               </button> */}
@@ -415,13 +416,17 @@ const Home = () => {
                             />
                             <button
                               onClick={handleSubmit}
-                              className="w-full py-1.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-xs"
+                              disabled={submitload}
+                              className={`w-full py-1.5 rounded-lg text-white text-xs ${
+                                submitload
+                                  ? "bg-gray-400 cursor-not-allowed"
+                                  : "bg-orange-500 hover:bg-orange-600"
+                              }`}
                             >
-                              Submit
+                              {submitload ? "Submitting..." : "Submit"}
                             </button>
                           </>
                         ) : (
-
                           // FILE SUBMISSION UI
                           <>
                             <h3 className="font-medium text-lg mb-2">
@@ -432,7 +437,8 @@ const Home = () => {
                                 isDark ? "text-white" : "text-black"
                               }`}
                             >
-                              Upload a screenshot as proof to receive your reward.
+                              Upload a screenshot as proof to receive your
+                              reward.
                             </p>
 
                             <input
@@ -452,34 +458,46 @@ const Home = () => {
                                 />
                               </div>
                             )}
-
                             <button
                               onClick={handleSubmit}
-                              className="w-full py-2 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm"
+                              disabled={submitload}
+                              className={`w-full py-2 rounded-lg text-white text-sm ${
+                                submitload
+                                  ? "bg-gray-400 cursor-not-allowed"
+                                  : "bg-orange-500 hover:bg-orange-600"
+                              }`}
                             >
-                              Submit Screenshot
+                              {submitload
+                                ? "Submitting..."
+                                : "Submit Screenshot"}
                             </button>
                           </>
-
                         )}
                       </div>
                     )}
                   </>
                 ) : (
-
                   <div className="flex flex-col items-center justify-center h-full">
                     <img
                       src={Step2}
                       alt="Select a task"
                       className="w-2/3 object-contain"
                     />
-                    <h3 className="mt-6 font-semibold text-center">
+                    <h3
+                      className={`mt-6 font-semibold text-center ${
+                        isDark ? "text-white" : "text-gray-900"
+                      }`}
+                    >
                       Select a Task to View Details
                     </h3>
-                    <p className="text-sm text-center text-gray-500 dark:text-gray-400 mt-2">
-                      Choose any task from the left to see its instructions and rewards.
+                    <p
+                      className={`text-sm text-center mt-2 ${
+                        isDark ? "text-gray-400" : "text-gray-500"
+                      }`}
+                    >
+                      Choose any task from the left to see its instructions and
+                      rewards.
                     </p>
-
                   </div>
                 )}
               </div>
@@ -492,7 +510,7 @@ const Home = () => {
           <Header />
 
           {/* Filters + Create Task */}
-          <div className="px-4 mt-4">
+          <div className="px-2 mt-4">
             <div className="flex items-center justify-between">
               <div className="flex gap-2 overflow-x-auto hide-scrollbar pr-2">
                 {filters.map((filter) => {
@@ -516,14 +534,14 @@ const Home = () => {
               </div>
 
               <button
-                className={`ml-3 flex items-center rounded-full  font-medium h-9 px-4  ${
+                className={` flex items-center rounded-full  font-medium  ${
                   isDark ? " text-orange-400" : " text-orange-500"
                 } bg-orange-500 text-white hover:opacity-90`}
               >
-                <span>
+                <span className="flex items-center gap-1 h-8 px-3">
                   <Plus size={16} />
+                  <span className="text-xs">Create Task</span>
                 </span>
-                <h1 className="text-xs">Create Task</h1>
               </button>
             </div>
           </div>

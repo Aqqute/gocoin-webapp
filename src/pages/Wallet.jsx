@@ -5,7 +5,6 @@ import Navbar from "../components/Navbar";
 import Icon from "../../public/images/GoLogo.png";
 import { X } from "lucide-react";
 import axios from "axios";
-import PageLoader from "../components/PageLoader";
 import { useNavigate } from "react-router-dom";
 
 import watermark from "../../public/images/watermark.svg";
@@ -117,7 +116,7 @@ function Card({ children }) {
     <div
       className={`${
         isDark ? "bg-black text-white" : "bg-gray-50 text-black"
-      } h-fit w-full rounded-2xl shadow-sm p-6`}
+      } h-fit w-full p-3`}
     >
       {children}
     </div>
@@ -168,7 +167,7 @@ const GoWalletComponent = () => {
     fetchWalletData();
   }, [token]);
 
-  if (loading) return <PageLoader />;
+  // if (loading) return <PageLoader />;
 
   const wallets = [
     { name: "Go token balance", balance: balance, amount: fiatEquivalent, currency: fiatCurrency },
@@ -204,57 +203,59 @@ const GoWalletComponent = () => {
   return (
     <BaseLayout>
       {/* MOBILE VIEW */}
-      <Header />
+      {/* <Header /> */}
       <div
         className={`min-h-screen lg:hidden flex flex-col ${
           isDark ? "bg-black text-white" : "bg-[#f9f9f9] text-black"
         }`}
       >
-        <h1 className="pt-6 px-4 text-lg font-semibold">Go Wallet</h1>
+        {/* <h1 className="pt-6 px-4 text-lg font-semibold">Go Wallet</h1> */}
         {/* Balance Card */}
-        <div className="px-1 pt-6 space-y-2">
+        <div className=" space-y-2">
           <Card>
-            <div className="grid grid-cols-1 gap-4">
-              {wallets.map((wallet, idx) => (
-                <div
-                  key={idx}
-                  className={`h-[120px] w-full border ${
-                    isDark ? "border-gray-500" : "border-[#E5E7EB]"
-                  } rounded-2xl relative p-5 cursor-pointer hover:shadow-md transition-all duration-300`}
-                >
-                  <img src={watermark} className="absolute top-0 right-10" />
-                  <div className="flex justify-between items-center z-10">
-                    <div className="space-y-1">
-                      <p
-                        className={`text-sm ${
-                          isDark ? "text-white/80" : "text-[#393A3F]"
-                        } font-normal`}
-                      >
-                        {wallet.name}
-                      </p>
-                      <h2
-                        className={`${
-                          isDark ? "text-white/90" : "text-black/90"
-                        } font-bold text-[28px] leading-11 truncate w-[200px] relative group`}
-                      >
-                        {wallet.balance}
-                        <div className="absolute bg-gray-100 text-gray-950 text-xs p-1 rounded-full -bottom-1 right-0 hidden group-hover:block transition-all duration-300">
+            <div className="grid grid-cols-1 p-2 gap-4">
+              {wallets
+                .filter((wallet) => wallet.name === "Go token balance")
+                .map((wallet, idx) => (
+                  <div
+                    key={idx}
+                    className={`h-[120px] w-full border ${
+                      isDark ? "border-gray-500" : "border-gray-300"
+                    } rounded-2xl relative p-5 cursor-pointer hover:shadow-md transition-all duration-300`}
+                  >
+                    <img src={watermark} className="absolute top-0 right-10" />
+                    <div className="flex justify-between items-center z-10">
+                      <div className="space-y-1">
+                        <p
+                          className={`text-sm ${
+                            isDark ? "text-white/80" : "text-[#393A3F]"
+                          } font-normal`}
+                        >
+                          {wallet.name}
+                        </p>
+                        <h2
+                          className={`${
+                            isDark ? "text-white/90" : "text-black/90"
+                          } font-bold text-[28px] leading-11 truncate w-[200px] relative group`}
+                        >
                           {wallet.balance}
-                        </div>
-                      </h2>
-                    </div>
-                    <div
-                      className={`border border-[#F3F4F9] ${
-                        isDark
-                          ? "bg-black/50 text-white"
-                          : "bg-[#e7ecf5] text-[#3C3C43]"
-                      } rounded-full w-28 h-[35px] px-2.5 py-1.5 font-bold text-sm flex justify-center items-center`}
-                    >
-                      ~{wallet.amount} {wallet.currency}
+                          <div className="absolute bg-gray-100 text-gray-950 text-xs p-1 rounded-full -bottom-1 right-0 hidden group-hover:block transition-all duration-300">
+                            {wallet.balance}
+                          </div>
+                        </h2>
+                      </div>
+                      <div
+                        className={`border border-[#F3F4F9] ${
+                          isDark
+                            ? "bg-black/50 text-white"
+                            : "bg-[#e7ecf5] text-[#3C3C43]"
+                        } rounded-full w-20 h-[35px] px-2.5 py-1.5 font-bold text-sm flex justify-center items-center`}
+                      >
+                        ~${wallet.amount}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </Card>
         </div>
@@ -320,13 +321,13 @@ const GoWalletComponent = () => {
         {/* quick actions */}
         <Card>
           <Heading heading={"Quick Actions"} />
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-5">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-5 ">
             {quickActions.map((action, idx) => {
               return (
                 <div
                   key={idx}
                   onClick={action.onClick}
-                  className="h-[150px] w-full border border-[#E5E7EB] rounded-2xl relative overflow-hidden p-5 space-y-2 cursor-pointer hover:shadow-md transition-all duration-300"
+                  className="h-[130px] w-full border border-[#E5E7EB] rounded-2xl px-2"
                 >
                   <img src={action.image} alt={action.title} />
                   <h3

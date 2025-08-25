@@ -6,20 +6,23 @@ function formatReadableDate(isoString) {
   return date.toLocaleDateString("en-GB", options);
 }
 
-
-export default function TransactionsTable ({ data }) {
+export default function TransactionsTable({ data, isDark }) {
   return (
     <div className="overflow-x-auto w-full">
-      <table className="min-w-full border-collapse">
+      <table
+        className={`min-w-full border-collapse ${
+          isDark ? "text-black": "text:white"
+        }`}
+      >
         {/* Table Head */}
-        <thead>
-          <tr className="bg-[#FFF6E6] text-left">
-            <th className="px-4 py-3 text-sm font-medium text-gray-700">Date</th>
-            <th className="px-4 py-3 text-sm font-medium text-gray-700">Type</th>
-            <th className="px-4 py-3 text-sm font-medium text-gray-700">Amount</th>
-            <th className="px-4 py-3 text-sm font-medium text-gray-700">Method</th>
-            <th className="px-4 py-3 text-sm font-medium text-gray-700">Status</th>
-            <th className="px-4 py-3 text-sm font-medium text-gray-700">Invoice</th>
+        <thead className="bg-pink-400/20">
+          <tr className="">
+            <th className="px-4 py-3 text-sm font-medium">Date</th>
+            <th className="px-4 py-3 text-sm font-medium">Type</th>
+            <th className="px-4 py-3 text-sm font-medium">Amount</th>
+            <th className="px-4 py-3 text-sm font-medium">Method</th>
+            <th className="px-4 py-3 text-sm font-medium">Status</th>
+            <th className="px-4 py-3 text-sm font-medium">Invoice</th>
           </tr>
         </thead>
 
@@ -28,19 +31,23 @@ export default function TransactionsTable ({ data }) {
           {data.map((item, index) => (
             <tr
               key={index}
-              className="border-b border-gray-200 hover:bg-gray-50 transition-colors capitalize"
+              className={`border-b transition-colors capitalize ${
+                isDark
+                  ? "border-gray-700"
+                  : "border-gray-200 "
+              }`}
             >
-              <td className="px-4 py-3 text-sm text-gray-700">{formatReadableDate(item.createdAt)}</td>
-              <td className="px-4 py-3 text-sm text-gray-700">{item.type}</td>
-              <td className="px-4 py-3 text-sm text-gray-700">{item.amount}</td>
-              <td className="px-4 py-3 text-sm text-gray-700">{item.method}</td>
+              <td className="px-4 py-3 text-sm">{formatReadableDate(item.createdAt)}</td>
+              <td className="px-4 py-3 text-sm">{item.type}</td>
+              <td className="px-4 py-3 text-sm">{item.amount}</td>
+              <td className="px-4 py-3 text-sm">{item.method}</td>
               <td className="px-4 py-3 text-sm">
                 <span
-                  className={`${
-                    item.status === "completed" || item.status === "Completed"
+                  className={`font-bold capitalize ${
+                    item.status.toLowerCase() === "completed"
                       ? "text-[#53A653]"
                       : "text-yellow-500"
-                  } font-bold capitalize`}
+                  }`}
                 >
                   {item.status}
                 </span>
