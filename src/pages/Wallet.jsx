@@ -131,6 +131,8 @@ const GoWalletComponent = () => {
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
   const [isSwapModalOpen, setIsSwapModalOpen] = useState(false);
   const [balance, setBalance] = useState(null);
+  const [fiatEquivalent, setFiatEquivalent] = useState(null);
+  const [fiatCurrency, setFiatCurrency] = useState("USD");
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -151,6 +153,8 @@ const GoWalletComponent = () => {
         ]);
 
         setBalance(balanceRes.data.data.goTokenBalance || "0.000000");
+        setFiatEquivalent(balanceRes.data.data.fiatEquivalent || "0.00");
+        setFiatCurrency(balanceRes.data.data.fiatCurrency || "USD");
         setTransactions(txRes.data.data.transactions || []);
       } catch (error) {
         console.error("Failed to fetch wallet data:", error);
@@ -167,9 +171,7 @@ const GoWalletComponent = () => {
   if (loading) return <PageLoader />;
 
   const wallets = [
-    { name: "Go token balance", balance: balance, amount: "20.00" },
-    { name: "Metamask wallet", balance: "0.0046589", amount: "20.00" },
-    { name: "Solana wallet", balance: "0.00469089", amount: "20.00" },
+    { name: "Go token balance", balance: balance, amount: fiatEquivalent, currency: fiatCurrency },
   ];
 
   const quickActions = [
@@ -213,97 +215,49 @@ const GoWalletComponent = () => {
         <div className="px-1 pt-6 space-y-2">
           <Card>
             <div className="grid grid-cols-1 gap-4">
-              {wallets
-                .filter((wallet) => wallet.name === "Go token balance")
-                .map((wallet, idx) => (
-                  <div
-                    key={idx}
-                    className={`h-[120px] w-full border ${
-                      isDark ? "border-gray-500" : "border-[#E5E7EB]"
-                    } rounded-2xl relative p-5 cursor-pointer hover:shadow-md transition-all duration-300`}
-                  >
-                    <img src={watermark} className="absolute top-0 right-10" />
-                    <div className="flex justify-between items-center z-10">
-                      <div className="space-y-1">
-                        <p
-                          className={`text-sm ${
-                            isDark ? "text-white/80" : "text-[#393A3F]"
-                          } font-normal`}
-                        >
-                          {wallet.name}
-                        </p>
-                        <h2
-                          className={`${
-                            isDark ? "text-white/90" : "text-black/90"
-                          } font-bold text-[28px] leading-11 truncate w-[200px] relative group`}
-                        >
-                          {wallet.balance}
-                          <div className="absolute bg-gray-100 text-gray-950 text-xs p-1 rounded-full -bottom-1 right-0 hidden group-hover:block transition-all duration-300">
-                            {wallet.balance}
-                          </div>
-                        </h2>
-                      </div>
-                      <div
-                        className={`border border-[#F3F4F9] ${
-                          isDark
-                            ? "bg-black/50 text-white"
-                            : "bg-[#e7ecf5] text-[#3C3C43]"
-                        } rounded-full w-20 h-[35px] px-2.5 py-1.5 font-bold text-sm flex justify-center items-center`}
+              {wallets.map((wallet, idx) => (
+                <div
+                  key={idx}
+                  className={`h-[120px] w-full border ${
+                    isDark ? "border-gray-500" : "border-[#E5E7EB]"
+                  } rounded-2xl relative p-5 cursor-pointer hover:shadow-md transition-all duration-300`}
+                >
+                  <img src={watermark} className="absolute top-0 right-10" />
+                  <div className="flex justify-between items-center z-10">
+                    <div className="space-y-1">
+                      <p
+                        className={`text-sm ${
+                          isDark ? "text-white/80" : "text-[#393A3F]"
+                        } font-normal`}
                       >
-                        ~${wallet.amount}
-                      </div>
+                        {wallet.name}
+                      </p>
+                      <h2
+                        className={`${
+                          isDark ? "text-white/90" : "text-black/90"
+                        } font-bold text-[28px] leading-11 truncate w-[200px] relative group`}
+                      >
+                        {wallet.balance}
+                        <div className="absolute bg-gray-100 text-gray-950 text-xs p-1 rounded-full -bottom-1 right-0 hidden group-hover:block transition-all duration-300">
+                          {wallet.balance}
+                        </div>
+                      </h2>
+                    </div>
+                    <div
+                      className={`border border-[#F3F4F9] ${
+                        isDark
+                          ? "bg-black/50 text-white"
+                          : "bg-[#e7ecf5] text-[#3C3C43]"
+                      } rounded-full w-28 h-[35px] px-2.5 py-1.5 font-bold text-sm flex justify-center items-center`}
+                    >
+                      ~{wallet.amount} {wallet.currency}
                     </div>
                   </div>
-                ))}
+                </div>
+              ))}
             </div>
           </Card>
         </div>
-
-        {/* Do More Button */}
-        <div className="px-4 mt-1 mb-4">
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="w-full bg-orange-500 text-white rounded-full mt-2 mb-2 py-2 text-sm font-medium hover:bg-orange-600 transition-colors"
-          >
-            Do more with GoC
-          </button>
-        </div>
-
-        {/* Transaction History */}
-        <div className="px-4 mb-20 w-full">
-          <h2 className="text-md font-semibold mb-4">Transaction History</h2>
-          <div className="space-y-3">
-            {transactions.map((tx) => (
-              <div key={tx.id} className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <img
-                    src={Icon}
-                    alt="tx"
-                    className="w-8 h-8 rounded-full bg-gray-200"
-                  />
-                  <div>
-                    <p className="text-sm font-medium">{tx.type}</p>
-                    <p className="text-xs text-gray-400">{tx.date}</p>
-                  </div>
-                </div>
-                <div
-                  className={`text-sm font-semibold ${
-                    tx.isPositive ? "text-green-500" : "text-red-500"
-                  }`}
-                >
-                  {tx.amount}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Modal */}
-        <DoMoreModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          isDark={isDark}
-        />
 
         {/* Bottom Navbar */}
         {!isModalOpen && <Navbar />}
