@@ -42,6 +42,9 @@ const TaskDetail = () => {
   const [inputValue, setInputValue] = useState("");
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [reward, setReward] = useState(null);
+  const [countdown, setCountdown] = useState("");
 
   const { token } = useAuth();
 
@@ -56,9 +59,15 @@ const TaskDetail = () => {
             },
           }
         );
-        console.log("Fetched task:", response.data.data.task);
-        setTask(response.data.data.task);
+        // Support both single and list response
+        let fetchedTask = response.data.data.task;
+        if (!fetchedTask && Array.isArray(response.data.data.tasks)) {
+          fetchedTask = response.data.data.tasks[0];
+        }
+        setTask(fetchedTask);
         setLoading(false);
+        // Setup countdown
+        updateCountdown(fetchedTask);
       } catch (error) {
         console.error("Error fetching task:", error);
       }
@@ -67,7 +76,41 @@ const TaskDetail = () => {
     if (id) {
       fetchTask();
     }
+    // eslint-disable-next-line
   }, [id]);
+
+  // Countdown logic
+  useEffect(() => {
+    let interval;
+    if (task) {
+      interval = setInterval(() => updateCountdown(task), 1000);
+    }
+    return () => clearInterval(interval);
+    // eslint-disable-next-line
+  }, [task]);
+
+  function updateCountdown(taskObj) {
+    if (!taskObj) return;
+    const now = new Date();
+    const start = new Date(taskObj.startDate);
+    const end = new Date(taskObj.endDate);
+    let diff, label;
+    if (now < start) {
+      diff = start - now;
+      label = "Starts in";
+    } else if (now < end) {
+      diff = end - now;
+      label = "Ends in";
+    } else {
+      setCountdown("Task ended");
+      return;
+    }
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const m = Math.floor((diff / (1000 * 60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+    setCountdown(`${label}: ${d}d ${h}h ${m}m ${s}s`);
+  }
 
   const handleFileChange = (e) => {
     const selected = e.target.files[0];
@@ -107,6 +150,23 @@ const TaskDetail = () => {
           <div>
             <h2 className="text-base font-bold mb-0.5">{task.campaignTopic}</h2>
             <p className="text-sm mt-1">{task.description}</p>
+            <div className="flex flex-wrap gap-2 mt-2 items-center">
+              {countdown && (
+                <span className="text-xs font-medium px-2 py-1 rounded bg-orange-100 text-orange-700">
+                  {countdown}
+                </span>
+              )}
+              {typeof task.goCoinReward !== "undefined" && (
+                <span className="text-xs font-medium px-2 py-1 rounded bg-green-100 text-green-700">
+                  Reward: {task.goCoinReward} GO
+                </span>
+              )}
+              {task.rewards?.goToken && (
+                <span className="text-xs font-medium px-2 py-1 rounded bg-green-100 text-green-700">
+                  Reward: {task.rewards.goToken} GO
+                </span>
+              )}
+            </div>
           </div>
 
           <div className={cardStyle}>
@@ -121,22 +181,7 @@ const TaskDetail = () => {
             </ol>
           </div>
 
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-sm font-medium">Reward:</p>
-            <div
-              className={`${
-                isDark ? "bg-[#2a2a2a]" : "bg-[#f2f3f5]"
-              } flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium`}
-            >
-              <img
-                src={GoLogo}
-                alt="Go Logo"
-                className="w-4 h-4 object-contain"
-              />
-              <span className="text-[#cc8400]">{task.rewards?.goToken}</span>
-              <span>~${task.rewards?.fiatEquivalent}</span>
-            </div>
-          </div>
+          {/* Reward section already shown above */}
 
           <button
             className="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 rounded-full text-sm transition mt-8"
@@ -217,8 +262,9 @@ const TaskDetail = () => {
                       return toast.error("Please provide a valid URL");
 
                     try {
+                      let response;
                       if (task.submissionMethod === "link") {
-                        await axios.post(
+                        response = await axios.post(
                           `https://gocoin.onrender.com/api/tasks/${id}/submit`,
                           { submissionData: inputValue },
                           {
@@ -228,7 +274,8 @@ const TaskDetail = () => {
                             },
                           }
                         );
-                        toast.success("Link submitted successfully!");
+                        setReward(response?.data?.goCoinReward || task.goCoinReward || task.rewards?.goToken);
+                        setShowSuccess(true);
                       } else {
                         if (!file)
                           return toast.error("Please upload a screenshot");
@@ -236,7 +283,7 @@ const TaskDetail = () => {
                         const formData = new FormData();
                         formData.append("submissionData", file);
 
-                        await axios.post(
+                        response = await axios.post(
                           `https://gocoin.onrender.com/api/tasks/${id}/submit`,
                           formData,
                           {
@@ -246,7 +293,8 @@ const TaskDetail = () => {
                             },
                           }
                         );
-                        toast.success("Screenshot submitted successfully!");
+                        setReward(response?.data?.goCoinReward || task.goCoinReward || task.rewards?.goToken);
+                        setShowSuccess(true);
                       }
 
                       setShowModal(false);
@@ -263,6 +311,28 @@ const TaskDetail = () => {
                 >
                   Submit{" "}
                   {task.submissionMethod === "link" ? "Link" : "Screenshot"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Success Popup */}
+          {showSuccess && (
+            <div className="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center">
+              <div className="bg-white dark:bg-[#232323] rounded-2xl shadow-lg p-8 max-w-xs w-full flex flex-col items-center">
+                <div className="mb-4">
+                  <svg width="48" height="48" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#22c55e" opacity="0.15"/><path d="M7 13l3 3 7-7" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </div>
+                <h3 className="text-lg font-bold mb-2 text-green-600 dark:text-green-400">Task Submitted!</h3>
+                <p className="text-sm mb-2 text-center">Your task was submitted successfully for review.</p>
+                {reward && (
+                  <div className="text-base font-semibold text-orange-600 dark:text-orange-400 mb-2">+{reward} GO Reward</div>
+                )}
+                <button
+                  className="mt-2 px-6 py-2 rounded-full bg-orange-500 text-white font-semibold hover:bg-orange-600"
+                  onClick={() => setShowSuccess(false)}
+                >
+                  Close
                 </button>
               </div>
             </div>

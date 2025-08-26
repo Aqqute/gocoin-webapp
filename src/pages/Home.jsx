@@ -187,40 +187,79 @@ const Home = () => {
     return null;
   };
 
-  const Card = ({ activity, onClick }) => (
-    <div
-      onClick={onClick}
-      className={`rounded-3xl p-4 text-sm shadow-[0_8px_24px_rgba(0,0,0,0.06)] cursor-pointer transition hover:shadow-[0_10px_28px_rgba(0,0,0,0.09)] ${
-        isDark ? "bg-[#2a2a2a] text-white" : "bg-white text-black"
-      }`}
-    >
-      <h3 className="text-left font-semibold text-sm mb-1">
-        {activity.campaignTopic || "Untitled Task"}
-      </h3>
-      <p
-        className={`text-left text-sm mb-4 ${
-          isDark ? "text-gray-300" : "text-gray-600"
+  // Countdown helper
+  const getCountdown = (startDate, endDate) => {
+    const now = new Date();
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    let diff, label;
+    if (now < start) {
+      diff = start - now;
+      label = "Starts in";
+    } else if (now < end) {
+      diff = end - now;
+      label = "Ends in";
+    } else {
+      return "Task ended";
+    }
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const m = Math.floor((diff / (1000 * 60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+    return `${label}: ${d}d ${h}h ${m}m ${s}s`;
+  };
+
+  const Card = ({ activity, onClick }) => {
+    const [countdown, setCountdown] = useState(() => getCountdown(activity.startDate, activity.endDate));
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setCountdown(getCountdown(activity.startDate, activity.endDate));
+      }, 1000);
+      return () => clearInterval(interval);
+    }, [activity.startDate, activity.endDate]);
+
+    return (
+      <div
+        onClick={onClick}
+        className={`rounded-3xl p-4 text-sm shadow-[0_8px_24px_rgba(0,0,0,0.06)] cursor-pointer transition hover:shadow-[0_10px_28px_rgba(0,0,0,0.09)] ${
+          isDark ? "bg-[#2a2a2a] text-white" : "bg-white text-black"
         }`}
       >
-        {activity.description?.split(".")[0] || "N/A"}
-      </p>
-      <div className="flex items-center gap-2">
-        <div className="w-7 h-7 rounded-full  shadow-md flex items-center justify-center">
-          <img src={GoLogo} alt="Go Logo" className="w-5 h-5 object-contain" />
-        </div>
-        <span className="font-semibold text-[15px] text-[#cc8400]">
-          {activity.rewards?.goToken || 0}
-        </span>
-        <span
-          className={`text-xs px-2 py-1 rounded-full ${
-            isDark ? "bg-[#1f1f1f] text-gray-300" : "bg-gray-100 text-gray-700"
+        <h3 className="text-left font-semibold text-sm mb-1">
+          {activity.campaignTopic || "Untitled Task"}
+        </h3>
+        <p
+          className={`text-left text-sm mb-4 ${
+            isDark ? "text-gray-300" : "text-gray-600"
           }`}
         >
-          ~${activity.rewards?.fiatEquivalent || 0}
-        </span>
+          {activity.description?.split(".")[0] || "N/A"}
+        </p>
+        <div className="flex flex-wrap items-center gap-2 mt-2">
+          <span className="text-xs font-medium px-2 py-1 rounded bg-orange-100 text-orange-700">
+            {countdown}
+          </span>
+          <div className="w-7 h-7 rounded-full shadow-md flex items-center justify-center">
+            <img src={GoLogo} alt="Go Logo" className="w-5 h-5 object-contain" />
+          </div>
+          <span className="font-semibold text-[15px] text-[#cc8400]">
+            {typeof activity.goCoinReward !== "undefined"
+              ? activity.goCoinReward
+              : activity.rewards?.goToken || 0}
+          </span>
+          {activity.rewards?.fiatEquivalent && (
+            <span
+              className={`text-xs px-2 py-1 rounded-full ${
+                isDark ? "bg-[#1f1f1f] text-gray-300" : "bg-gray-100 text-gray-700"
+              }`}
+            >
+              ~${activity.rewards.fiatEquivalent}
+            </span>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <BaseLayout>
