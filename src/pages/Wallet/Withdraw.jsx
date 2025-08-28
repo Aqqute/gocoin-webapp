@@ -11,6 +11,44 @@ const Withdraw = () => {
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [showBankModal, setShowBankModal] = useState(false);
   const [bankStep, setBankStep] = useState(1);
+  // Withdrawal to wallet state
+  const [withdrawAddress, setWithdrawAddress] = useState("");
+  const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [withdrawLoading, setWithdrawLoading] = useState(false);
+
+  // Toast import (if not already in your project, add it at the top):
+  // import toast from "react-hot-toast";
+
+  const handleWithdrawToWallet = async () => {
+    if (!withdrawAddress || !withdrawAmount || Number(withdrawAmount) <= 0) {
+      window.toast?.error?.("Enter a valid wallet address and amount");
+      return;
+    }
+    setWithdrawLoading(true);
+    try {
+      const res = await fetch("/api/withdraw-gotoken", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          address: withdrawAddress,
+          amount: withdrawAmount,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        window.toast?.success?.("Withdrawal successful! Tx: " + data.tx);
+        setShowWalletModal(false);
+        setWithdrawAddress("");
+        setWithdrawAmount("");
+      } else {
+        window.toast?.error?.(data.error || "Withdrawal failed");
+      }
+    } catch (err) {
+      window.toast?.error?.("Network error");
+    } finally {
+      setWithdrawLoading(false);
+    }
+  };
 
   const handleBack = () => navigate("/wallet");
 
@@ -71,20 +109,30 @@ const Withdraw = () => {
         {showWalletModal && (
           <Modal onClose={() => setShowWalletModal(false)}>
             <h2 className="text-base font-semibold mb-3">
-              Withdraw to Connected Wallet
+              Withdraw to Wallet
             </h2>
-
-            <label className={`font-semibold text-sm ${smallText}`}>
-              Go Amount
-            </label>
+            <label className={`font-semibold text-sm ${smallText}`}>Wallet Address</label>
+            <input
+              className={`mt-2 mb-4 ${inputStyle}`}
+              type="text"
+              placeholder="Enter Solana wallet address"
+              value={withdrawAddress}
+              onChange={e => setWithdrawAddress(e.target.value)}
+            />
+            <label className={`font-semibold text-sm ${smallText}`}>Go Amount</label>
             <input
               className={`mt-2 mb-4 ${inputStyle}`}
               type="number"
               placeholder="Enter Go amount"
+              value={withdrawAmount}
+              onChange={e => setWithdrawAmount(e.target.value)}
             />
-
-            <button className="w-full bg-orange-500 text-white p-2 rounded-full text-sm">
-              Withdraw
+            <button
+              className="w-full bg-orange-500 text-white p-2 rounded-full text-sm"
+              onClick={handleWithdrawToWallet}
+              disabled={withdrawLoading}
+            >
+              {withdrawLoading ? "Processing..." : "Withdraw"}
             </button>
           </Modal>
         )}

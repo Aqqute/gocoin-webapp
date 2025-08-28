@@ -98,8 +98,8 @@ const ManageWallet = () => {
     try {
       const resp = await provider.connect();
       const acc = resp.publicKey?.toString();
-      // Get SOL balance
-      const connection = new Connection("https://api.mainnet-beta.solana.com");
+      // Get SOL balance using Alchemy endpoint
+      const connection = new Connection("https://solana-mainnet.g.alchemy.com/v2/5dkOE0g3IiQEDQ2H7o4NE");
       let balance = 0;
       if (acc) {
         balance = await connection.getBalance(new PublicKey(acc));
@@ -223,17 +223,15 @@ const ManageWallet = () => {
               >
                 <ArrowUpRight size={14} /> Transfer
               </button>
-              {wallet.walletType === "Phantom Wallet" && (
-                <button
-                  onClick={() => {
-                    setPhantomAddress(wallet.address);
-                    setShowBuyToken(true);
-                  }}
-                  className="flex items-center gap-1 px-3 py-1 rounded-full bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700"
-                >
-                  Buy Token
-                </button>
-              )}
+              <button
+                onClick={() => {
+                  setPhantomAddress(wallet.address);
+                  setShowBuyToken(true);
+                }}
+                className="flex items-center gap-1 px-3 py-1 rounded-full bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700"
+              >
+                Buy Token
+              </button>
             </div>
             <div className="absolute top-2 right-2 flex items-center">
               <button

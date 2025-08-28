@@ -1,9 +1,38 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Connection, PublicKey } from "@solana/web3.js";
+import { getAssociatedTokenAddress } from "@solana/spl-token";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import { Download } from "lucide-react";
 
-const GoWalletDesktop = ({ isDark, balance, transactions }) => {
+const TOKEN_MINT = "2Kr7Whxn5UE28tEqSxJJNQkrVFnVFS5VKf51XMhJpump"; // Your GoToken mint address
+
+const GoWalletDesktop = ({ isDark, balance, transactions, connectedWallet }) => {
+  const [solBalance, setSolBalance] = useState(0);
+  const [goTokenBalance, setGoTokenBalance] = useState(0);
+
+  useEffect(() => {
+    const fetchBalances = async () => {
+      if (!connectedWallet) return;
+      try {
+        const connection = new Connection("https://solana-mainnet.g.alchemy.com/v2/5dkOE0g3IiQEDQ2H7o4NE");
+        // SOL balance
+        const sol = await connection.getBalance(new PublicKey(connectedWallet));
+        setSolBalance(sol / 1e9);
+        // GoToken balance
+        const mintPubkey = new PublicKey(TOKEN_MINT);
+        const ownerPubkey = new PublicKey(connectedWallet);
+        const ata = await getAssociatedTokenAddress(mintPubkey, ownerPubkey);
+        const accountInfo = await connection.getTokenAccountBalance(ata);
+        setGoTokenBalance(accountInfo.value.uiAmount || 0);
+      } catch (err) {
+        setSolBalance(0);
+        setGoTokenBalance(0);
+      }
+    };
+    fetchBalances();
+  }, [connectedWallet]);
+
   return (
     <div className="hidden lg:flex">
       <div className="h-screen sticky top-0">
@@ -22,20 +51,24 @@ const GoWalletDesktop = ({ isDark, balance, transactions }) => {
           {/* Wallet Cards */}
           <h1 className="text-xl font-bold mb-3">Your Wallets</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {["GoToken", "Metamask", "Solana"].map((name, index) => (
-              <div
-                key={index}
-                className={`rounded-xl p-4 ${
-                  isDark ? "bg-[#1e1e1e]" : "bg-gray-100"
-                }`}
-              >
-                <p className="text-xs">{name} Balance</p>
-                <p className="text-2xl mt-1 font-semibold">
-                  {Number(balance).toFixed(4)}
-                </p>
-                <p className="text-sm mt-1 text-right">~$20.00</p>
-              </div>
-            ))}
+            {/* GoToken Card */}
+            <div className={`rounded-xl p-4 flex flex-col justify-between ${isDark ? "bg-[#1e1e1e]" : "bg-gray-100"}`}>
+              <p className="text-xs font-semibold mb-1">GoToken Balance</p>
+              <p className="text-2xl mt-1 font-bold">{Number(goTokenBalance).toFixed(4)}</p>
+              <p className="text-sm mt-2 text-right text-blue-500">GoToken</p>
+            </div>
+            {/* Solana Card */}
+            <div className={`rounded-xl p-4 flex flex-col justify-between ${isDark ? "bg-[#1e1e1e]" : "bg-gray-100"}`}>
+              <p className="text-xs font-semibold mb-1">Solana Wallet Balance</p>
+              <p className="text-2xl mt-1 font-bold">{Number(solBalance).toFixed(4)}</p>
+              <p className="text-sm mt-2 text-right text-purple-500">SOL</p>
+            </div>
+            {/* Metamask Card (optional, placeholder) */}
+            <div className={`rounded-xl p-4 flex flex-col justify-between ${isDark ? "bg-[#1e1e1e]" : "bg-gray-100"}`}>
+              <p className="text-xs font-semibold mb-1">Metamask Wallet</p>
+              <p className="text-2xl mt-1 font-bold">--</p>
+              <p className="text-sm mt-2 text-right text-yellow-500">ETH</p>
+            </div>
           </div>
 
           {/* Quick Actions */}
