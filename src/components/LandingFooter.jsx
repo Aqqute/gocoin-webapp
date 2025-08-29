@@ -14,7 +14,7 @@ const LandingFooter = () => {
     },
   ];
   return (
-    <footer className="bg-[#202020] h-[500px] p-20 text-white space-y-10">
+    <footer className="bg-[#202020] h-[500px] p-20 text-white space-y-10 hidden md:block">
       {/* main content */}
       <div className="flex gap-[100px]">
         <div className="space-y-5">

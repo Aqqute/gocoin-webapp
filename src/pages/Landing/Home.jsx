@@ -11,7 +11,7 @@ import LandingFooter from "../../components/LandingFooter";
 
 function Tab({ children, isUppercase = true }) {
   return (
-    <div className="h-11 border border-white rounded-xl px-5 flex justify-center items-center">
+    <div className="h-fit md:h-11 w-4/5 md:w-fit border border-white rounded-xl py-2 px-5 flex justify-center items-center text-center mx-24 md:mx-0">
       <p className={isUppercase ? "uppercase text-sm" : "text-base"}>
         {children}
       </p>
@@ -72,7 +72,7 @@ export default function LandingHome() {
 
   return (
     <>
-      <section className="h-screen bg-[#0A0A0A] relative">
+      <section className="h-full md:h-screen bg-[#0A0A0A] relative pb-10 md:pb-0">
         <LandingNavigation />
         <img
           src={backgroundSvg}
@@ -84,44 +84,44 @@ export default function LandingHome() {
           <Tab>
             Join the decentralized economy for freelancers and marketers
           </Tab>
-          <h1 className="font-medium text-8xl text-center">
-            <span>The Future of Creativity is</span>
+          <h1 className="font-medium text-[45px] md:text-8xl text-center">
+            <span>The Future of <br className="block md:hidden" />Creativity is</span>
             <span className="block text-[#FBBB27]">Borderless</span>
           </h1>
-          <p className="text-2xl text-center font-normal w-[600px] leading-10">
+          <p className="text-lg md:text-2xl text-center font-normal w-[264px] md:w-[600px] leading-10">
             Go Coin is the token that lets Creatives and Brands connect, engage,
             and earn—instantly and borderlessly.
           </p>
 
-          <div className="flex gap-6 items-center">
+          <div className="flex flex-col md:flex-row gap-6 items-center">
             <LandingButton content="Farm GoC Tokens" />
             <LandingButton content="Read Litepaper" variant="secondary" />
           </div>
         </div>
       </section>
 
-      <section className="bg-[#121212] text-[#E6E6E6] flex flex-col justify-center items-center py-20 gap-10 px-20">
+      <section className="bg-[#121212] text-[#E6E6E6] flex flex-col justify-center items-center py-20 gap-5 md:gap-10 px-5 md:px-20">
         <Tab isUppercase={false}>Why GoCoin?</Tab>
-        <h2 className="font-semibold text-6xl text-center leading-16">
+        <h2 className="font-semibold text-2xl md:text-6xl text-center md:leading-16">
           Go Coin is a utility token powering a{" "}
           <br className="hidden md:block" /> decentralized economy for
           creatives.
         </h2>
-        <p className="text-2xl leading-10 text-center">
+        <p className="text-sm md:text-2xl leading-5 md:leading-10 text-center">
           Go Coin fuses a Proof‑of‑Activity model with a deflationary token{" "}
           <br className="hidden md:block" /> economy—built on Solana and bridged
           across Ethereum, BSC & Polygon.
         </p>
 
         {/* grid boxes */}
-        <div className="mt-20 grid grid-cols-2 gap-[30px]">
+        <div className="mt-10 md:mt-20 grid grid-cols-1 md:grid-cols-2 gap-[30px]">
           {cards.map((card, idx) => (
             <div
               key={idx}
-              className="bg-[#171717] h-[545px] w-[650px] flex justify-center items-center flex-col gap-6 rounded-[30px] space-y-6"
+              className="bg-[#171717] h-[545px] w-full md:w-[650px] flex justify-center items-center flex-col gap-6 rounded-[30px] space-y-6"
             >
-              <h4 className="font-semibold text-[40px] ">{card.heading}</h4>
-              <ul className="list-disc w-[565px] text-xl space-y-6 px-10">
+              <h4 className="font-semibold text-2xl md:text-[40px]">{card.heading}</h4>
+              <ul className="list-disc md:w-[565px] text-base md:text-xl space-y-6 px-10">
                 {card.list.map((l, id) => (
                   <li key={id}>
                     <span className="font-semibold">{l.title}: </span>
@@ -134,28 +134,28 @@ export default function LandingHome() {
           ))}
 
           {/* boxes with images */}
-          <div className="bg-[#171717] h-[600px] rounded-[30px] relative">
+          <div className="bg-[#171717] md:h-[600px] rounded-[30px] relative">
             <img
               src={backgroundSvgGray}
               className="absolute inset-0 z-0 w-full h-full object-cover"
             />
-            <div className="relative z-10 flex flex-col items-center justify-between h-full pt-9">
-              <h4 className="font-semibold text-[40px] text-center">
+            <div className="relative z-10 flex flex-col items-center justify-between h-full pt-9 gap-8 md:gap-0">
+              <h4 className="font-semibold text-2xl md:text-[40px] text-center">
                 Earn now on the GoCoin <br className="hidden md:block" /> App
               </h4>
-              <img src={earnNow} alt="Earn Now" className="w-[400px]" />
+              <img src={earnNow} alt="Earn Now" className="w-[288px] md:w-[400px]" />
             </div>
           </div>
-          <div className="bg-[#171717] h-[600px] rounded-[30px] relative">
+          <div className="bg-[#171717] md:h-[600px] rounded-[30px] relative">
             <img
               src={backgroundSvgGray}
               className="absolute inset-0 z-0 w-full h-full object-cover"
             />
-            <div className="relative z-10 flex flex-col items-center justify-between h-full pt-9">
-              <h4 className="font-semibold text-[40px] text-center">
+            <div className="relative z-10 flex flex-col items-center justify-between h-full pt-9 gap-8 md:gap-0">
+              <h4 className="font-semibold text-2xl md:text-[40px] text-center">
                 Own your worth wih <br className="hidden md:block" /> GoCoin
               </h4>
-              <img src={ownWorth} alt="Earn Now" className="w-[400px]" />
+              <img src={ownWorth} alt="Earn Now" className="w-[288px] md:w-[400px]" />
             </div>
           </div>
         </div>
@@ -166,13 +166,13 @@ export default function LandingHome() {
               src={backgroundSvgGray}
               className="absolute inset-0 z-0 w-full h-full object-cover"
             />
-            <div className="relative z-10 flex flex-col items-center justify-between h-full p-10">
-                <h4 className="font-semibold text-[40px] text-center mt-5">What You Can Do with GoC</h4>
-                <div className="space-y-[19px] w-full">
+            <div className="relative z-10 flex flex-col items-center justify-between h-[500px] md:h-full p-5 md:p-10">
+                <h4 className="font-semibold text-2xl md:text-[40px] text-center mt-2.5 md:mt-5">What You Can Do with GoC</h4>
+                <div className="space-y-3.5 md:space-y-[19px] w-full">
                     {whatYouCanDoWithGoC.map((tab, id) => (
-                        <div key={id} className="h-[67px] rounded-lg border border-black/10 bg-black/10 py-3.5 px-[37px] flex items-center gap-3">
+                        <div key={id} className="h-[67px] rounded-lg border border-black/10 bg-black/10 py-3.5 px-5 md:px-[37px] flex items-center gap-3">
                             <img src={vector} alt="Icon" />
-                            <p className="text-xl leading-10">{tab}</p>
+                            <p className="text-sm md:text-xl leading-5 md:leading-10">{tab}</p>
                         </div>
                     ))}
                 </div>
@@ -181,8 +181,8 @@ export default function LandingHome() {
 
         {/* How GoCoin  Works */}
         <div className="flex justify-center items-center flex-col">
-            <h4 className="font-semibold text-[40px] text-center mt-5">How GoCoin Works</h4>
-            <ul className="list-decimal text-2xl leading-[31px] space-y-6 mt-8 mb-12 flex flex-col items-center">
+            <h4 className="font-semibold text-2xl md:text-[40px] text-center mt-5">How GoCoin Works</h4>
+            <ul className="list-decimal text-sm md:text-2xl leading-5 md:leading-[31px] space-y-6 mt-8 mb-12 flex flex-col items-center ml-5 md:ml-0">
                 <li>Earn Your Token: Creatives farm GoC by completing micro‑tasks or delivering projects.</li>
                 <li>Use or Stake: Spend GoC on tools, subscriptions, or stake for yield.</li>
                 <li>Govern & Grow: Vote on platform upgrades, funding rounds, and strategic partnerships.</li>
@@ -192,12 +192,12 @@ export default function LandingHome() {
 
 
         <LandingCTACard>
-            <div className="uppercase border border-[#171717] rounded-lg h-10 flex items-center gap-1 px-5 font-medium text-[#171717] text-base w-fit">
+            <div className="uppercase border border-[#171717] rounded-lg h-11 md:h-10 flex items-center gap-1 px-5 font-medium text-[#171717] text-xs md:text-base w-fit">
                 <Coffee />
-                <p>Download and start farming</p>
+                <p className="whitespace-nowrap">Download and start farming</p>
             </div>
-            <h3 className="font-bold text-[40px] leading-11">Ready to Join and <br className="hidden md:block"/> Earn GoCoins?</h3>
-            <p className="text-[#212121] text-lg font-normal">The platform that rewards your creativity and powers <br className="hidden md:block"/> your brand’s campaigns is here</p>
+            <h3 className="font-bold text-2xl md:text-[40px] leading-8 md:leading-11 text-center md:text-start">Ready to Join and <br className="hidden md:block"/> Earn GoCoins?</h3>
+            <p className="text-[#212121] text-sm md:text-lg font-normal text-center md:text-start">The platform that rewards your creativity and powers <br className="hidden md:block"/> your brand’s campaigns is here</p>
             <LandingButton variant="black" content="Download the GoCoin App" />
         </LandingCTACard>
       </section>

@@ -31,9 +31,9 @@ export default function LandingNavigation() {
 
   return (
      <div className={`flex justify-center sticky top-0 z-20 py-5 transition-all duration-300 ${isScrolled ? 'bg-[#0A0A0A]' : 'bg-transparent'}`}>
-        <nav className={`h-[60px] w-4/5 flex justify-between items-center`}>
+        <nav className={`h-[60px] w-full md:w-4/5 flex justify-between items-center`}>
             <img src={logoWhite} alt="Logo" />
-            <div className="flex items-center gap-5">
+            <div className="hidden md:flex items-center gap-5">
                 <ul className="flex gap-4 items-center">
                     {navLinks.map((link, idx) => {
                         const isActive = link.route === location.pathname;
