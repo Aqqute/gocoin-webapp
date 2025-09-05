@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { Connection, PublicKey } from "@solana/web3.js";
+import { getAssociatedTokenAddress } from "@solana/spl-token";
 import { useTheme } from "../contexts/ThemeContext";
 import { useAuth } from "../contexts/AuthContext";
 import Navbar from "../components/Navbar";
@@ -18,7 +20,9 @@ import WithdrawModal from "../components/wallet/WithdrawModal";
 import Button from "../components/Button";
 import SwapModal from "../components/wallet/SwapModal";
 import Header from "../components/Header";
+import { Card } from "../components/ui/card"; // ✅ assuming you use shadcn/ui
 
+// Heading component
 function Heading({ heading }) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -33,123 +37,39 @@ function Heading({ heading }) {
   );
 }
 
-const DoMoreModal = ({ isOpen, onClose, isDark }) => {
-  const navigate = useNavigate();
-  if (!isOpen) return null;
-
-  const options = [
-    {
-      title: "Withdraw",
-      subtitle: "Withdraw to connected wallet",
-      path: "/wallet/withdraw",
-    },
-    {
-      title: "Recieve Payments",
-      subtitle: "Choose a method to receive payments",
-      path: "/wallet/receive",
-    },
-    {
-      title: "Send payment",
-      subtitle: "Choose a method to send payments",
-      path: "/wallet/send",
-    },
-    {
-      title: "Swap",
-      subtitle: "Swap between currencies e.g BTC to ETH",
-      path: "/wallet/swap",
-    },
-    {
-      title: "Savings",
-      subtitle: "Start saving in different currencies",
-      path: "/wallet/savings",
-    },
-    {
-      title: "Pay Bills",
-      subtitle: "Pay utilities e.g airtime, data, etc",
-      path: "/wallet/paybills",
-    },
-  ];
-
-  return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-end">
-      <div
-        className={`w-full max-w-md p-4 rounded-t-xl shadow-lg transform transition-all duration-300 translate-y-0 animate-slide-up ${
-          isDark ? "bg-[#2a2a2a] text-white" : "bg-white text-black"
-        }`}
-      >
-        {/* Close Icon */}
-        <div className="flex justify-end mb-2">
-          <button onClick={onClose} className=" hover:text-red-500">
-            <X size={20} />
-          </button>
-        </div>
-
-        {/* Options */}
-        <div className="space-y-3">
-          {options.map((opt, i) => (
-            <button
-              key={i}
-              onClick={() => {
-                onClose();
-                navigate(opt.path);
-              }}
-              className={`w-full text-left p-3 rounded-lg ${
-                isDark
-                  ? "bg-[#3a3a3a] hover:bg-[#444]"
-                  : "bg-gray-100 hover:bg-gray-200"
-              }`}
-            >
-              <p className="text-sm font-semibold">{opt.title}</p>
-              <p className="text-xs">{opt.subtitle}</p>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-function Card({ children }) {
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
-  return (
-    <div
-      className={`${
-        isDark ? "bg-black text-white" : "bg-gray-50 text-black"
-      } h-fit w-full p-3`}
-    >
-      {children}
-    </div>
-  );
-}
-
+// Main Wallet Component
 const GoWalletComponent = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const { token } = useAuth();
+
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
   const [isSwapModalOpen, setIsSwapModalOpen] = useState(false);
   const [balance, setBalance] = useState(null);
+  const [fiatEquivalent, setFiatEquivalent] = useState(null);
+  const [fiatCurrency, setFiatCurrency] = useState("USD");
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Solana/GoToken balances
+  const [solBalance, setSolBalance] = useState(null);
+  const [goTokenBalance, setGoTokenBalance] = useState(null);
+  const [walletAddress, setWalletAddress] = useState("");
+
+  // Fetch wallet balance + transactions from backend
   useEffect(() => {
     const fetchWalletData = async () => {
       try {
-        const config = {
-          headers: { Authorization: `Bearer ${token}` },
-        };
+        const config = { headers: { Authorization: `Bearer ${token}` } };
 
         const [balanceRes, txRes] = await Promise.all([
           axios.get("https://gocoin.onrender.com/api/wallet/balance", config),
-          axios.get(
-            "https://gocoin.onrender.com/api/wallet/transactions",
-            config
-          ),
+          axios.get("https://gocoin.onrender.com/api/wallet/transactions", config),
         ]);
 
         setBalance(balanceRes.data.data.goTokenBalance || "0.000000");
+        setFiatEquivalent(balanceRes.data.data.fiatEquivalent || "0.00");
+        setFiatCurrency(balanceRes.data.data.fiatCurrency || "USD");
         setTransactions(txRes.data.data.transactions || []);
       } catch (error) {
         console.error("Failed to fetch wallet data:", error);
@@ -160,241 +80,105 @@ const GoWalletComponent = () => {
       }
     };
 
-    fetchWalletData();
+    if (token) fetchWalletData();
   }, [token]);
 
-  // if (loading) return <PageLoader />;
+  // Get Phantom wallet from window or localStorage
+  useEffect(() => {
+    let addr = "";
+    if (window.solana && window.solana.isPhantom && window.solana.publicKey) {
+      addr = window.solana.publicKey.toString();
+    } else {
+      addr = localStorage.getItem("phantomAddress") || "";
+    }
+    setWalletAddress(addr);
+  }, []);
+
+  // Fetch Solana + GoToken balances
+  useEffect(() => {
+    const fetchBalances = async () => {
+      if (!walletAddress) {
+        setSolBalance(null);
+        setGoTokenBalance(null);
+        return;
+      }
+      try {
+        const connection = new Connection("https://api.mainnet-beta.solana.com");
+        const sol = await connection.getBalance(new PublicKey(walletAddress));
+        setSolBalance(sol / 1e9);
+
+        const mintPubkey = new PublicKey("2Kr7Whxn5UE28tEqSxJJNQkrVFnVFS5VKf51XMhJpump");
+        const ownerPubkey = new PublicKey(walletAddress);
+        const ata = await getAssociatedTokenAddress(mintPubkey, ownerPubkey);
+        const accountInfo = await connection.getTokenAccountBalance(ata);
+        setGoTokenBalance(accountInfo.value.uiAmount || 0);
+      } catch (err) {
+        console.error("Balance fetch error:", err);
+        setSolBalance(0);
+        setGoTokenBalance(0);
+      }
+    };
+
+    if (walletAddress) fetchBalances();
+  }, [walletAddress]);
 
   const wallets = [
-    { name: "Go token balance", balance: balance, amount: "20.00" },
-    { name: "Metamask wallet", balance: "0.0046589", amount: "20.00" },
-    { name: "Solana wallet", balance: "0.00469089", amount: "20.00" },
+    { name: "GoToken Balance", balance: goTokenBalance, symbol: "GoToken", color: "text-blue-500" },
+    { name: "Solana Wallet Balance", balance: solBalance, symbol: "SOL", color: "text-purple-500" },
+    { name: "GoToken (Fiat)", balance: balance, amount: fiatEquivalent, currency: fiatCurrency },
   ];
 
   const quickActions = [
-    {
-      title: "Withdraw",
-      subtitle: "Select withdrawal method",
-      image: withdraw,
-      onClick: () => setIsWalletModalOpen(true),
-    },
-    {
-      title: "Receive payments",
-      subtitle: "Choose a method to receive payments",
-      image: receive,
-      onClick: () => console.log(true),
-    },
-    {
-      title: "Send Payments",
-      subtitle: "Choose a method to send payments",
-      image: send,
-      onClick: () => console.log(true),
-    },
-    {
-      title: "Swap",
-      subtitle: "Swap between currencies e.g BTC to ETH",
-      image: swap,
-      onClick: () => setIsSwapModalOpen(true),
-    },
+    { title: "Withdraw", subtitle: "Select withdrawal method", image: withdraw, onClick: () => setIsWalletModalOpen(true) },
+    { title: "Receive payments", subtitle: "Choose a method to receive payments", image: receive, onClick: () => console.log("Receive") },
+    { title: "Send Payments", subtitle: "Choose a method to send payments", image: send, onClick: () => console.log("Send") },
+    { title: "Swap", subtitle: "Swap between currencies e.g BTC to ETH", image: swap, onClick: () => setIsSwapModalOpen(true) },
   ];
 
   return (
     <BaseLayout>
-      {/* MOBILE VIEW */}
-      {/* <Header /> */}
-      <div
-        className={`min-h-screen lg:hidden flex flex-col ${
-          isDark ? "bg-black text-white" : "bg-[#f9f9f9] text-black"
-        }`}
-      >
-        {/* <h1 className="pt-6 px-4 text-lg font-semibold">Go Wallet</h1> */}
-        {/* Balance Card */}
-        <div className=" space-y-2">
-          <Card>
-            <div className="grid grid-cols-1 p-2 gap-4">
-              {wallets
-                .filter((wallet) => wallet.name === "Go token balance")
-                .map((wallet, idx) => (
-                  <div
-                    key={idx}
-                    className={`h-[120px] w-full border ${
-                      isDark ? "border-gray-500" : "border-gray-300"
-                    } rounded-2xl relative p-5 cursor-pointer hover:shadow-md transition-all duration-300`}
-                  >
-                    <img src={watermark} className="absolute top-0 right-10" />
-                    <div className="flex justify-between items-center z-10">
-                      <div className="space-y-1">
-                        <p
-                          className={`text-sm ${
-                            isDark ? "text-white/80" : "text-[#393A3F]"
-                          } font-normal`}
-                        >
-                          {wallet.name}
-                        </p>
-                        <h2
-                          className={`${
-                            isDark ? "text-white/90" : "text-black/90"
-                          } font-bold text-[28px] leading-11 truncate w-[200px] relative group`}
-                        >
-                          {wallet.balance}
-                          <div className="absolute bg-gray-100 text-gray-950 text-xs p-1 rounded-full -bottom-1 right-0 hidden group-hover:block transition-all duration-300">
-                            {wallet.balance}
-                          </div>
-                        </h2>
-                      </div>
-                      <div
-                        className={`border border-[#F3F4F9] ${
-                          isDark
-                            ? "bg-black/50 text-white"
-                            : "bg-[#e7ecf5] text-[#3C3C43]"
-                        } rounded-full w-20 h-[35px] px-2.5 py-1.5 font-bold text-sm flex justify-center items-center`}
-                      >
-                        ~${wallet.amount}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </Card>
-        </div>
-
-        {/* Do More Button */}
-        <div className="px-4 mt-1 mb-4">
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="w-full bg-orange-500 text-white rounded-full mt-2 mb-2 py-2 text-sm font-medium hover:bg-orange-600 transition-colors"
-          >
-            Do more with GoC
-          </button>
-        </div>
-
-        {/* Transaction History */}
-        <div className="px-4 mb-20 w-full">
-          <h2 className="text-md font-semibold mb-4">Transaction History</h2>
-          <div className="space-y-3">
-            {transactions.map((tx) => (
-              <div key={tx.id} className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <img
-                    src={Icon}
-                    alt="tx"
-                    className="w-8 h-8 rounded-full bg-gray-200"
-                  />
-                  <div>
-                    <p className="text-sm font-medium">{tx.type}</p>
-                    <p className="text-xs text-gray-400">{tx.date}</p>
-                  </div>
-                </div>
-                <div
-                  className={`text-sm font-semibold ${
-                    tx.isPositive ? "text-green-500" : "text-red-500"
-                  }`}
-                >
-                  {tx.amount}
+      <div className={`min-h-screen flex flex-col ${isDark ? "bg-black text-white" : "bg-[#f9f9f9] text-black"}`}>
+        {/* Wallet Balances */}
+        <Card>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
+            {wallets.map((wallet, idx) => (
+              <div
+                key={idx}
+                className={`h-[120px] w-full border ${isDark ? "border-gray-500" : "border-gray-300"} rounded-2xl relative p-5`}
+              >
+                <img src={watermark} className="absolute top-0 right-10 opacity-20" alt="watermark" />
+                <div className="flex flex-col justify-between h-full z-10">
+                  <p className="text-sm font-semibold">{wallet.name}</p>
+                  <h2 className={`font-bold text-[28px] mt-2 ${isDark ? "text-white" : "text-black"}`}>
+                    {wallet.balance === null ? "--" : Number(wallet.balance).toFixed(4)}
+                  </h2>
+                  {wallet.symbol && <span className="text-xs mt-1">{wallet.symbol}</span>}
+                  {wallet.amount && <span className="text-xs mt-1">~${wallet.amount} {wallet.currency}</span>}
                 </div>
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Modal */}
-        <DoMoreModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          isDark={isDark}
-        />
-
-        {/* Bottom Navbar */}
-        {!isModalOpen && <Navbar />}
-      </div>
-
-      {/* DESKTOP VIEW */}
-      <div
-        className={`min-h-screen hidden lg:flex flex-col gap-8 p-6 ${
-          isDark ? "bg-black text-white" : "bg-gray-50 text-black"
-        }`}
-      >
-        {/* wallets */}
-        <Card>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
-            {wallets.map((wallet, idx) => {
-              return (
-                <div
-                  key={idx}
-                  className={`h-[120px] w-full border ${
-                    isDark ? "border-gray-500" : "border-[#E5E7EB]"
-                  } rounded-2xl relative p-5 cursor-pointer hover:shadow-md transition-all duration-300`}
-                >
-                  <img src={watermark} className="absolute top-0 right-10" />
-                  <div className="flex justify-between items-center z-10">
-                    <div className="space-y-1">
-                      <p
-                        className={`text-sm ${
-                          isDark ? "text-white/80" : "text-[#393A3F]"
-                        } font-normal`}
-                      >
-                        {wallet.name}
-                      </p>
-                      <h2
-                        className={`${
-                          isDark ? "text-white/90" : "text-black/90"
-                        } font-bold text-[28px] leading-11 truncate w-[200px] relative group`}
-                      >
-                        {wallet.balance}
-                        <div className="absolute bg-gray-100 text-gray-950 text-xs p-1 rounded-full -bottom-1 right-0 hidden group-hover:block transition-all duration-300">
-                          {wallet.balance}
-                        </div>
-                      </h2>
-                    </div>
-                    <div
-                      className={`border border-[#F3F4F9] ${
-                        isDark
-                          ? "bg-black/50 text-white"
-                          : "bg-[#e7ecf5] text-[#3C3C43]"
-                      } rounded-full w-20 h-[35px] px-2.5 py-1.5 font-bold text-sm flex justify-center items-center`}
-                    >
-                      ~${wallet.amount}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
         </Card>
 
-        {/* quick actions */}
+        {/* Quick Actions */}
         <Card>
           <Heading heading={"Quick Actions"} />
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-5 ">
-            {quickActions.map((action, idx) => {
-              return (
-                <div
-                  key={idx}
-                  onClick={action.onClick}
-                  className="h-[130px] w-full border border-[#E5E7EB] rounded-2xl px-2"
-                >
-                  <img src={action.image} alt={action.title} />
-                  <h3
-                    className={`${
-                      isDark ? "text-white/90" : "text-black/90"
-                    } font-bold text-base leading-[26px]`}
-                  >
-                    {action.title}
-                  </h3>
-                  <p
-                    className={`${
-                      isDark ? "text-white/80" : "text-black/80"
-                    }font-normal text-sm`}
-                  >
-                    {action.subtitle}
-                  </p>
-                </div>
-              );
-            })}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5">
+            {quickActions.map((action, idx) => (
+              <div
+                key={idx}
+                onClick={action.onClick}
+                className="h-[130px] w-full border border-[#E5E7EB] rounded-2xl px-2 cursor-pointer hover:shadow-md"
+              >
+                <img src={action.image} alt={action.title} />
+                <h3 className="font-bold text-base">{action.title}</h3>
+                <p className="text-sm">{action.subtitle}</p>
+              </div>
+            ))}
           </div>
         </Card>
 
-        {/* recent transactions */}
+        {/* Transactions */}
         <Card>
           <Heading heading={"Recent Transactions"} />
           <div className="m-4">
@@ -405,15 +189,9 @@ const GoWalletComponent = () => {
         <Navbar />
       </div>
 
-      <WithdrawModal
-        isOpen={isWalletModalOpen}
-        onClose={() => setIsWalletModalOpen(false)}
-      />
-
-      <SwapModal
-        isOpen={isSwapModalOpen}
-        onClose={() => setIsSwapModalOpen(false)}
-      />
+      {/* Modals */}
+      <WithdrawModal isOpen={isWalletModalOpen} onClose={() => setIsWalletModalOpen(false)} />
+      <SwapModal isOpen={isSwapModalOpen} onClose={() => setIsSwapModalOpen(false)} />
     </BaseLayout>
   );
 };
