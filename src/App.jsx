@@ -28,6 +28,7 @@ import ChangePassword from "./pages/Profile/ChangePassword";
 import Swap from "./pages/Wallet/Swap"
 import SendPayment from "./pages/Wallet/SendPayment"
 import AddDetails from "./pages/AddDetails";
+import LandingHome from "./pages/Landing/Home";
 
 
 function App() {
@@ -92,6 +93,9 @@ function App() {
           <Route path="/profile/referrals" element={<Referrals />} />
           <Route path="/profile/password" element={<ChangePassword />} />
           <Route path="/add-details" element={<AddDetails />} />
+
+          {/* landing pages */}
+          <Route path="/landing/home" element={<LandingHome />} />
         </Routes>
       ) : (
         <Onboarding

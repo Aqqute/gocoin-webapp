@@ -45,7 +45,7 @@ export default function WithdrawModal({ isOpen, onClose }) {
       setBankWithdrawalData((prev) => ({
         ...prev,
         amountFiat: fiat,
-        amountGoToken: fiat !== "" ? fiat + 5 : "", // example: add conversion logic
+        amountGoToken: fiat !== "" ? fiat - 5 : "", // example: add conversion logic
       }));
       return;
     }
