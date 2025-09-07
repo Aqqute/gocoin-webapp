@@ -29,6 +29,7 @@ import Swap from "./pages/Wallet/Swap"
 import SendPayment from "./pages/Wallet/SendPayment"
 import AddDetails from "./pages/AddDetails";
 import LandingHome from "./pages/Landing/Home";
+import WithdrawalsDashboard from './pages/Admin/WithdrawalsDashboard';
 
 
 function App() {
@@ -96,6 +97,7 @@ function App() {
 
           {/* landing pages */}
           <Route path="/landing/home" element={<LandingHome />} />
+          <Route path="/admin/withdrawals" element={<WithdrawalsDashboard />} />
         </Routes>
       ) : (
         <Onboarding

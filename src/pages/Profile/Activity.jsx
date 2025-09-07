@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
-
+import WithdrawModal from './WithdrawModal';
 
 const Activity = () => {
   const { theme } = useTheme();
@@ -15,7 +15,9 @@ const Activity = () => {
     dateRange: '',
   });
   const [activities, setActivities] = useState([]);
+  const [withdrawals, setWithdrawals] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
 
   useEffect(() => {
     const fetchActivity = async () => {
@@ -31,9 +33,15 @@ const Activity = () => {
           dateRange: data.summary.dateRange || '',
         });
         setActivities(data.activities || []);
+        // Fetch user withdrawal history
+        const wRes = await axios.get('https://gocoin.onrender.com/api/withdrawal/user', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setWithdrawals(Array.isArray(wRes.data.withdrawals) ? wRes.data.withdrawals : []);
       } catch (err) {
         setWeeklyStats({ goTokenEarned: 0, leaderboardRank: null, dateRange: '' });
         setActivities([]);
+        setWithdrawals([]);
       } finally {
         setLoading(false);
       }
@@ -66,6 +74,12 @@ const Activity = () => {
             {weeklyStats.dateRange || ''}
           </p>
         </div>
+        <button
+          className="bg-[#cc8400] hover:bg-[#b97a00] text-white font-semibold px-4 py-2 rounded-full mb-2"
+          onClick={() => setShowWithdrawModal(true)}
+        >
+          Withdraw Funds
+        </button>
         <div className="grid grid-cols-2 gap-3">
           <div className={`${isDark ? 'bg-[#2a2a2a]' : 'bg-white'} rounded-xl p-3 shadow-sm`}>
             <p className="text-sm font-semibold mb-0.5">{weeklyStats.goTokenEarned}</p>
@@ -106,7 +120,35 @@ const Activity = () => {
             ))
           )}
         </div>
+        {/* Withdrawal History Section */}
+        <div className="mt-8">
+          <h3 className="text-base font-bold mb-2">Withdrawal History</h3>
+          {withdrawals.length === 0 ? (
+            <div className="text-center py-4 text-gray-400">No withdrawals yet.</div>
+          ) : (
+            <div className="space-y-2">
+              {withdrawals.map(w => (
+                <div key={w._id} className={`${isDark ? 'bg-[#2a2a2a]' : 'bg-white'} rounded-xl p-3 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-2`}>
+                  <div>
+                    <div className="font-semibold text-sm">Amount: <span className="text-[#cc8400]">{w.amount}</span></div>
+                    <div className="text-xs text-gray-500">Wallet: {w.walletAddress}</div>
+                    <div className="text-xs text-gray-500">Date: {new Date(w.createdAt).toLocaleString()}</div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${getStatusStyle(w.status)}`}>{w.status}</span>
+                    {w.txHash && <span className="text-xs text-gray-400">Tx: {w.txHash}</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
+      {showWithdrawModal && (
+        <WithdrawModal
+          onClose={() => setShowWithdrawModal(false)}
+        />
+      )}
     </div>
   );
 };

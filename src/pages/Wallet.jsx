@@ -20,7 +20,7 @@ import WithdrawModal from "../components/wallet/WithdrawModal";
 import Button from "../components/Button";
 import SwapModal from "../components/wallet/SwapModal";
 import Header from "../components/Header";
-import { Card } from "../components/ui/card"; // ✅ assuming you use shadcn/ui
+import { Card } from "../components/ui/Card"; // ✅ assuming you use shadcn/ui
 
 // Heading component
 function Heading({ heading }) {

@@ -34,6 +34,7 @@ import Referrals from "./Profile/Referrals";
 import Notifications from "./Profile/NotificationSettings";
 import TermsOfService from "./Profile/Terms";
 import AddDetails from "./AddDetails";
+import WithdrawForm from "./Profile/WithdrawForm"; // New import
 
 const ProfileDashboard = () => {
   const navigate = useNavigate();
@@ -116,6 +117,12 @@ const ProfileDashboard = () => {
       icon: FileText,
       path: "/profile/terms",
     },
+    {
+      id: "withdraw",
+      title: "Withdraw Funds",
+      icon: Wallet,
+      path: "/profile/withdraw"
+    },
     { id: "logout", title: "Logout", icon: LogOut, action: handleLogout },
   ];
 
@@ -181,6 +188,8 @@ const ProfileDashboard = () => {
         return <TermsOfService />;
       case "add-details":
         return <AddDetails />;
+      case "withdraw": // New case for withdraw section
+        return <WithdrawForm user={user} />;
       default:
         // Default to Activity if an unknown section is active or for 'profile' card click
         return <Activity />;
