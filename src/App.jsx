@@ -3,7 +3,7 @@ import { useTheme } from "./contexts/ThemeContext";
 import { useAuth } from "./contexts/AuthContext";
 import Loading from "./components/Loading";
 import { Toaster } from "react-hot-toast";
-import Onboarding from "./components/Onboarding";
+// import Onboarding from "./components/Onboarding";
 import ThemeSelector from "./components/ThemeSelector";
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
@@ -33,7 +33,7 @@ import LandingHome from "./pages/Landing/Home";
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [onboardingComplete, setOnboardingComplete] = useState(false);
+  // const [onboardingComplete, setOnboardingComplete] = useState(false);
   const { theme, setTheme } = useTheme();
   const { isAuthenticated } = useAuth();
 
@@ -56,7 +56,7 @@ function App() {
         <ThemeSelector onSelect={setTheme} />
       // ) : needsMoreInfo ? ( 
       //   <Signup stepOverride={3} />
-      ) : isAuthenticated || onboardingComplete ? (
+      ) : isAuthenticated ? (
         <Routes>
           <Route
             path="/"
@@ -94,14 +94,9 @@ function App() {
           <Route path="/profile/password" element={<ChangePassword />} />
           <Route path="/add-details" element={<AddDetails />} />
 
-          {/* landing pages */}
-          <Route path="/landing/home" element={<LandingHome />} />
         </Routes>
       ) : (
-        <Onboarding
-          onAccept={() => setOnboardingComplete(true)}
-          theme={theme}
-        />
+        <LandingHome />
       )}
     </>
   );
