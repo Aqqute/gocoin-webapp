@@ -6,6 +6,8 @@ import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import Header from "../components/Header";
 import BaseLayout from "../components/Layout";
+import PopupModal from "../components/PopupModal";
+import SuccessModalContent from "../components/SuccessModalContent";
 
 import { useTheme } from "../contexts/ThemeContext";
 import { useAuth } from "../contexts/AuthContext";
@@ -22,6 +24,14 @@ import {
 
 const Home = () => {
   const [activeFilter, setActiveFilter] = useState("All");
+  const [tab, setTab] = useState("all"); // "all" or "submitted"
+  const [submittedTaskIds, setSubmittedTaskIds] = useState(() => {
+    // Persist submitted tasks in localStorage
+    const saved = localStorage.getItem("submittedTaskIds");
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successAmount, setSuccessAmount] = useState(0);
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -87,14 +97,13 @@ const Home = () => {
   const handleSubmit = async () => {
     if (!selectedTask) return;
     setSubmitload(true);
-
     try {
       if (selectedTask.submissionMethod === "link") {
         if (!inputValue) {
           toast.error("Please provide a valid link");
+          setSubmitload(false);
           return;
         }
-
         await axios.post(
           `https://gocoin.onrender.com/api/tasks/${selectedTask._id}/submit`,
           { submissionData: inputValue },
@@ -105,26 +114,32 @@ const Home = () => {
             },
           }
         );
-
-        toast.success("Link submitted successfully!");
+        setSuccessAmount(selectedTask.rewards?.goToken || selectedTask.goCoinReward || 0);
+        setShowSuccessModal(true);
+        // Mark as submitted
+        const updated = [...submittedTaskIds, selectedTask._id];
+        setSubmittedTaskIds(updated);
+        localStorage.setItem("submittedTaskIds", JSON.stringify(updated));
       } else {
         if (!file) {
           toast.error("Please upload a screenshot");
+          setSubmitload(false);
           return;
         }
-
         const formData = new FormData();
         formData.append("submissionData", file);
-
         await axios.post(
           `https://gocoin.onrender.com/api/tasks/${selectedTask._id}/submit`,
           formData,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-
-        toast.success("Screenshot submitted successfully!");
+        setSuccessAmount(selectedTask.rewards?.goToken || selectedTask.goCoinReward || 0);
+        setShowSuccessModal(true);
+        // Mark as submitted
+        const updated = [...submittedTaskIds, selectedTask._id];
+        setSubmittedTaskIds(updated);
+        localStorage.setItem("submittedTaskIds", JSON.stringify(updated));
       }
-
       setInputValue("");
       setFile(null);
     } catch (error) {
@@ -139,13 +154,11 @@ const Home = () => {
 
   const filteredActivities = useMemo(() => {
     let list = activities;
-
     // Map types to figma-like filters
     if (activeFilter !== "All") {
       const key = normalized(activeFilter);
       list = list.filter((a) => normalized(a.type || "").includes(key));
     }
-
     if (query.trim()) {
       const q = normalized(query.trim());
       list = list.filter(
@@ -154,8 +167,14 @@ const Home = () => {
           normalized(a.description || "").includes(q)
       );
     }
+    // Filter by tab
+    if (tab === "submitted") {
+      list = list.filter((a) => submittedTaskIds.includes(a._id));
+    } else {
+      list = list.filter((a) => !submittedTaskIds.includes(a._id));
+    }
     return list;
-  }, [activities, activeFilter, query]);
+  }, [activities, activeFilter, query, tab, submittedTaskIds]);
 
   const renderState = () => {
     if (loading) {
@@ -187,40 +206,79 @@ const Home = () => {
     return null;
   };
 
-  const Card = ({ activity, onClick }) => (
-    <div
-      onClick={onClick}
-      className={`rounded-3xl p-4 text-sm shadow-[0_8px_24px_rgba(0,0,0,0.06)] cursor-pointer transition hover:shadow-[0_10px_28px_rgba(0,0,0,0.09)] ${
-        isDark ? "bg-[#2a2a2a] text-white" : "bg-white text-black"
-      }`}
-    >
-      <h3 className="text-left font-semibold text-sm mb-1">
-        {activity.campaignTopic || "Untitled Task"}
-      </h3>
-      <p
-        className={`text-left text-sm mb-4 ${
-          isDark ? "text-gray-300" : "text-gray-600"
+  // Countdown helper
+  const getCountdown = (startDate, endDate) => {
+    const now = new Date();
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    let diff, label;
+    if (now < start) {
+      diff = start - now;
+      label = "Ends in";
+    } else if (now < end) {
+      diff = end - now;
+      label = "Ends in";
+    } else {
+      return "Task ended";
+    }
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const m = Math.floor((diff / (1000 * 60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+    return `${label}: ${d}d ${h}h ${m}m ${s}s`;
+  };
+
+  const Card = ({ activity, onClick }) => {
+    const [countdown, setCountdown] = useState(() => getCountdown(activity.startDate, activity.endDate));
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setCountdown(getCountdown(activity.startDate, activity.endDate));
+      }, 1000);
+      return () => clearInterval(interval);
+    }, [activity.startDate, activity.endDate]);
+
+    return (
+      <div
+        onClick={onClick}
+        className={`rounded-3xl p-4 text-sm shadow-[0_8px_24px_rgba(0,0,0,0.06)] cursor-pointer transition hover:shadow-[0_10px_28px_rgba(0,0,0,0.09)] ${
+          isDark ? "bg-[#2a2a2a] text-white" : "bg-white text-black"
         }`}
       >
-        {activity.description?.split(".")[0] || "N/A"}
-      </p>
-      <div className="flex items-center gap-2">
-        <div className="w-7 h-7 rounded-full  shadow-md flex items-center justify-center">
-          <img src={GoLogo} alt="Go Logo" className="w-5 h-5 object-contain" />
-        </div>
-        <span className="font-semibold text-[15px] text-[#cc8400]">
-          {activity.rewards?.goToken || 0}
-        </span>
-        <span
-          className={`text-xs px-2 py-1 rounded-full ${
-            isDark ? "bg-[#1f1f1f] text-gray-300" : "bg-gray-100 text-gray-700"
+        <h3 className="text-left font-semibold text-sm mb-1">
+          {activity.campaignTopic || "Untitled Task"}
+        </h3>
+        <p
+          className={`text-left text-sm mb-4 ${
+            isDark ? "text-gray-300" : "text-gray-600"
           }`}
         >
-          ~${activity.rewards?.fiatEquivalent || 0}
-        </span>
+          {activity.description?.split(".")[0] || "N/A"}
+        </p>
+        <div className="flex flex-wrap items-center gap-2 mt-2">
+          <span className="text-xs font-medium px-2 py-1 rounded bg-orange-100 text-orange-700">
+            {countdown}
+          </span>
+          <div className="w-7 h-7 rounded-full shadow-md flex items-center justify-center">
+            <img src={GoLogo} alt="Go Logo" className="w-5 h-5 object-contain" />
+          </div>
+          <span className="font-semibold text-[15px] text-[#cc8400]">
+            {typeof activity.goCoinReward !== "undefined"
+              ? activity.goCoinReward
+              : activity.rewards?.goToken || 0}
+          </span>
+          {activity.rewards?.fiatEquivalent && (
+            <span
+              className={`text-xs px-2 py-1 rounded-full ${
+                isDark ? "bg-[#1f1f1f] text-gray-300" : "bg-gray-100 text-gray-700"
+              }`}
+            >
+              ~${activity.rewards.fiatEquivalent}
+            </span>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <BaseLayout>
@@ -255,17 +313,33 @@ const Home = () => {
                   );
                 })}
               </div>
-
-              <button
-                className={`flex items-center gap-1 rounded-full text-xs font-medium h-8 px-3 border ${
-                  isDark
-                    ? "border-orange-500 text-orange-400"
-                    : "border-orange-500 text-orange-500"
-                } bg-orange-500 text-white hover:opacity-90`}
-              >
-                <Plus size={14} />
-                Create Task
-              </button>
+              {/* Tabs for All/Submited */}
+              <div className="flex gap-2 ml-4">
+                <button
+                  onClick={() => setTab("all")}
+                  className={`px-4 h-8 rounded-full text-xs font-semibold transition-colors ${
+                    tab === "all"
+                      ? "bg-orange-500 text-white"
+                      : isDark
+                      ? "bg-[#eaeaea12] text-gray-200"
+                      : "bg-[#EFEFEF] text-gray-700"
+                  }`}
+                >
+                  Available Tasks
+                </button>
+                <button
+                  onClick={() => setTab("submitted")}
+                  className={`px-4 h-8 rounded-full text-xs font-semibold transition-colors ${
+                    tab === "submitted"
+                      ? "bg-green-500 text-white"
+                      : isDark
+                      ? "bg-[#eaeaea12] text-gray-200"
+                      : "bg-[#EFEFEF] text-gray-700"
+                  }`}
+                >
+                  Submitted
+                </button>
+              </div>
             </div>
 
             {/* Main Content */}
@@ -274,7 +348,7 @@ const Home = () => {
               <div className="flex-1 overflow-y-auto hide-scrollbar pr-1">
                 <div className="flex items-center justify-between mb-2">
                   <h2 className="text-left text-base mb-2 font-bold">
-                    Task Timeline
+                    {tab === "all" ? "Task Timeline" : "Submitted Tasks"}
                   </h2>
                 </div>
 
@@ -508,9 +582,35 @@ const Home = () => {
         {/* Mobile (<=1023px) */}
         <div className="lg:hidden flex flex-col min-h-screen">
           <Header />
-
+          {/* Tabs for All/Submitted */}
+          <div className="flex gap-2 px-2 mt-4">
+            <button
+              onClick={() => setTab("all")}
+              className={`flex-1 h-9 rounded-full text-xs font-semibold transition-colors ${
+                tab === "all"
+                  ? "bg-orange-500 text-white"
+                  : isDark
+                  ? "bg-[#eaeaea12] text-gray-200"
+                  : "bg-[#EFEFEF] text-gray-700"
+              }`}
+            >
+              Available Tasks
+            </button>
+            <button
+              onClick={() => setTab("submitted")}
+              className={`flex-1 h-9 rounded-full text-xs font-semibold transition-colors ${
+                tab === "submitted"
+                  ? "bg-green-500 text-white"
+                  : isDark
+                  ? "bg-[#eaeaea12] text-gray-200"
+                  : "bg-[#EFEFEF] text-gray-700"
+              }`}
+            >
+              Submitted
+            </button>
+          </div>
           {/* Filters + Create Task */}
-          <div className="px-2 mt-4">
+          <div className="px-2 mt-2">
             <div className="flex items-center justify-between">
               <div className="flex gap-2 overflow-x-auto hide-scrollbar pr-2">
                 {filters.map((filter) => {
@@ -532,7 +632,6 @@ const Home = () => {
                   );
                 })}
               </div>
-
               <button
                 className={` flex items-center rounded-full  font-medium  ${
                   isDark ? " text-orange-400" : " text-orange-500"
@@ -545,15 +644,13 @@ const Home = () => {
               </button>
             </div>
           </div>
-
           {/* Task Timeline */}
           <div className="px-4 mt-4 pb-32">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-left text-xl font-extrabold">
-                Task Timeline
+                {tab === "all" ? "Task Timeline" : "Submitted Tasks"}
               </h2>
             </div>
-
             {renderState() ||
               (filteredActivities.length > 0 && (
                 <div className="grid gap-4">
@@ -561,16 +658,23 @@ const Home = () => {
                     <Card
                       key={activity._id}
                       activity={activity}
-                      onClick={() => navigate(`/task/${activity._id}`)}
+                      onClick={() => {
+                        if (tab === "all") {
+                          navigate(`/task/${activity._id}`);
+                        }
+                      }}
                     />
                   ))}
                 </div>
               ))}
           </div>
-
           <Navbar />
         </div>
       </div>
+      {/* Success Modal */}
+      <PopupModal isOpen={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
+        <SuccessModalContent amount={successAmount} onClose={() => setShowSuccessModal(false)} />
+      </PopupModal>
     </BaseLayout>
   );
 };

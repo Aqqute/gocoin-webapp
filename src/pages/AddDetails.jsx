@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   CheckCircle, 
   Loader2, 
@@ -73,6 +73,21 @@ const fields = [
   },
 ];
 
+
+// Simulate fetching saved data (replace with real API call)
+const fetchSavedData = async () => {
+  // Replace with actual API call
+  return {
+    telegram: "@saveduser",
+    facebook: "https://facebook.com/saveduser",
+    twitter: "@savedtwitter",
+    instagram: "@savedinsta",
+    phone: "+2348012345678",
+    country: "Nigeria",
+    state: "Lagos",
+  };
+};
+
 const AddDetails = () => {
   // Mock theme context for demo
   const [theme, setTheme] = useState("light");
@@ -81,6 +96,15 @@ const AddDetails = () => {
   const [values, setValues] = useState({});
   const [status, setStatus] = useState({}); // idle | saving | success | error
   const [isLoading, setIsLoading] = useState(false);
+  const [savedData, setSavedData] = useState({});
+
+  useEffect(() => {
+    // Fetch saved data on mount
+    fetchSavedData().then((data) => {
+      setSavedData(data);
+      setValues(data); // Pre-fill form with saved data
+    });
+  }, []);
 
   const handleBlur = async (field) => {
     if (!values[field.key]) return;
@@ -161,6 +185,7 @@ const AddDetails = () => {
     }
   };
 
+
   const containerStyle = `min-h-screen ${
     isDark 
       ? "bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900" 
@@ -191,14 +216,19 @@ const AddDetails = () => {
     isDark ? "text-white" : "text-gray-900"
   }`;
 
+  // Responsive utility classes
+  const responsiveGrid = "grid gap-6 md:grid-cols-2";
+  const responsiveCard = `${cardStyle} p-4 sm:p-6 md:p-8 mb-6`;
+
   const hasValues = Object.keys(values).some(key => values[key]);
+
 
   return (
     <div className={containerStyle}>
-      <div className="max-w-6xl mx-auto p-4 md:p-8">
+      <div className="max-w-2xl md:max-w-4xl lg:max-w-6xl mx-auto p-2 sm:p-4 md:p-8">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-4 mb-2">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex items-center gap-2 sm:gap-4 mb-2">
             <button className={`p-2 rounded-xl ${
               isDark ? "bg-gray-800 hover:bg-gray-700" : "bg-white hover:bg-gray-50"
             } border ${
@@ -207,44 +237,48 @@ const AddDetails = () => {
               <ArrowLeft size={20} className={isDark ? "text-gray-300" : "text-gray-600"} />
             </button>
             <div>
-              <h1 className={`text-2xl md:text-3xl font-bold ${
+              <h1 className={`text-xl sm:text-2xl md:text-3xl font-bold ${
                 isDark ? "text-white" : "text-gray-900"
               }`}>
                 Edit Profile
               </h1>
-              {/* <p className={`text-sm ${
-                isDark ? "text-gray-400" : "text-gray-600"
-              } mt-1`}>
-                Step 3/5 • Complete your profile information
-              </p> */}
             </div>
           </div>
-          {/* <div className="flex items-center gap-2 mt-4">
-            <div className="h-2 bg-orange-500 rounded-full flex-1 max-w-xs"></div>
-            <span className={`text-xs font-medium ${
-              isDark ? "text-gray-400" : "text-gray-600"
-            }`}>
-              60% Complete
-            </span>
-          </div> */}
         </div>
 
+        {/* Saved Data Section */}
+        {Object.keys(savedData).length > 0 && (
+          <div className="mb-6">
+            <div className={`${cardStyle} p-4 sm:p-6 flex flex-col gap-2 sm:gap-4 text-xs sm:text-sm md:text-base`} style={{overflowX:'auto'}}>
+              <h2 className="font-semibold mb-2 text-gray-700 dark:text-gray-200 text-base sm:text-lg">Saved Details</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-4">
+                {fields.map(field => (
+                  savedData[field.key] ? (
+                    <div key={field.key} className="flex flex-col break-words">
+                      <span className="font-medium text-gray-500 dark:text-gray-400">{field.label}:</span>
+                      <span className="text-gray-900 dark:text-white truncate max-w-[120px] sm:max-w-[180px] md:max-w-[220px]" title={savedData[field.key]}>{savedData[field.key]}</span>
+                    </div>
+                  ) : null
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Social Media Section */}
-        <div className={`${cardStyle} p-6 md:p-8 mb-6`}>
+        <div className={responsiveCard}>
           <h2 className={sectionTitleStyle}>
             <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
               <Edit3 size={18} className="text-orange-600 dark:text-orange-400" />
             </div>
             Social Media Accounts
           </h2>
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2">
             {groupedFields.social.map((field) => {
               const Icon = field.icon;
               return (
                 <div key={field.key} className="space-y-2">
-                  <label className={`block text-sm font-semibold ${
-                    isDark ? "text-gray-300" : "text-gray-700"
-                  }`}>
+                  <label className={`block text-xs sm:text-sm font-semibold ${isDark ? "text-gray-300" : "text-gray-700"}`}>
                     {field.label}
                   </label>
                   <div className={inputWrapperStyle}>
@@ -268,23 +302,21 @@ const AddDetails = () => {
         </div>
 
         {/* Contact & Location Section */}
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className={responsiveGrid}>
           {/* Contact Information */}
-          <div className={`${cardStyle} p-6 md:p-8`}>
+          <div className={responsiveCard}>
             <h2 className={sectionTitleStyle}>
               <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
                 <Phone size={18} className="text-blue-600 dark:text-blue-400" />
               </div>
               Contact Information
             </h2>
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {groupedFields.contact.map((field) => {
                 const Icon = field.icon;
                 return (
                   <div key={field.key} className="space-y-2">
-                    <label className={`block text-sm font-semibold ${
-                      isDark ? "text-gray-300" : "text-gray-700"
-                    }`}>
+                    <label className={`block text-xs sm:text-sm font-semibold ${isDark ? "text-gray-300" : "text-gray-700"}`}>
                       {field.label}
                     </label>
                     <div className={inputWrapperStyle}>
@@ -308,21 +340,19 @@ const AddDetails = () => {
           </div>
 
           {/* Location Information */}
-          <div className={`${cardStyle} p-6 md:p-8`}>
+          <div className={responsiveCard}>
             <h2 className={sectionTitleStyle}>
               <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
                 <Globe size={18} className="text-green-600 dark:text-green-400" />
               </div>
               Location Details
             </h2>
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {groupedFields.location.map((field) => {
                 const Icon = field.icon;
                 return (
                   <div key={field.key} className="space-y-2">
-                    <label className={`block text-sm font-semibold ${
-                      isDark ? "text-gray-300" : "text-gray-700"
-                    }`}>
+                    <label className={`block text-xs sm:text-sm font-semibold ${isDark ? "text-gray-300" : "text-gray-700"}`}>
                       {field.label}
                     </label>
                     <div className={inputWrapperStyle}>
@@ -347,26 +377,17 @@ const AddDetails = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="sticky bottom-4 mt-8 flex flex-col sm:flex-row gap-4 justify-between items-center">
-          <div className={`text-sm ${
+        <div className="sticky bottom-2 sm:bottom-4 mt-8 flex flex-col sm:flex-row gap-4 justify-between items-center px-1 sm:px-0">
+          <div className={`text-xs sm:text-sm ${
             isDark ? "text-gray-400" : "text-gray-600"
           }`}>
             {hasValues ? "Changes will be saved automatically" : "Fill in your details to continue"}
           </div>
-          
-          <div className="flex gap-3 w-full sm:w-auto">
-            {/* <button className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
-              isDark 
-                ? "bg-gray-700 hover:bg-gray-600 text-white border border-gray-600" 
-                : "bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-300"
-            } flex-1 sm:flex-none`}>
-              Skip for now
-            </button> */}
-            
+          <div className="flex gap-2 sm:gap-3 w-full sm:w-auto">
             <button
               onClick={handleSaveAll}
               disabled={!hasValues || isLoading}
-              className={`px-8 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 flex-1 sm:flex-none ${
+              className={`px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 flex-1 sm:flex-none ${
                 hasValues && !isLoading
                   ? "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
                   : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"

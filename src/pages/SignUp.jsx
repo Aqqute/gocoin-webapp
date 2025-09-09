@@ -16,12 +16,12 @@ import {
   House,
 } from "lucide-react";
 
-import CoinbaseLogo from "../../public/images/coinbase.webp";
-import MetaMaskLogo from "../../public/images/MetaMask.webp";
-import TronLogo from "../../public/images/tron.png";
-import PhantomLogo from "../../public/images/phantom.jpeg";
-import TrustWalletLogo from "../../public/images/trustwallet.png";
-import SolflareLogo from "../../public/images/solflare.png";
+// import CoinbaseLogo from "../../public/images/coinbase.webp";
+// import MetaMaskLogo from "../../public/images/MetaMask.webp";
+// import TronLogo from "../../public/images/tron.png";
+// import PhantomLogo from "../../public/images/phantom.jpeg";
+// import TrustWalletLogo from "../../public/images/trustwallet.png";
+// import SolflareLogo from "../../public/images/solflare.png";
 // import { GraduationCap, Dumbbell, Gamepad, Bitcoin } from "lucide-react";
 import WelcomeModal from "../components/WelcomeModal";
 import { useAuth } from "../contexts/AuthContext";
@@ -60,7 +60,7 @@ const Signup = ({ stepOverride }) => {
   // const { currentUser } = useAuth();
 
   useEffect(() => {
-    if (stepOverride) setStep(stepOverride);
+    if (stepOverride) setStep(stepOverride > 4 ? 4 : stepOverride);
   }, [stepOverride]);
 
   const handleNext = async () => {
@@ -161,7 +161,8 @@ const Signup = ({ stepOverride }) => {
         });
 
         toast.success("Location saved!");
-        setStep(5);
+        // End of signup flow, redirect or show success here
+        navigate("/login");
       } catch (error) {
         const message =
           error?.response?.data?.message || "Failed to save location";
@@ -170,7 +171,7 @@ const Signup = ({ stepOverride }) => {
         setLoading(false);
       }
     } else {
-      setStep((prev) => Math.min(prev + 1, 5));
+      setStep((prev) => Math.min(prev + 1, 4));
     }
   };
 
@@ -473,83 +474,7 @@ const Signup = ({ stepOverride }) => {
           </>
         );
 
-      case 5:
-        return (
-          <>
-            <h2 className={`text-xl font-bold mb-6 ${text}`}>
-              Connect Crypto Wallet
-            </h2>
-            <p className={`text-sm mb-6 ${text}`}>
-              Ready to start earning? Let’s begin by connecting your wallet and
-              secure your GO Tokens.
-            </p>
-
-            <div className="grid grid-cols-3 gap-4 mb-6">
-              {[
-                { name: "Coinbase", icon: CoinbaseLogo },
-                { name: "MetaMask", icon: MetaMaskLogo },
-                { name: "Tron Wallet", icon: TronLogo },
-                { name: "Phantom", icon: PhantomLogo },
-                { name: "Trust Wallet", icon: TrustWalletLogo },
-                { name: "Solflare", icon: SolflareLogo },
-              ].map((wallet) => (
-                <button
-                  key={wallet.name}
-                  onClick={() =>
-                    setFormData({ ...formData, wallet: wallet.name })
-                  }
-                  className={`border rounded-xl ${text} p-4 flex flex-col items-center justify-center ${
-                    formData.wallet === wallet.name
-                      ? "border-orange-500 shadow-sm"
-                      : "border-gray-200"
-                  }`}
-                >
-                  <img
-                    src={wallet.icon}
-                    alt={wallet.name}
-                    className="w-8 h-8 mb-2 object-contain"
-                  />
-                  <span className="text-sm">{wallet.name}</span>
-                </button>
-              ))}
-            </div>
-
-            <button
-              onClick={() => setIsWelcomeOpen(true)}
-              disabled={loading}
-              className={`bg-orange-500 font-semibold hover:bg-orange-600 text-white w-full py-2 px-4 rounded-full mb-4 ${
-                loading ? "opacity-60 cursor-not-allowed" : ""
-              }`}
-            >
-              {loading ? "Connecting..." : "Connect"}
-            </button>
-
-            <WelcomeModal
-              isOpen={isWelcomeOpen}
-              onClose={() => setIsWelcomeOpen(false)}
-              isDark={isDark}
-            />
-
-            <button
-              onClick={() => navigate("/login")}
-              className={`w-full text-sm underline mb-6 text-center font-bold ${text} cursor-pointer`}
-            >
-              Skip
-            </button>
-
-            <p className={`${text} text-center mt-4 text-sm`}>
-              By connecting your wallet you agree to our{" "}
-              <span className="text-blue-800 underline cursor-pointer">
-                Terms of service
-              </span>{" "}
-              and{" "}
-              <span className="text-blue-800 underline cursor-pointer">
-                Privacy Policy
-              </span>
-              .
-            </p>
-          </>
-        );
+      // Step 5 removed
 
       default:
         return null;
@@ -565,13 +490,13 @@ const Signup = ({ stepOverride }) => {
               <ArrowLeft size={20} className={`${text}`} />
             </button>
           )}
-          <p className={`text-base font-bold ${text}`}>Step {step}/5</p>
+          <p className={`text-base font-bold ${text}`}>Step {step}/4</p>
         </div>
 
         <div className="w-full h-1 bg-gray-200 rounded mb-6">
           <div
             className="h-1 bg-orange-500 rounded-full"
-            style={{ width: `${(step / 5) * 100}%` }}
+            style={{ width: `${(step / 4) * 100}%` }}
           />
         </div>
 

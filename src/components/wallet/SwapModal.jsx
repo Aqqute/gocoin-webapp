@@ -3,7 +3,7 @@ import Modal from "../PopupModal";
 import { useState } from "react";
 import Button from "../Button";
 import toast from "react-hot-toast";
-import { swap } from "../../config/wallet";
+import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 
 export default function SwapModal({ isOpen, onClose }) {
@@ -39,14 +39,28 @@ export default function SwapModal({ isOpen, onClose }) {
         fromAmount: Number(fromAmount),
       };
 
-      const result = await swap(payload, token);
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL || "https://gocoin.onrender.com"}/api/wallet/swap`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      onClose();
-      toast.success("Currency Swap Successful!");
-      console.log(result);
+      if (response.data && response.data.status === "success") {
+        onClose();
+        toast.success(response.data.message || "Currency swap initiated successfully.");
+        console.log(response.data.data);
+      } else {
+        toast.error(response.data.message || "Swap failed");
+      }
     } catch (error) {
-      console.error("Unexpected error:", error);
-      toast.error("Unexpected error occurred");
+      const message = error?.response?.data?.message || "Unexpected error occurred";
+      toast.error(message);
+      console.error("Swap error:", error);
     } finally {
       setIsLoading(false);
     }
